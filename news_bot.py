@@ -20,6 +20,69 @@ RSS_SOURCES = [
 ]
 
 
+def get_market_data():
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    market = {}
+    try:
+        symbols = {
+            'kospi': '^KS11',
+            'kosdaq': '^KQ11',
+            'nasdaq': '^IXIC',
+            'sp500': '^GSPC',
+            'usdkrw': 'USDKRW=X',
+            'oil': 'CL=F',
+        }
+        for key, symbol in symbols.items():
+            url = "https://query1.finance.yahoo.com/v8/finance/chart/" + symbol
+            res = requests.get(url, headers=headers, timeout=10)
+            data = res.json()
+            price = data['chart']['result'][0]['meta']['regularMarketPrice']
+            prev = data['chart']['result'][0]['meta']['chartPreviousClose']
+            change = price - prev
+            pct = (change / prev) * 100
+            market[key] = {
+                'price': price,
+                'change': change,
+                'pct': pct
+            }
+            print(key, "수집 완료:", price)
+    except Exception as e:
+        print("시장 데이터 오류:", e)
+    return market
+
+
+def format_market(market):
+    def arrow(val):
+        return "🔺" if val >= 0 else "🔻"
+
+    lines = []
+    if 'kospi' in market:
+        m = market['kospi']
+        lines.append("🇰🇷 코스피: {:,.2f} {} ({:+.2f} / {:+.2f}%)".format(
+            m['price'], arrow(m['change']), m['change'], m['pct']))
+    if 'kosdaq' in market:
+        m = market['kosdaq']
+        lines.append("🇰🇷 코스닥: {:,.2f} {} ({:+.2f} / {:+.2f}%)".format(
+            m['price'], arrow(m['change']), m['change'], m['pct']))
+    if 'nasdaq' in market:
+        m = market['nasdaq']
+        lines.append("🇺🇸 나스닥: {:,.2f} {} ({:+.2f} / {:+.2f}%)".format(
+            m['price'], arrow(m['change']), m['change'], m['pct']))
+    if 'sp500' in market:
+        m = market['sp500']
+        lines.append("🇺🇸 S&P500: {:,.2f} {} ({:+.2f} / {:+.2f}%)".format(
+            m['price'], arrow(m['change']), m['change'], m['pct']))
+    if 'usdkrw' in market:
+        m = market['usdkrw']
+        lines.append("💱 달러/원: {:,.2f}원 {} ({:+.2f} / {:+.2f}%)".format(
+            m['price'], arrow(m['change']), m['change'], m['pct']))
+    if 'oil' in market:
+        m = market['oil']
+        lines.append("🛢 WTI유가: ${:.2f} {} ({:+.2f} / {:+.2f}%)".format(
+            m['price'], arrow(m['change']), m['change'], m['pct']))
+    return "\n".join(lines)
+
+
 def get_news():
     headers = {'User-Agent': 'Mozilla/5.0'}
     all_news = []
@@ -49,15 +112,12 @@ def get_news():
     return all_news
 
 
-def send_telegram(news_items):
+def send_telegram(market_text, news_items):
     today = datetime.now().strftime("%Y년 %m월 %d일")
     msg = "📈 <b>" + today + " 투자 뉴스 브리핑</b>\n\n"
-    msg += "📊 주요 증시 현황\n"
-    msg += "🇰🇷 <a href='https://finance.naver.com/sise'>코스피/코스닥</a>\n"
-    msg += "🇺🇸 <a href='https://finance.yahoo.com'>나스닥/S&P500</a>\n"
-    msg += "💱 <a href='https://finance.naver.com/marketindex'>환율</a>\n"
-    msg += "🛢 <a href='https://www.investing.com/commodities/crude-oil'>유가</a>\n\n"
-    msg += "📰 <b>오늘의 주요 뉴스</b>\n\n"
+    msg += "📊 <b>주요 증시 현황</b>\n"
+    msg += market_text + "\n\n"
+    msg += "📰 <b>오늘의 주요 뉴스</b>\n"
     current_source = ""
     for item in news_items:
         if item['source'] != current_source:
@@ -76,8 +136,9 @@ def send_telegram(news_items):
     print("텔레그램 응답:", response.text)
 
 
-def send_email(news_items):
+def send_email(market_text, news_items):
     today = datetime.now().strftime("%Y년 %m월 %d일")
+    market_html = market_text.replace("\n", "<br>")
     news_html = ""
     current_source = ""
     for item in news_items:
@@ -95,11 +156,8 @@ def send_email(news_items):
         "<html><body style='font-family:Arial;max-width:600px;margin:0 auto;'>"
         "<h2>📈 " + today + " 투자 뉴스 브리핑</h2>"
         "<h3>📊 주요 증시 현황</h3>"
-        "<p>"
-        "🇰🇷 <a href='https://finance.naver.com/sise'>코스피/코스닥</a><br>"
-        "🇺🇸 <a href='https://finance.yahoo.com'>나스닥/S&P500</a><br>"
-        "💱 <a href='https://finance.naver.com/marketindex'>환율</a><br>"
-        "🛢 <a href='https://www.investing.com/commodities/crude-oil'>유가</a>"
+        "<p style='background:#f0f7ff;padding:15px;border-radius:8px;line-height:2;'>"
+        + market_html +
         "</p>"
         "<h3>📰 오늘의 주요 뉴스</h3>"
         + news_html +
@@ -125,11 +183,14 @@ def send_email(news_items):
 
 def main():
     print("시작!")
+    market = get_market_data()
+    market_text = format_market(market)
+    print("시장 데이터:\n" + market_text)
     news_items = get_news()
     print("총 뉴스 수집 완료:", len(news_items))
-    send_telegram(news_items)
+    send_telegram(market_text, news_items)
     print("텔레그램 전송 완료!")
-    send_email(news_items)
+    send_email(market_text, news_items)
     print("이메일 전송 완료!")
 
 
