@@ -11,18 +11,16 @@ TELEGRAM_CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
 GMAIL_USER = os.environ['GMAIL_USER']
 GMAIL_PASSWORD = os.environ['GMAIL_PASSWORD']
 
-
+        
 def get_news():
-    url = "https://news.google.com/rss/search?q=주식+투자+증시&hl=ko&gl=KR&ceid=KR:ko"
-    response = requests.get(url)
-    news_items = []
-    root = ET.fromstring(response.content)
-    for item in root.findall('.//item')[:10]:
-        title = item.find('title').text
-        link = item.find('link').text
-        news_items.append({'title': title, 'link': link})
+    news_items = [
+        {'title': '코스피 오늘 시장 동향 확인', 'link': 'https://finance.naver.com/sise'},
+        {'title': '오늘의 환율 정보', 'link': 'https://finance.naver.com/marketindex'},
+        {'title': '미국 증시 현황', 'link': 'https://finance.yahoo.com'},
+        {'title': '국제 유가 동향', 'link': 'https://www.investing.com/commodities/crude-oil'},
+        {'title': '오늘의 투자 뉴스', 'link': 'https://finance.naver.com/news'},
+    ]
     return news_items
-
 
 def send_telegram(news_items):
     today = datetime.now().strftime("%Y년 %m월 %d일")
