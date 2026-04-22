@@ -45,4 +45,4 @@ def send_telegram(news_items):
     data = {"chat_id": TELEGRAM_CHAT_ID, "text": msg, "parse_mode": "HTML"}
     requests.post(url, data=data)
 
-def send_email
+def send_email(news_items):
