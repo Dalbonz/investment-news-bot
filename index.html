@@ -13,28 +13,10 @@
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Arial, sans-serif;
     padding: 16px;
   }
-  h1 {
-    text-align: center;
-    padding: 16px 0 20px 0;
-    font-size: 1.4em;
-    font-weight: 700;
-    color: #1d1d1f;
-    letter-spacing: -0.5px;
-  }
-
-  /* 지수 가로 스크롤 */
-  .market-scroll {
-    overflow-x: auto;
-    margin-bottom: 14px;
-    padding-bottom: 4px;
-    -webkit-overflow-scrolling: touch;
-  }
+  h1 { text-align: center; padding: 16px 0 20px 0; font-size: 1.4em; font-weight: 700; color: #1d1d1f; }
+  .market-scroll { overflow-x: auto; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
   .market-scroll::-webkit-scrollbar { display: none; }
-  .market-row {
-    display: flex;
-    gap: 10px;
-    min-width: max-content;
-  }
+  .market-row { display: flex; gap: 10px; min-width: max-content; }
   .market-chip {
     background: rgba(255,255,255,0.85);
     backdrop-filter: blur(20px);
@@ -42,15 +24,12 @@
     border: 1px solid rgba(255,255,255,0.95);
     box-shadow: 0 2px 10px rgba(0,0,0,0.07);
     padding: 12px 16px;
-    min-width: 120px;
-    white-space: nowrap;
+    min-width: 110px;
   }
-  .market-chip .m-label { font-size: 0.68em; color: #6e6e73; font-weight: 500; margin-bottom: 4px; }
-  .market-chip .m-price { font-size: 1.05em; font-weight: 700; color: #1d1d1f; }
-  .market-chip .m-change { font-size: 0.72em; font-weight: 500; margin-top: 2px; }
+  .m-label { font-size: 0.68em; color: #6e6e73; font-weight: 500; margin-bottom: 4px; }
+  .m-price { font-size: 1.05em; font-weight: 700; color: #1d1d1f; }
+  .m-change { font-size: 0.72em; font-weight: 500; margin-top: 2px; }
   .up { color: #34c759; } .down { color: #ff3b30; }
-
-  /* 글래스 카드 */
   .glass {
     background: rgba(255,255,255,0.78);
     backdrop-filter: blur(24px);
@@ -61,45 +40,39 @@
     padding: 18px;
     margin-bottom: 14px;
   }
-  .section-title {
-    font-size: 0.95em;
-    font-weight: 700;
-    color: #1d1d1f;
-    margin-bottom: 14px;
-    letter-spacing: -0.3px;
-  }
-
-  /* 차트 탭 */
-  .chart-tabs {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 14px;
-  }
-  .chart-tab {
+  .section-title { font-size: 0.95em; font-weight: 700; color: #1d1d1f; margin-bottom: 12px; }
+  .index-tabs { display: flex; gap: 6px; margin-bottom: 10px; overflow-x: auto; }
+  .index-tabs::-webkit-scrollbar { display: none; }
+  .index-tab {
     background: rgba(0,0,0,0.05);
     color: #6e6e73;
     border: none;
     border-radius: 8px;
-    padding: 5px 12px;
-    font-size: 0.75em;
+    padding: 5px 11px;
+    font-size: 0.72em;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .index-tab.active { background: #007aff; color: white; }
+  .range-tabs { display: flex; gap: 5px; margin-bottom: 12px; }
+  .range-tab {
+    background: transparent;
+    color: #6e6e73;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 0.7em;
     font-weight: 600;
     cursor: pointer;
     font-family: inherit;
   }
-  .chart-tab.active {
-    background: #007aff;
-    color: white;
-  }
-
-  /* 뉴스 */
-  .news-item {
-    padding: 13px 0;
-    border-bottom: 1px solid rgba(0,0,0,0.06);
-  }
+  .range-tab.active { background: rgba(0,122,255,0.12); color: #007aff; }
+  .news-item { padding: 13px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
   .news-item:last-child { border-bottom: none; }
   .news-source { font-size: 0.68em; color: #007aff; font-weight: 600; margin-bottom: 3px; }
   .news-title { font-size: 0.88em; font-weight: 600; color: #1d1d1f; line-height: 1.4; margin-bottom: 3px; }
-  .news-desc { font-size: 0.76em; color: #6e6e73; line-height: 1.5; margin-bottom: 5px; }
   .news-link { font-size: 0.74em; color: #007aff; text-decoration: none; font-weight: 500; }
   .loading { text-align: center; color: #6e6e73; padding: 20px; font-size: 0.85em; }
   .updated { text-align: center; font-size: 0.7em; color: #6e6e73; padding: 8px 0 20px 0; }
@@ -108,27 +81,32 @@
 <body>
 <h1>📈 투자 대시보드</h1>
 
-<!-- 지수 가로 스크롤 -->
 <div class="market-scroll">
   <div class="market-row" id="market-row">
     <div class="loading">불러오는 중...</div>
   </div>
 </div>
 
-<!-- 차트 -->
 <div class="glass">
-  <div class="section-title">📊 지수 추이</div>
-  <div class="chart-tabs">
-    <button class="chart-tab active" onclick="loadChart('5d','1d',this)">1주</button>
-    <button class="chart-tab" onclick="loadChart('1mo','1d',this)">1달</button>
-    <button class="chart-tab" onclick="loadChart('3mo','1wk',this)">3달</button>
-    <button class="chart-tab" onclick="loadChart('6mo','1wk',this)">6달</button>
-    <button class="chart-tab" onclick="loadChart('1y','1mo',this)">1년</button>
+  <div class="section-title">📊 지수 차트</div>
+  <div class="index-tabs" id="index-tabs">
+    <button class="index-tab active" onclick="selectIndex(0,this)">코스피</button>
+    <button class="index-tab" onclick="selectIndex(1,this)">코스닥</button>
+    <button class="index-tab" onclick="selectIndex(2,this)">나스닥</button>
+    <button class="index-tab" onclick="selectIndex(3,this)">S&P500</button>
+    <button class="index-tab" onclick="selectIndex(4,this)">달러/원</button>
+    <button class="index-tab" onclick="selectIndex(5,this)">WTI유가</button>
   </div>
-  <canvas id="myChart" height="150"></canvas>
+  <div class="range-tabs">
+    <button class="range-tab active" onclick="selectRange('5d','1d',this)">1주</button>
+    <button class="range-tab" onclick="selectRange('1mo','1d',this)">1달</button>
+    <button class="range-tab" onclick="selectRange('3mo','1wk',this)">3달</button>
+    <button class="range-tab" onclick="selectRange('6mo','1wk',this)">6달</button>
+    <button class="range-tab" onclick="selectRange('1y','1mo',this)">1년</button>
+  </div>
+  <canvas id="myChart" height="130"></canvas>
 </div>
 
-<!-- 뉴스 -->
 <div class="glass">
   <div class="section-title">📰 투자 뉴스</div>
   <div id="news-list"><div class="loading">뉴스 불러오는 중...</div></div>
@@ -139,26 +117,51 @@
 <script>
 const PROXY = 'https://api.allorigins.win/raw?url=';
 const SYMBOLS = [
-  { label: '🇰🇷 코스피', symbol: '^KS11' },
-  { label: '🇰🇷 코스닥', symbol: '^KQ11' },
-  { label: '🇺🇸 나스닥', symbol: '^IXIC' },
-  { label: '🇺🇸 S&P500', symbol: '^GSPC' },
-  { label: '💱 달러/원', symbol: 'USDKRW=X' },
-  { label: '🛢 WTI유가', symbol: 'CL=F' },
+  { label: '🇰🇷 코스피', symbol: '^KS11', color: '#007aff' },
+  { label: '🇰🇷 코스닥', symbol: '^KQ11', color: '#5856d6' },
+  { label: '🇺🇸 나스닥', symbol: '^IXIC', color: '#34c759' },
+  { label: '🇺🇸 S&P500', symbol: '^GSPC', color: '#ff9500' },
+  { label: '💱 달러/원', symbol: 'USDKRW=X', color: '#ff3b30' },
+  { label: '🛢 WTI유가', symbol: 'CL=F', color: '#8e8e93' },
 ];
 
+const NEWS_SOURCES = [
+  { name: 'Investing.com', url: 'https://kr.investing.com/rss/news.rss' },
+  { name: '한국경제', url: 'https://feeds.hankyung.com/app/stock.xml' },
+  { name: '매일경제', url: 'https://www.mk.co.kr/rss/30100041/' },
+  { name: '머니투데이', url: 'https://news.mt.co.kr/mtview/rss/stock.xml' },
+];
+
+const INVEST_KEYWORDS = ['주식','증시','코스피','코스닥','나스닥','S&P','금리','환율','달러','유가','원자재','채권','ETF','펀드','투자','매수','매도','실적','수출','무역','경제','GDP','인플레','연준','Fed','반도체','배당','IPO','공모','상장'];
+
+const EXCLUDE_KEYWORDS = ['연예','드라마','영화','아이돌','가수','배우','스포츠','축구','야구','골프','패션','뷰티','다이어트','맛집','여행','결혼','이혼','열애'];
+
 let myChart = null;
+let currentSymbolIdx = 0;
+let currentRange = '5d';
+let currentInterval = '1d';
+
+function isInvestNews(title) {
+  const t = title.toLowerCase();
+  const hasExclude = EXCLUDE_KEYWORDS.some(k => title.includes(k));
+  if (hasExclude) return false;
+  return INVEST_KEYWORDS.some(k => title.includes(k));
+}
 
 async function fetchMarket() {
   const row = document.getElementById('market-row');
   row.innerHTML = '';
-  for (const s of SYMBOLS) {
+  const fetches = SYMBOLS.map(s =>
+    fetch(PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(s.symbol)))
+      .then(r => r.json())
+      .catch(() => null)
+  );
+  const results = await Promise.all(fetches);
+  results.forEach((data, i) => {
+    const s = SYMBOLS[i];
     const chip = document.createElement('div');
     chip.className = 'market-chip';
     try {
-      const url = PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(s.symbol));
-      const res = await fetch(url);
-      const data = await res.json();
       const meta = data.chart.result[0].meta;
       const price = meta.regularMarketPrice;
       const prev = meta.chartPreviousClose;
@@ -169,59 +172,75 @@ async function fetchMarket() {
         '<div class="m-label">' + s.label + '</div>' +
         '<div class="m-price">' + price.toLocaleString() + '</div>' +
         '<div class="m-change ' + (isUp ? 'up' : 'down') + '">' +
-        (isUp ? '▲' : '▼') + ' ' + (isUp ? '+' : '') + pct + '%</div>';
+        (isUp ? '▲ +' : '▼ ') + pct + '%</div>';
     } catch(e) {
       chip.innerHTML = '<div class="m-label">' + s.label + '</div><div class="m-price" style="color:#6e6e73">-</div>';
     }
     row.appendChild(chip);
-  }
+  });
 }
 
-async function loadChart(range, interval, btn) {
-  if (btn) {
-    document.querySelectorAll('.chart-tab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-  }
+function selectIndex(idx, btn) {
+  currentSymbolIdx = idx;
+  document.querySelectorAll('.index-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  loadChart();
+}
+
+function selectRange(range, interval, btn) {
+  currentRange = range;
+  currentInterval = interval;
+  document.querySelectorAll('.range-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  loadChart();
+}
+
+async function loadChart() {
   if (myChart) { myChart.destroy(); myChart = null; }
+  const s = SYMBOLS[currentSymbolIdx];
   try {
-    const kospiUrl = PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/%5EKS11?interval=' + interval + '&range=' + range);
-    const nasdaqUrl = PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/%5EIXIC?interval=' + interval + '&range=' + range);
-    const [r1, r2] = await Promise.all([fetch(kospiUrl), fetch(nasdaqUrl)]);
-    const d1 = await r1.json();
-    const d2 = await r2.json();
-    const kospiClose = d1.chart.result[0].indicators.quote[0].close.map(v => v ? +v.toFixed(2) : null);
-    const nasdaqClose = d2.chart.result[0].indicators.quote[0].close.map(v => v ? +v.toFixed(2) : null);
-    const labels = d1.chart.result[0].timestamp.map(t => {
+    const url = PROXY + encodeURIComponent(
+      'https://query1.finance.yahoo.com/v8/finance/chart/' +
+      encodeURIComponent(s.symbol) + '?interval=' + currentInterval + '&range=' + currentRange
+    );
+    const res = await fetch(url);
+    const data = await res.json();
+    const closes = data.chart.result[0].indicators.quote[0].close.map(v => v ? +v.toFixed(2) : null);
+    const labels = data.chart.result[0].timestamp.map(t => {
       const d = new Date(t * 1000);
-      if (interval === '1mo') return d.getFullYear() + '/' + (d.getMonth()+1);
+      if (currentInterval === '1mo') return d.getFullYear() + '/' + (d.getMonth()+1);
       return (d.getMonth()+1) + '/' + d.getDate();
     });
     const ctx = document.getElementById('myChart').getContext('2d');
-    const g1 = ctx.createLinearGradient(0, 0, 0, 250);
-    g1.addColorStop(0, 'rgba(0,122,255,0.25)');
-    g1.addColorStop(1, 'rgba(0,122,255,0.0)');
-    const g2 = ctx.createLinearGradient(0, 0, 0, 250);
-    g2.addColorStop(0, 'rgba(52,199,89,0.2)');
-    g2.addColorStop(1, 'rgba(52,199,89,0.0)');
+    const grad = ctx.createLinearGradient(0, 0, 0, 220);
+    grad.addColorStop(0, s.color + '40');
+    grad.addColorStop(1, s.color + '00');
     myChart = new Chart(ctx, {
       type: 'line',
       data: {
         labels,
-        datasets: [
-          { label: '코스피', data: kospiClose, borderColor: '#007aff', backgroundColor: g1, tension: 0.4, pointRadius: 0, pointHoverRadius: 4, borderWidth: 2, fill: true, yAxisID: 'y' },
-          { label: '나스닥', data: nasdaqClose, borderColor: '#34c759', backgroundColor: g2, tension: 0.4, pointRadius: 0, pointHoverRadius: 4, borderWidth: 2, fill: true, yAxisID: 'y1' }
-        ]
+        datasets: [{
+          label: s.label,
+          data: closes,
+          borderColor: s.color,
+          backgroundColor: grad,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 4,
+          borderWidth: 2,
+          fill: true,
+        }]
       },
       options: {
         responsive: true,
         interaction: { mode: 'index', intersect: false },
         plugins: {
-          legend: { labels: { color: '#1d1d1f', font: { size: 11, weight: '600' }, boxWidth: 12 } },
+          legend: { display: false },
           tooltip: {
             backgroundColor: 'rgba(255,255,255,0.95)',
             titleColor: '#1d1d1f',
-            bodyColor: '#6e6e73',
-            borderColor: 'rgba(0,0,0,0.1)',
+            bodyColor: s.color,
+            borderColor: 'rgba(0,0,0,0.08)',
             borderWidth: 1,
             padding: 10,
             cornerRadius: 10,
@@ -233,13 +252,8 @@ async function loadChart(range, interval, btn) {
             grid: { color: 'rgba(0,0,0,0.04)' }
           },
           y: {
-            ticks: { color: '#007aff', font: { size: 9 } },
+            ticks: { color: '#6e6e73', font: { size: 9 } },
             grid: { color: 'rgba(0,0,0,0.04)' },
-            position: 'left'
-          },
-          y1: {
-            ticks: { color: '#34c759', font: { size: 9 } },
-            grid: { display: false },
             position: 'right'
           }
         }
@@ -253,42 +267,37 @@ async function loadChart(range, interval, btn) {
 async function fetchNews() {
   const newsList = document.getElementById('news-list');
   newsList.innerHTML = '';
-  const sources = [
-    { name: 'Investing.com', url: 'https://kr.investing.com/rss/news.rss' },
-    { name: '한국경제', url: 'https://feeds.hankyung.com/app/economy.xml' },
-    { name: '매일경제', url: 'https://www.mk.co.kr/rss/30000001/' },
-    { name: '머니투데이', url: 'https://news.mt.co.kr/mtview/rss.xml' },
-  ];
   let total = 0;
-  for (const source of sources) {
+  const fetches = NEWS_SOURCES.map(source =>
+    fetch(PROXY + encodeURIComponent(source.url))
+      .then(r => r.text())
+      .then(text => ({ source, text }))
+      .catch(() => null)
+  );
+  const results = await Promise.all(fetches);
+  for (const result of results) {
+    if (!result) continue;
     try {
-      const url = PROXY + encodeURIComponent(source.url);
-      const res = await fetch(url);
-      const text = await res.text();
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(text, 'text/xml');
+      const xml = new DOMParser().parseFromString(result.text, 'text/xml');
       const items = xml.querySelectorAll('item');
       let count = 0;
       for (const item of items) {
-        if (count >= 2) break;
+        if (count >= 3) break;
         const title = item.querySelector('title')?.textContent?.trim() || '';
         const link = item.querySelector('link')?.textContent?.trim() || '#';
-        const desc = (item.querySelector('description')?.textContent || '')
-          .replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 100) + '...';
-        if (!title) continue;
+        if (!title || !isInvestNews(title)) continue;
         const div = document.createElement('div');
         div.className = 'news-item';
         div.innerHTML =
-          '<div class="news-source">📌 ' + source.name + '</div>' +
+          '<div class="news-source">📌 ' + result.source.name + '</div>' +
           '<div class="news-title">' + title + '</div>' +
-          '<div class="news-desc">' + desc + '</div>' +
           '<a class="news-link" href="' + link + '" target="_blank">자세히 보기 →</a>';
         newsList.appendChild(div);
         count++;
         total++;
       }
     } catch(e) {
-      console.log(source.name + ' 오류:', e);
+      console.log(result.source.name + ' 오류:', e);
     }
   }
   if (total === 0) {
@@ -297,12 +306,12 @@ async function fetchNews() {
 }
 
 async function init() {
-  await Promise.all([fetchMarket(), loadChart('5d','1d',null), fetchNews()]);
+  await Promise.all([fetchMarket(), loadChart(), fetchNews()]);
   document.getElementById('updated-time').textContent = '마지막 업데이트: ' + new Date().toLocaleString('ko-KR');
 }
 
 init();
-setInterval(init, 60000);
+setInterval(init, 300000);
 </script>
 </body>
 </html>
