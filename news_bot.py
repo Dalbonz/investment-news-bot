@@ -1,10 +1,10 @@
 import os
 import smtplib
 import requests
-import xml.etree.ElementTree as ET
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
+from bs4 import BeautifulSoup
 
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 TELEGRAM_CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
@@ -13,13 +13,20 @@ GMAIL_PASSWORD = os.environ['GMAIL_PASSWORD']
 
 
 def get_news():
-    news_items = [
-        {'title': '코스피 오늘 시장 동향 확인', 'link': 'https://finance.naver.com/sise'},
-        {'title': '오늘의 환율 정보', 'link': 'https://finance.naver.com/marketindex'},
-        {'title': '미국 증시 현황', 'link': 'https://finance.yahoo.com'},
-        {'title': '국제 유가 동향', 'link': 'https://www.investing.com/commodities/crude-oil'},
-        {'title': '오늘의 투자 뉴스', 'link': 'https://finance.naver.com/news'},
-    ]
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    url = "https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=258"
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    news_items = []
+    for item in soup.select('ul.type2 li')[:5]:
+        a_tag = item.select_one('a')
+        if not a_tag:
+            continue
+        title = a_tag.text.strip()
+        link = a_tag['href']
+        desc_tag = item.select_one('.lede')
+        desc = desc_tag.text.strip() if desc_tag else '본문을 확인하세요.'
+        news_items.append({'title': title, 'desc': desc, 'link': link})
     return news_items
 
 
@@ -31,10 +38,12 @@ def send_telegram(news_items):
     msg += "🇺🇸 <a href='https://finance.yahoo.com'>나스닥/S&P500</a>\n"
     msg += "💱 <a href='https://finance.naver.com/marketindex'>환율</a>\n"
     msg += "🛢 <a href='https://www.investing.com/commodities/crude-oil'>유가</a>\n\n"
-    msg += "📰 <b>오늘의 주요 뉴스</b>\n"
+    msg += "📰 <b>오늘의 주요 뉴스</b>\n\n"
     for i, item in enumerate(news_items, 1):
-        msg += str(i) + ". <a href='" + item['link'] + "'>" + item['title'] + "</a>\n"
-    msg += "\n🔗 <b>투자 사이트</b>\n"
+        msg += str(i) + ". <b>" + item['title'] + "</b>\n"
+        msg += item['desc'] + "\n"
+        msg += "<a href='" + item['link'] + "'>🔗 자세히 보기</a>\n\n"
+    msg += "🔗 <b>투자 사이트</b>\n"
     msg += "• <a href='https://finance.naver.com'>네이버 금융</a>\n"
     msg += "• <a href='https://www.investing.com'>인베스팅닷컴</a>\n"
     msg += "• <a href='https://finance.yahoo.com'>야후 파이낸스</a>"
@@ -48,7 +57,13 @@ def send_email(news_items):
     today = datetime.now().strftime("%Y년 %m월 %d일")
     news_html = ""
     for i, item in enumerate(news_items, 1):
-        news_html += str(i) + ". <a href='" + item['link'] + "'>" + item['title'] + "</a><br>"
+        news_html += (
+            "<div style='margin-bottom:20px;padding:15px;background:#f9f9f9;border-radius:8px;'>"
+            "<h4 style='margin:0 0 8px 0;'>" + str(i) + ". " + item['title'] + "</h4>"
+            "<p style='margin:0 0 8px 0;color:#555;'>" + item['desc'] + "</p>"
+            "<a href='" + item['link'] + "' style='color:#1a73e8;'>🔗 자세히 보기</a>"
+            "</div>"
+        )
     html = (
         "<html><body style='font-family:Arial;max-width:600px;margin:0 auto;'>"
         "<h2>📈 " + today + " 투자 뉴스 브리핑</h2>"
@@ -60,7 +75,7 @@ def send_email(news_items):
         "🛢 <a href='https://www.investing.com/commodities/crude-oil'>유가</a>"
         "</p>"
         "<h3>📰 오늘의 주요 뉴스</h3>"
-        "<p>" + news_html + "</p>"
+        + news_html +
         "<hr>"
         "<h3>🔗 투자 사이트 바로가기</h3>"
         "<p>"
