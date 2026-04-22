@@ -36,7 +36,7 @@ def analyze_with_ai(news_text):
         "⚠️ 리스크 요인"
     )
     response = client.chat.completions.create(
-        model="gpt-4",
+        model="gpt-3.5-turbo",
         messages=[
             {"role": "system", "content": system_msg},
             {"role": "user", "content": "다음 뉴스를 분석해주세요:\n" + news_text}
