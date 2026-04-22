@@ -1,33 +1,52 @@
 import os
 import smtplib
 import requests
+import xml.etree.ElementTree as ET
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
-from bs4 import BeautifulSoup
 
 TELEGRAM_TOKEN = os.environ['TELEGRAM_TOKEN']
 TELEGRAM_CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
 GMAIL_USER = os.environ['GMAIL_USER']
 GMAIL_PASSWORD = os.environ['GMAIL_PASSWORD']
 
+RSS_SOURCES = [
+    {'name': '한국경제', 'url': 'https://feeds.hankyung.com/app/economy.xml'},
+    {'name': '매일경제', 'url': 'https://www.mk.co.kr/rss/30000001/'},
+    {'name': '머니투데이', 'url': 'https://news.mt.co.kr/mtview/rss.xml'},
+    {'name': '조선비즈', 'url': 'https://biz.chosun.com/rss/economics.xml'},
+    {'name': 'Investing.com', 'url': 'https://kr.investing.com/rss/news.rss'},
+]
+
 
 def get_news():
     headers = {'User-Agent': 'Mozilla/5.0'}
-    url = "https://news.naver.com/main/list.naver?mode=LS2D&mid=shm&sid1=101&sid2=258"
-    response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    news_items = []
-    for item in soup.select('ul.type2 li')[:5]:
-        a_tag = item.select_one('a')
-        if not a_tag:
-            continue
-        title = a_tag.text.strip()
-        link = a_tag['href']
-        desc_tag = item.select_one('.lede')
-        desc = desc_tag.text.strip() if desc_tag else '본문을 확인하세요.'
-        news_items.append({'title': title, 'desc': desc, 'link': link})
-    return news_items
+    all_news = []
+    for source in RSS_SOURCES:
+        try:
+            response = requests.get(source['url'], headers=headers, timeout=10)
+            root = ET.fromstring(response.content)
+            count = 0
+            for item in root.findall('.//item'):
+                if count >= 2:
+                    break
+                title_tag = item.find('title')
+                link_tag = item.find('link')
+                desc_tag = item.find('description')
+                if title_tag is None or link_tag is None:
+                    continue
+                title = title_tag.text.strip()
+                link = link_tag.text.strip()
+                desc = desc_tag.text.strip() if desc_tag is not None and desc_tag.text else '내용을 확인하세요.'
+                if len(desc) > 150:
+                    desc = desc[:150] + '...'
+                all_news.append({'source': source['name'], 'title': title, 'desc': desc, 'link': link})
+                count += 1
+            print(source['name'] + " 수집 완료:", count)
+        except Exception as e:
+            print(source['name'] + " 오류:", e)
+    return all_news
 
 
 def send_telegram(news_items):
@@ -39,8 +58,12 @@ def send_telegram(news_items):
     msg += "💱 <a href='https://finance.naver.com/marketindex'>환율</a>\n"
     msg += "🛢 <a href='https://www.investing.com/commodities/crude-oil'>유가</a>\n\n"
     msg += "📰 <b>오늘의 주요 뉴스</b>\n\n"
-    for i, item in enumerate(news_items, 1):
-        msg += str(i) + ". <b>" + item['title'] + "</b>\n"
+    current_source = ""
+    for item in news_items:
+        if item['source'] != current_source:
+            current_source = item['source']
+            msg += "\n📌 <b>[" + current_source + "]</b>\n"
+        msg += "• <b>" + item['title'] + "</b>\n"
         msg += item['desc'] + "\n"
         msg += "<a href='" + item['link'] + "'>🔗 자세히 보기</a>\n\n"
     msg += "🔗 <b>투자 사이트</b>\n"
@@ -56,11 +79,15 @@ def send_telegram(news_items):
 def send_email(news_items):
     today = datetime.now().strftime("%Y년 %m월 %d일")
     news_html = ""
-    for i, item in enumerate(news_items, 1):
+    current_source = ""
+    for item in news_items:
+        if item['source'] != current_source:
+            current_source = item['source']
+            news_html += "<h4 style='color:#1a73e8;margin-top:20px;'>📌 " + current_source + "</h4>"
         news_html += (
-            "<div style='margin-bottom:20px;padding:15px;background:#f9f9f9;border-radius:8px;'>"
-            "<h4 style='margin:0 0 8px 0;'>" + str(i) + ". " + item['title'] + "</h4>"
-            "<p style='margin:0 0 8px 0;color:#555;'>" + item['desc'] + "</p>"
+            "<div style='margin-bottom:15px;padding:12px;background:#f9f9f9;border-radius:8px;'>"
+            "<b>" + item['title'] + "</b><br>"
+            "<p style='color:#555;margin:5px 0;'>" + item['desc'] + "</p>"
             "<a href='" + item['link'] + "' style='color:#1a73e8;'>🔗 자세히 보기</a>"
             "</div>"
         )
@@ -99,7 +126,7 @@ def send_email(news_items):
 def main():
     print("시작!")
     news_items = get_news()
-    print("뉴스 수집 완료:", len(news_items))
+    print("총 뉴스 수집 완료:", len(news_items))
     send_telegram(news_items)
     print("텔레그램 전송 완료!")
     send_email(news_items)
