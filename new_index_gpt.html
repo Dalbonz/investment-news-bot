@@ -3,277 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <style>
-body{margin:0;background:#f5f7fb;font-family:Arial}
+body{margin:0;background:#f4f6fa;font-family:Arial}
 .wrap{padding:10px}
-
-/* 상단 */
 .top{display:grid;grid-template-columns:1.3fr 1fr;gap:8px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-
-.card{
- background:#fff;
- border-radius:10px;
- padding:8px;
- box-shadow:0 1px 4px rgba(0,0,0,0.05);
-}
-
-.title{font-size:11px;font-weight:700;margin-bottom:4px}
-
-.row{
- display:flex;
- justify-content:space-between;
- font-size:11px;
- padding:1px 0;
-}
-
-.up{color:#16a34a}
-.down{color:#dc2626}
-
+.card{background:#fff;border-radius:10px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.title{font-size:12px;font-weight:700;margin-bottom:6px}
+.row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
+.up{color:#16a34a}.down{color:#dc2626}
 canvas{height:40px!important}
-
-/* 뉴스 */
-.news-item{
- font-size:12px;
- padding:6px 0;
- border-bottom:1px solid #eee;
- cursor:pointer;
-}
-
-/* 섹션 */
-.section{margin-top:10px}
-
-/* 스크롤 */
 .scroll{display:flex;gap:6px;overflow-x:auto}
-
-/* 카드 */
-.box{
- min-width:110px;
- background:#fff;
- border-radius:8px;
- padding:6px;
- font-size:11px;
- cursor:pointer;
-}
-
-/* 리스트 */
-.list{margin-top:6px}
-.list-row{
- display:flex;
- justify-content:space-between;
- padding:6px 0;
- border-bottom:1px solid #eee;
- cursor:pointer;
- font-size:12px;
-}
-
-/* 상세 */
-.detail{
- font-size:11px;
- margin-top:6px;
- border-top:1px solid #ddd;
- padding-top:6px;
-}
-
-.detail-row{
- display:flex;
- justify-content:space-between;
- padding:2px 0;
-}
-
-.badge{
- padding:2px 5px;
- font-size:10px;
- border-radius:4px;
-}
-
-.buy{background:#dcfce7}
-.sell{background:#fee2e2}
-.neutral{background:#e5e7eb}
+.box{min-width:110px;background:#fff;border-radius:8px;padding:6px;font-size:11px;cursor:pointer}
+.list-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;font-size:12px;cursor:pointer}
+.detail{font-size:11px;margin-top:6px;border-top:1px solid #ddd;padding-top:6px}
+.detail-row{display:flex;justify-content:space-between;padding:2px 0}
+.news-item{font-size:12px;padding:6px 0;border-bottom:1px solid #eee}
 </style>
 </head>
 
 <body>
 <div class="wrap">
 
-<!-- 상단 -->
 <div class="top">
-
 <div class="grid">
 
 <div class="card">
 <div class="title">주식</div>
-<div class="row"><span>AAPL</span><span class="up">+1.2%</span></div>
-<div class="row"><span>TSLA</span><span class="down">-0.5%</span></div>
-<div class="row"><span>MSFT</span><span class="up">+0.8%</span></div>
 <canvas id="c1"></canvas>
+<div id="stock-mini"></div>
 </div>
 
 <div class="card">
 <div class="title">지수</div>
-<div class="row"><span>NASDAQ</span><span class="up">+1.1%</span></div>
-<div class="row"><span>S&P</span><span class="up">+0.7%</span></div>
-<div class="row"><span>KOSPI</span><span class="down">-0.4%</span></div>
 <canvas id="c2"></canvas>
+<div id="index-mini"></div>
 </div>
 
 <div class="card">
 <div class="title">외환</div>
-<div class="row"><span>USD/KRW</span><span class="up">+0.3%</span></div>
-<div class="row"><span>EUR/USD</span><span class="down">-0.2%</span></div>
-<div class="row"><span>JPY</span><span class="up">+0.1%</span></div>
 <canvas id="c3"></canvas>
+<div id="fx-mini"></div>
 </div>
 
 <div class="card">
 <div class="title">원자재</div>
-<div class="row"><span>Gold</span><span class="up">+0.6%</span></div>
-<div class="row"><span>WTI</span><span class="up">+1.0%</span></div>
-<div class="row"><span>Silver</span><span class="down">-0.2%</span></div>
 <canvas id="c4"></canvas>
+<div id="com-mini"></div>
 </div>
 
 </div>
 
 <div class="card">
-<div class="title">🔥 뉴스</div>
-<div class="news-item">금리 인하 기대 확대</div>
-<div class="news-item">AI 반도체 수요 증가</div>
-<div class="news-item">삼성전자 실적 개선</div>
+<div class="title">뉴스</div>
+<div id="news"></div>
+</div>
 </div>
 
+<div class="card">
+<div class="title">📊 주식</div>
+<div class="scroll" id="theme"></div>
+<div id="stocks"></div>
+<div id="sdetail" class="detail"></div>
 </div>
 
-<!-- 주식 -->
-<div class="section card">
-<div class="title">📊 주식 시세</div>
-
-<div class="scroll" id="theme-box"></div>
-<div id="stock-list" class="list"></div>
-<div id="stock-detail" class="detail"></div>
-</div>
-
-<!-- ETF -->
-<div class="section card">
+<div class="card">
 <div class="title">📦 ETF</div>
-
-<div class="scroll" id="etf-box"></div>
-<div id="etf-list" class="list"></div>
-<div id="etf-detail" class="detail"></div>
+<div class="scroll" id="etf"></div>
+<div id="elist"></div>
+<div id="edetail" class="detail"></div>
 </div>
 
 </div>
 
 <script>
-// 테마 데이터
-const THEMES={
- "반도체":["삼성전자","SK하이닉스"],
- "AI":["네이버","카카오"],
- "방산":["한화에어로","LIG넥스원"],
- "바이오":["삼성바이오","셀트리온"],
- "건설":["현대건설","GS건설"]
-};
+const P='https://api.allorigins.win/raw?url=';
 
-// ETF
-const ETFS=["SPY","QQQ","EEM","EFA","GDX","USO"];
+async function Y(s){
+ let u=`https://query1.finance.yahoo.com/v8/finance/chart/${s}?range=1mo&interval=1d`;
+ let r=await fetch(P+encodeURIComponent(u));
+ return r.json();
+}
 
-// 차트
-function draw(id){
- const d=Array.from({length:20},()=>Math.random()*100)
+function chart(id,data){
  new Chart(document.getElementById(id),{
   type:'line',
-  data:{labels:d.map((_,i)=>i),datasets:[{data:d,borderWidth:1,tension:0.3,pointRadius:0}]},
+  data:{labels:data.map((_,i)=>i),
+  datasets:[{data,borderWidth:1,tension:.3,pointRadius:0}]},
   options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}
  })
 }
-["c1","c2","c3","c4"].forEach(draw);
 
-// 테마 렌더
-function renderThemes(){
- const box=document.getElementById("theme-box");
- box.innerHTML="";
- Object.keys(THEMES).forEach(t=>{
-  const div=document.createElement("div");
-  div.className="box";
-  div.innerHTML=t+`<canvas id="t_${t}"></canvas>`;
-  div.onclick=()=>renderStocks(t);
-  box.appendChild(div);
-  draw(`t_${t}`);
+async function mini(symbols,box,canvas){
+ let c=false;
+ for(let s of symbols){
+  try{
+   let d=await Y(s);
+   let m=d.chart.result[0].meta;
+   let p=m.regularMarketPrice;
+   let prev=m.chartPreviousClose;
+   let ch=p-prev;
+   let cls=ch>=0?'up':'down';
+
+   let div=document.createElement('div');
+   div.className='row';
+   div.innerHTML=`<span>${s}</span><span class="${cls}">${ch.toFixed(2)}</span>`;
+   box.appendChild(div);
+
+   if(!c){
+    let cl=d.chart.result[0].indicators.quote[0].close.filter(v=>v);
+    chart(canvas,cl);
+    c=true;
+   }
+  }catch(e){}
+ }
+}
+
+mini(["AAPL","TSLA"],document.getElementById('stock-mini'),'c1');
+mini(["^GSPC","^IXIC"],document.getElementById('index-mini'),'c2');
+mini(["USDKRW=X","EURUSD=X"],document.getElementById('fx-mini'),'c3');
+mini(["GC=F","CL=F"],document.getElementById('com-mini'),'c4');
+
+const THEMES={
+ "반도체":["005930.KS","000660.KS"],
+ "AI":["035420.KS","035720.KS"],
+ "방산":["012450.KS"],
+ "바이오":["068270.KS"],
+ "건설":["000720.KS"]
+};
+
+function renderTheme(){
+ let t=document.getElementById('theme');
+ Object.keys(THEMES).forEach(k=>{
+  let d=document.createElement('div');
+  d.className='box';
+  d.innerText=k;
+  d.onclick=()=>stocks(k);
+  t.appendChild(d);
  });
 }
 
-// 종목
-function renderStocks(t){
- const list=document.getElementById("stock-list");
- list.innerHTML="";
- THEMES[t].forEach(s=>{
-  const row=document.createElement("div");
-  row.className="list-row";
-  row.innerHTML=`${s}<span>${rand()}</span>`;
-  row.onclick=()=>stockDetail(s);
-  list.appendChild(row);
- });
+async function stocks(k){
+ let s=document.getElementById('stocks');
+ s.innerHTML="";
+ for(let sym of THEMES[k]){
+  let d=await Y(sym);
+  let m=d.chart.result[0].meta;
+  let row=document.createElement('div');
+  row.className='list-row';
+  row.innerHTML=`${sym}<span>${m.regularMarketPrice}</span>`;
+  row.onclick=()=>detail(m);
+  s.appendChild(row);
+ }
 }
 
-// 상세
-function stockDetail(s){
- document.getElementById("stock-detail").innerHTML=`
- <div class="detail-row"><b>${s}</b></div>
- <div class="detail-row"><span>종가</span><span>72,000</span></div>
- <div class="detail-row"><span>고가</span><span>73,000</span></div>
- <div class="detail-row"><span>저가</span><span>70,500</span></div>
- <div class="detail-row"><span>변동%</span><span>+1.2%</span></div>
- <div class="detail-row"><span>거래량</span><span>1.2M</span></div>
- <div class="detail-row"><span>YTD</span><span>+12%</span></div>
- <div class="detail-row"><span>1년</span><span>+25%</span></div>
- <div class="detail-row"><span>3년</span><span>+60%</span></div>
- <div class="detail-row"><span>신호</span><span class="badge buy">매수</span></div>
+function detail(m){
+ document.getElementById('sdetail').innerHTML=`
+ <div class="detail-row"><span>종가</span><span>${m.regularMarketPrice}</span></div>
+ <div class="detail-row"><span>고가</span><span>${m.regularMarketDayHigh}</span></div>
+ <div class="detail-row"><span>저가</span><span>${m.regularMarketDayLow}</span></div>
+ <div class="detail-row"><span>거래량</span><span>${m.regularMarketVolume}</span></div>
  `;
 }
 
-// ETF
+const ETFS=["SPY","QQQ","EEM","EFA","GDX","USO"];
+
 function renderETF(){
- const box=document.getElementById("etf-box");
- const list=document.getElementById("etf-list");
-
- box.innerHTML="";
- list.innerHTML="";
-
+ let box=document.getElementById('etf');
+ let list=document.getElementById('elist');
  ETFS.forEach(e=>{
-  const div=document.createElement("div");
-  div.className="box";
-  div.innerHTML=e+`<canvas id="e_${e}"></canvas>`;
-  div.onclick=()=>etfDetail(e);
-  box.appendChild(div);
-  draw(`e_${e}`);
+  let d=document.createElement('div');
+  d.className='box';
+  d.innerText=e;
+  d.onclick=()=>etfDetail(e);
+  box.appendChild(d);
 
-  const row=document.createElement("div");
-  row.className="list-row";
-  row.innerHTML=`${e}<span>${rand()}</span>`;
+  let row=document.createElement('div');
+  row.className='list-row';
+  row.innerText=e;
   row.onclick=()=>etfDetail(e);
   list.appendChild(row);
  });
 }
 
-function etfDetail(e){
- document.getElementById("etf-detail").innerHTML=`
- <div class="detail-row"><b>${e}</b></div>
- <div class="detail-row"><span>YTD</span><span>+10%</span></div>
- <div class="detail-row"><span>1년</span><span>+18%</span></div>
- <div class="detail-row"><span>신호</span><span class="badge neutral">중립</span></div>
+async function etfDetail(e){
+ let d=await Y(e);
+ let m=d.chart.result[0].meta;
+ document.getElementById('edetail').innerHTML=`
+ <div class="detail-row"><span>${e}</span><span>${m.regularMarketPrice}</span></div>
  `;
 }
 
-// 랜덤
-function rand(){
- return (Math.random()>0.5?"+":"-")+(Math.random()*3).toFixed(1)+"%";
+async function news(){
+ let url='https://feeds.hankyung.com/app/stock.xml';
+ let r=await fetch(P+encodeURIComponent(url));
+ let t=await r.text();
+ let xml=new DOMParser().parseFromString(t,'text/xml');
+ let items=xml.querySelectorAll('item');
+ let box=document.getElementById('news');
+ items.forEach((i,idx)=>{
+  if(idx>5)return;
+  let d=document.createElement('div');
+  d.className='news-item';
+  d.innerText=i.querySelector('title').textContent;
+  box.appendChild(d);
+ });
 }
 
-// 실행
-renderThemes();
-renderStocks("반도체");
+renderTheme();
+stocks("반도체");
 renderETF();
+news();
 </script>
 
 </body>
