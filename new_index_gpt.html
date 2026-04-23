@@ -9,17 +9,14 @@ body{margin:0;background:#f4f6fa;font-family:Arial}
 .wrap{padding:10px}
 .top{display:grid;grid-template-columns:1.3fr 1fr;gap:8px}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.card{background:#fff;border-radius:10px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.title{font-size:12px;font-weight:700;margin-bottom:6px}
-.row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
+.card{background:#fff;border-radius:10px;padding:8px}
+.row{display:flex;justify-content:space-between;font-size:12px;padding:2px 0}
 .up{color:#16a34a}.down{color:#dc2626}
 canvas{height:50px!important}
+.news-item{padding:6px 0;border-bottom:1px solid #eee;font-size:12px}
 .scroll{display:flex;gap:6px;overflow-x:auto}
-.box{min-width:110px;background:#fff;border-radius:8px;padding:6px;font-size:11px;cursor:pointer}
-.list-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee;font-size:12px;cursor:pointer}
-.detail{font-size:11px;margin-top:6px;border-top:1px solid #ddd;padding-top:6px}
-.detail-row{display:flex;justify-content:space-between;padding:2px 0}
-.news-item{font-size:12px;padding:6px 0;border-bottom:1px solid #eee}
+.box{min-width:100px;background:#fff;padding:6px;border-radius:8px;font-size:11px}
+.list-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee}
 </style>
 </head>
 
@@ -30,25 +27,25 @@ canvas{height:50px!important}
 <div class="grid">
 
 <div class="card">
-<div class="title">주식</div>
+주식
 <canvas id="c1"></canvas>
 <div id="stock-mini"></div>
 </div>
 
 <div class="card">
-<div class="title">지수</div>
+지수
 <canvas id="c2"></canvas>
 <div id="index-mini"></div>
 </div>
 
 <div class="card">
-<div class="title">외환</div>
+외환
 <canvas id="c3"></canvas>
 <div id="fx-mini"></div>
 </div>
 
 <div class="card">
-<div class="title">원자재</div>
+원자재
 <canvas id="c4"></canvas>
 <div id="com-mini"></div>
 </div>
@@ -56,157 +53,106 @@ canvas{height:50px!important}
 </div>
 
 <div class="card">
-<div class="title">뉴스</div>
+뉴스
 <div id="news"></div>
 </div>
 </div>
 
 <div class="card">
-<div class="title">📊 주식 (테마)</div>
+📊 주식 테마
 <div class="scroll" id="theme"></div>
 <div id="stocks"></div>
-<div id="sdetail" class="detail"></div>
 </div>
 
 <div class="card">
-<div class="title">📦 ETF</div>
+📦 ETF
 <div class="scroll" id="etf"></div>
-<div id="elist"></div>
-<div id="edetail" class="detail"></div>
 </div>
 
 </div>
 
 <script>
-// ✅ 안정적인 무료 API (CORS 문제 없음)
-const API_KEY = "demo"; // 필요하면 무료 키 발급 가능
 
-async function getPrice(symbol){
- try{
-  const r = await fetch(`https://api.twelvedata.com/price?symbol=${symbol}&apikey=${API_KEY}`);
-  const d = await r.json();
-  return parseFloat(d.price);
- }catch(e){ return null }
+// ✔ 더미 데이터 (무조건 뜨게)
+const DATA = {
+ stocks:[
+  {n:"AAPL",p:189,c:1.2},
+  {n:"TSLA",p:172,c:-0.8}
+ ],
+ index:[
+  {n:"S&P",p:5200,c:0.5},
+  {n:"NASDAQ",p:16200,c:0.7}
+ ],
+ fx:[
+  {n:"USD/KRW",p:1380,c:0.3}
+ ],
+ commodity:[
+  {n:"GOLD",p:2300,c:-0.2}
+ ]
+};
+
+function render(id,list){
+ let el=document.getElementById(id);
+ el.innerHTML="";
+ list.forEach(i=>{
+  let d=document.createElement('div');
+  d.className="row";
+  d.innerHTML=`<span>${i.n}</span>
+  <span class="${i.c>=0?'up':'down'}">${i.p}</span>`;
+  el.appendChild(d);
+ });
 }
 
-function drawChart(id){
- let data = Array.from({length:20},()=>Math.random()*100);
+// 차트
+function chart(id){
+ let d=Array.from({length:20},()=>Math.random()*100);
  new Chart(document.getElementById(id),{
   type:'line',
-  data:{labels:data.map((_,i)=>i),datasets:[{data,tension:.3,pointRadius:0}]},
+  data:{labels:d.map((_,i)=>i),
+  datasets:[{data:d,tension:.3,pointRadius:0}]},
   options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}
  })
 }
 
-// 🔹 2x2 데이터
-async function mini(symbols, target, chartId){
- let el=document.getElementById(target);
- el.innerHTML="";
- drawChart(chartId);
-
- for(let s of symbols){
-  let p=await getPrice(s);
-  if(!p) continue;
-  let div=document.createElement('div');
-  div.className="row";
-  div.innerHTML=`<span>${s}</span><span>${p}</span>`;
-  el.appendChild(div);
- }
-}
-
-// 🔹 테마
-const THEMES={
- "반도체":["005930","000660"],
- "AI":["NVDA","MSFT"],
- "방산":["LMT"],
- "바이오":["PFE"],
- "건설":["CAT"]
-};
-
-function renderTheme(){
- let t=document.getElementById('theme');
- Object.keys(THEMES).forEach(k=>{
-  let d=document.createElement('div');
-  d.className='box';
-  d.innerText=k;
-  d.onclick=()=>stocks(k);
-  t.appendChild(d);
- });
-}
-
-async function stocks(k){
- let s=document.getElementById('stocks');
- s.innerHTML="";
- for(let sym of THEMES[k]){
-  let p=await getPrice(sym);
-  let row=document.createElement('div');
-  row.className='list-row';
-  row.innerHTML=`${sym}<span>${p||'-'}</span>`;
-  row.onclick=()=>detail(sym,p);
-  s.appendChild(row);
- }
-}
-
-function detail(sym,p){
- document.getElementById('sdetail').innerHTML=`
- <div class="detail-row"><span>${sym}</span><span>${p}</span></div>
- <div class="detail-row"><span>상태</span><span>중립</span></div>
- `;
-}
-
-// 🔹 ETF
-const ETFS=["SPY","QQQ","EEM","EFA","GDX","USO"];
-
-function renderETF(){
- let box=document.getElementById('etf');
- let list=document.getElementById('elist');
-
- ETFS.forEach(e=>{
-  let d=document.createElement('div');
-  d.className='box';
-  d.innerText=e;
-  d.onclick=()=>etfDetail(e);
-  box.appendChild(d);
-
-  let row=document.createElement('div');
-  row.className='list-row';
-  row.innerText=e;
-  row.onclick=()=>etfDetail(e);
-  list.appendChild(row);
- });
-}
-
-async function etfDetail(e){
- let p=await getPrice(e);
- document.getElementById('edetail').innerHTML=`
- <div class="detail-row"><span>${e}</span><span>${p}</span></div>
- `;
-}
-
-// 🔹 뉴스 (간단)
-async function news(){
- let box=document.getElementById('news');
- box.innerHTML="";
- let list=["금리 인하 기대감","AI 반도체 상승","유가 반등"];
+// 뉴스
+function news(){
+ let list=["금리 인하 기대","AI 상승","유가 반등"];
+ let box=document.getElementById("news");
  list.forEach(t=>{
-  let d=document.createElement('div');
-  d.className='news-item';
+  let d=document.createElement("div");
+  d.className="news-item";
   d.innerText=t;
   box.appendChild(d);
  });
 }
 
-// 실행
-mini(["AAPL","TSLA"],"stock-mini","c1");
-mini(["SPX","IXIC"],"index-mini","c2");
-mini(["USD/KRW","EUR/USD"],"fx-mini","c3");
-mini(["GOLD","OIL"],"com-mini","c4");
+// 테마
+const THEMES=["반도체","AI","방산","바이오","건설"];
+THEMES.forEach(t=>{
+ let d=document.createElement("div");
+ d.className="box";
+ d.innerText=t;
+ document.getElementById("theme").appendChild(d);
+});
 
-renderTheme();
-stocks("반도체");
-renderETF();
+// ETF
+["SPY","QQQ","EEM","EFA","GDX","USO"].forEach(e=>{
+ let d=document.createElement("div");
+ d.className="box";
+ d.innerText=e;
+ document.getElementById("etf").appendChild(d);
+});
+
+// 실행
+render("stock-mini",DATA.stocks);
+render("index-mini",DATA.index);
+render("fx-mini",DATA.fx);
+render("com-mini",DATA.commodity);
+
+chart("c1");chart("c2");chart("c3");chart("c4");
 news();
 
 </script>
+
 </body>
 </html>
