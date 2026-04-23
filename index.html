@@ -15,31 +15,38 @@
     max-width: 480px;
     margin: 0 auto;
   }
-  h1 { text-align: center; padding: 14px 0 18px 0; font-size: 1.3em; font-weight: 700; color: #1d1d1f; }
-  .market-scroll { overflow-x: auto; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
-  .market-scroll::-webkit-scrollbar { display: none; }
-  .market-row { display: flex; gap: 10px; min-width: max-content; }
+  h1 { text-align: center; padding: 14px 0 16px 0; font-size: 1.3em; font-weight: 700; color: #1d1d1f; }
+
+  /* 지수 2줄 그리드 */
+  .market-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
   .market-chip {
     background: rgba(255,255,255,0.85);
     backdrop-filter: blur(20px);
-    border-radius: 14px;
+    border-radius: 12px;
     border: 2px solid transparent;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-    padding: 10px 12px;
-    min-width: 110px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    padding: 8px 6px;
     cursor: pointer;
     transition: all 0.2s;
+    text-align: center;
   }
   .market-chip.active {
     border-color: #007aff;
     background: rgba(255,255,255,0.95);
-    box-shadow: 0 4px 16px rgba(0,122,255,0.15);
+    box-shadow: 0 4px 14px rgba(0,122,255,0.15);
   }
-  .m-label { font-size: 0.65em; color: #6e6e73; font-weight: 500; margin-bottom: 3px; }
-  .m-price { font-size: 1em; font-weight: 700; color: #1d1d1f; }
-  .m-change { font-size: 0.7em; font-weight: 500; margin-top: 1px; margin-bottom: 4px; }
+  .m-label { font-size: 0.58em; color: #6e6e73; font-weight: 500; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .m-price { font-size: 0.82em; font-weight: 700; color: #1d1d1f; }
+  .m-change { font-size: 0.62em; font-weight: 500; margin-top: 1px; margin-bottom: 3px; }
   .up { color: #34c759; } .down { color: #ff3b30; }
-  .spark-wrap { height: 32px; }
+  .spark-wrap { height: 26px; }
+
+  /* 글래스 */
   .glass {
     background: rgba(255,255,255,0.78);
     backdrop-filter: blur(24px);
@@ -51,24 +58,30 @@
     margin-bottom: 14px;
   }
   .section-title { font-size: 0.92em; font-weight: 700; color: #1d1d1f; margin-bottom: 10px; }
-  .range-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
+
+  /* 차트 탭 */
+  .range-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
   .range-tab {
     background: transparent; color: #6e6e73;
     border: none; border-radius: 6px;
-    padding: 4px 9px; font-size: 0.7em; font-weight: 600;
+    padding: 4px 8px; font-size: 0.68em; font-weight: 600;
     cursor: pointer; font-family: inherit;
   }
   .range-tab.active { background: rgba(0,122,255,0.12); color: #007aff; }
+
+  /* 종목 */
   .stock-item {
     display: flex; justify-content: space-between; align-items: center;
     padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
   }
   .stock-item:last-child { border-bottom: none; }
   .stock-name { font-size: 0.85em; font-weight: 600; color: #1d1d1f; }
-  .stock-ticker { font-size: 0.68em; color: #6e6e73; margin-top: 2px; }
+  .stock-ticker { font-size: 0.65em; color: #6e6e73; margin-top: 2px; }
   .stock-right { text-align: right; }
   .stock-price { font-size: 0.85em; font-weight: 700; color: #1d1d1f; }
-  .stock-change { font-size: 0.7em; font-weight: 500; margin-top: 2px; }
+  .stock-change { font-size: 0.68em; font-weight: 500; margin-top: 2px; }
+
+  /* 뉴스 */
   .news-item { padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
   .news-item:last-child { border-bottom: none; }
   .news-source { font-size: 0.65em; color: #007aff; font-weight: 600; margin-bottom: 2px; }
@@ -81,29 +94,33 @@
 <body>
 <h1>📈 투자 대시보드</h1>
 
-<div class="market-scroll">
-  <div class="market-row" id="market-row">
-    <div class="loading">불러오는 중...</div>
-  </div>
+<!-- 지수 2줄 그리드 -->
+<div class="market-grid" id="market-grid">
+  <div class="loading" style="grid-column:span 4">불러오는 중...</div>
 </div>
 
+<!-- 차트 -->
 <div class="glass">
   <div class="section-title" id="chart-title">📊 코스피 추이</div>
   <div class="range-tabs">
-    <button class="range-tab active" onclick="selectRange('5d','1d',this)">1주</button>
+    <button class="range-tab active" onclick="selectRange('1d','5m',this)">1일</button>
+    <button class="range-tab" onclick="selectRange('5d','1h',this)">3일</button>
+    <button class="range-tab" onclick="selectRange('5d','1d',this)">1주</button>
     <button class="range-tab" onclick="selectRange('1mo','1d',this)">1달</button>
     <button class="range-tab" onclick="selectRange('3mo','1wk',this)">3달</button>
     <button class="range-tab" onclick="selectRange('6mo','1wk',this)">6달</button>
     <button class="range-tab" onclick="selectRange('1y','1mo',this)">1년</button>
   </div>
-  <canvas id="myChart" height="100"></canvas>
+  <canvas id="myChart" height="110"></canvas>
 </div>
 
+<!-- 주요 종목 -->
 <div class="glass">
   <div class="section-title">💼 주요 종목</div>
   <div id="stock-list"><div class="loading">불러오는 중...</div></div>
 </div>
 
+<!-- 뉴스 -->
 <div class="glass">
   <div class="section-title">📰 투자 뉴스</div>
   <div id="news-list"><div class="loading">뉴스 불러오는 중...</div></div>
@@ -141,8 +158,8 @@ const EXCLUDE_KW = ['연예','드라마','영화','아이돌','가수','배우',
 
 let myChart = null;
 let currentIdx = 0;
-let currentRange = '5d';
-let currentInterval = '1d';
+let currentRange = '1d';
+let currentInterval = '5m';
 let sparkCharts = [];
 
 function isInvestNews(title) {
@@ -151,8 +168,8 @@ function isInvestNews(title) {
 }
 
 async function fetchMarket() {
-  const row = document.getElementById('market-row');
-  row.innerHTML = '';
+  const grid = document.getElementById('market-grid');
+  grid.innerHTML = '';
   const fetches = SYMBOLS.map(s =>
     fetch(PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(s.symbol) + '?interval=1d&range=5d'))
       .then(r => r.json()).catch(() => null)
@@ -176,20 +193,20 @@ async function fetchMarket() {
       const isUp = change >= 0;
       priceHtml =
         '<div class="m-price">' + price.toLocaleString() + '</div>' +
-        '<div class="m-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲ +' : '▼ ') + pct + '%</div>';
+        '<div class="m-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲+' : '▼') + pct + '%</div>';
       sparkData = (data.chart.result[0].indicators.quote[0].close || []).filter(v => v != null);
     } catch(e) {}
     chip.innerHTML =
       '<div class="m-label">' + s.flag + ' ' + s.label + '</div>' +
       priceHtml +
-      '<div class="spark-wrap"><canvas id="spark-' + i + '" height="32"></canvas></div>';
-    row.appendChild(chip);
+      '<div class="spark-wrap"><canvas id="spark-' + i + '" height="26"></canvas></div>';
+    grid.appendChild(chip);
     if (sparkData.length > 1) {
       setTimeout(() => {
         const ctx = document.getElementById('spark-' + i);
         if (!ctx) return;
         const isUp = sparkData[sparkData.length-1] >= sparkData[0];
-        const sc = new Chart(ctx, {
+        sparkCharts[i] = new Chart(ctx, {
           type: 'line',
           data: {
             labels: sparkData.map((_,j) => j),
@@ -201,7 +218,6 @@ async function fetchMarket() {
             scales: { x: { display: false }, y: { display: false } }
           }
         });
-        sparkCharts[i] = sc;
       }, 50);
     }
   });
@@ -232,11 +248,12 @@ async function loadChart() {
     const closes = data.chart.result[0].indicators.quote[0].close.map(v => v ? +v.toFixed(2) : null);
     const labels = data.chart.result[0].timestamp.map(t => {
       const d = new Date(t * 1000);
+      if (currentInterval === '5m' || currentInterval === '1h') return d.getHours() + ':' + String(d.getMinutes()).padStart(2,'0');
       if (currentInterval === '1mo') return d.getFullYear() + '/' + (d.getMonth()+1);
       return (d.getMonth()+1) + '/' + d.getDate();
     });
     const ctx = document.getElementById('myChart').getContext('2d');
-    const grad = ctx.createLinearGradient(0, 0, 0, 160);
+    const grad = ctx.createLinearGradient(0, 0, 0, 180);
     grad.addColorStop(0, s.color + '35');
     grad.addColorStop(1, s.color + '00');
     myChart = new Chart(ctx, {
