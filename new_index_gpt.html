@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment Daily Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  margin:0;
+  font-family: 'Arial';
+  background:#f2f4f8;
+}
+
+.header {
+  text-align:center;
+  padding:16px;
+  border-bottom:2px solid #111;
+  font-weight:bold;
+  font-size:18px;
+}
+
+.container { padding:12px; }
+
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.card {
+  background:white;
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.full { grid-column:1/-1; }
+
+.title {
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+.value {
+  font-size:18px;
+  font-weight:800;
+}
+
+.up { color:#16a34a; }
+.down { color:#dc2626; }
+
+canvas {
+  height:70px !important;
+}
+
+.news-item {
+  font-size:13px;
+  padding:8px 0;
+  border-bottom:1px solid #eee;
+}
+
+.summary-box {
+  font-size:13px;
+  line-height:1.4;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">Investment Daily Dashboard</div>
+
+<div class="container">
+<div class="grid">
+
+<div class="card">
+  <div class="title">📊 시장 요약</div>
+  <div id="summary" class="summary-box">로딩중...</div>
+</div>
+
+<div class="card">
+  <div class="title">💱 환율 (USD/KRW)</div>
+  <div id="usd" class="value"></div>
+  <canvas id="usdChart"></canvas>
+</div>
+
+<div class="card">
+  <div class="title">📈 나스닥</div>
+  <div id="nasdaq" class="value"></div>
+  <canvas id="nasdaqChart"></canvas>
+</div>
+
+<div class="card">
+  <div class="title">🇰🇷 코스피</div>
+  <div id="kospi" class="value"></div>
+  <canvas id="kospiChart"></canvas>
+</div>
+
+<div class="card full">
+  <div class="title">🔥 주요 뉴스</div>
+  <div id="news"></div>
+</div>
+
+</div>
+</div>
+
+<script>
+
+// 공통 fetch
+async function fetchData(symbol) {
+  const proxy = "https://api.allorigins.win/raw?url=";
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=5d&interval=1h`;
+  const res = await fetch(proxy + encodeURIComponent(url));
+  const data = await res.json();
+  return data.chart.result[0];
+}
+
+// 계산
+function calc(meta){
+  const price = meta.regularMarketPrice;
+  const prev = meta.chartPreviousClose;
+  const diff = price - prev;
+  const pct = (diff/prev*100).toFixed(2);
+  return {price, diff, pct};
+}
+
+// 차트
+function drawChart(id, data, color){
+  new Chart(document.getElementById(id),{
+    type:'line',
+    data:{
+      labels:data.map((_,i)=>i),
+      datasets:[{
+        data:data,
+        borderColor:color,
+        tension:0.4,
+        pointRadius:0
+      }]
+    },
+    options:{
+      plugins:{legend:{display:false}},
+      scales:{x:{display:false},y:{display:false}}
+    }
+  });
+}
+
+// 인사이트 생성
+function makeSummary(k,n,u){
+  let txt = "";
+
+  if(n > 1) txt += "미국 기술주 강세 → 위험자산 선호. ";
+  if(n < -1) txt += "미국 기술주 약세 → 조정 압력. ";
+  if(u > 0.3) txt += "달러 강세 → 외국인 수급 부담. ";
+  if(k > 0.5) txt += "코스피 상승 흐름 유지. ";
+  if(k < -0.5) txt += "코스피 약세 흐름.";
+
+  return txt || "시장 혼조세.";
+}
+
+// 뉴스
+async function loadNews(){
+  const url = "https://feeds.hankyung.com/app/stock.xml";
+  const proxy = "https://api.allorigins.win/raw?url=";
+
+  const res = await fetch(proxy + url);
+  const txt = await res.text();
+
+  const xml = new DOMParser().parseFromString(txt,"text/xml");
+  const items = xml.querySelectorAll("item");
+
+  const container = document.getElementById("news");
+
+  for(let i=0;i<5;i++){
+    const title = items[i]?.querySelector("title")?.textContent;
+    if(!title) continue;
+
+    const div = document.createElement("div");
+    div.className = "news-item";
+    div.innerText = "• " + title;
+    container.appendChild(div);
+  }
+}
+
+// 초기 실행
+async function init(){
+
+  const kospi = await fetchData("^KS11");
+  const nasdaq = await fetchData("^IXIC");
+  const usd = await fetchData("USDKRW=X");
+
+  const kc = calc(kospi.meta);
+  const nc = calc(nasdaq.meta);
+  const uc = calc(usd.meta);
+
+  document.getElementById("kospi").innerHTML =
+    kc.price.toFixed(0) + " <span class='"+(kc.diff>=0?"up":"down")+"'>("+kc.pct+"%)</span>";
+
+  document.getElementById("nasdaq").innerHTML =
+    nc.price.toFixed(0) + " <span class='"+(nc.diff>=0?"up":"down")+"'>("+nc.pct+"%)</span>";
+
+  document.getElementById("usd").innerHTML =
+    uc.price.toFixed(0) + " <span class='"+(uc.diff>=0?"up":"down")+"'>("+uc.pct+"%)</span>";
+
+  document.getElementById("summary").innerText =
+    makeSummary(parseFloat(kc.pct), parseFloat(nc.pct), parseFloat(uc.pct));
+
+  drawChart("kospiChart", kospi.indicators.quote[0].close.filter(v=>v), "#1d4ed8");
+  drawChart("nasdaqChart", nasdaq.indicators.quote[0].close.filter(v=>v), "#7c3aed");
+  drawChart("usdChart", usd.indicators.quote[0].close.filter(v=>v), "#dc2626");
+
+  loadNews();
+}
+
+init();
+
+</script>
+
+</body>
+</html>
