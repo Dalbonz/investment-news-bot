@@ -12,8 +12,10 @@
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Arial, sans-serif;
     padding: 16px;
+    max-width: 480px;
+    margin: 0 auto;
   }
-  h1 { text-align: center; padding: 16px 0 20px 0; font-size: 1.4em; font-weight: 700; color: #1d1d1f; }
+  h1 { text-align: center; padding: 14px 0 18px 0; font-size: 1.3em; font-weight: 700; color: #1d1d1f; }
   .market-scroll { overflow-x: auto; margin-bottom: 14px; -webkit-overflow-scrolling: touch; }
   .market-scroll::-webkit-scrollbar { display: none; }
   .market-row { display: flex; gap: 10px; min-width: max-content; }
@@ -21,15 +23,23 @@
     background: rgba(255,255,255,0.85);
     backdrop-filter: blur(20px);
     border-radius: 14px;
-    border: 1px solid rgba(255,255,255,0.95);
+    border: 2px solid transparent;
     box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-    padding: 12px 16px;
+    padding: 10px 12px;
     min-width: 110px;
+    cursor: pointer;
+    transition: all 0.2s;
   }
-  .m-label { font-size: 0.68em; color: #6e6e73; font-weight: 500; margin-bottom: 4px; }
-  .m-price { font-size: 1.05em; font-weight: 700; color: #1d1d1f; }
-  .m-change { font-size: 0.72em; font-weight: 500; margin-top: 2px; }
+  .market-chip.active {
+    border-color: #007aff;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 4px 16px rgba(0,122,255,0.15);
+  }
+  .m-label { font-size: 0.65em; color: #6e6e73; font-weight: 500; margin-bottom: 3px; }
+  .m-price { font-size: 1em; font-weight: 700; color: #1d1d1f; }
+  .m-change { font-size: 0.7em; font-weight: 500; margin-top: 1px; margin-bottom: 4px; }
   .up { color: #34c759; } .down { color: #ff3b30; }
+  .spark-wrap { height: 32px; }
   .glass {
     background: rgba(255,255,255,0.78);
     backdrop-filter: blur(24px);
@@ -37,45 +47,35 @@
     border-radius: 20px;
     border: 1px solid rgba(255,255,255,0.95);
     box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-    padding: 18px;
+    padding: 16px;
     margin-bottom: 14px;
   }
-  .section-title { font-size: 0.95em; font-weight: 700; color: #1d1d1f; margin-bottom: 12px; }
-  .index-tabs { display: flex; gap: 6px; margin-bottom: 10px; overflow-x: auto; }
-  .index-tabs::-webkit-scrollbar { display: none; }
-  .index-tab {
-    background: rgba(0,0,0,0.05);
-    color: #6e6e73;
-    border: none;
-    border-radius: 8px;
-    padding: 5px 11px;
-    font-size: 0.72em;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    font-family: inherit;
-  }
-  .index-tab.active { background: #007aff; color: white; }
-  .range-tabs { display: flex; gap: 5px; margin-bottom: 12px; }
+  .section-title { font-size: 0.92em; font-weight: 700; color: #1d1d1f; margin-bottom: 10px; }
+  .range-tabs { display: flex; gap: 5px; margin-bottom: 10px; }
   .range-tab {
-    background: transparent;
-    color: #6e6e73;
-    border: none;
-    border-radius: 6px;
-    padding: 4px 9px;
-    font-size: 0.7em;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: inherit;
+    background: transparent; color: #6e6e73;
+    border: none; border-radius: 6px;
+    padding: 4px 9px; font-size: 0.7em; font-weight: 600;
+    cursor: pointer; font-family: inherit;
   }
   .range-tab.active { background: rgba(0,122,255,0.12); color: #007aff; }
-  .news-item { padding: 13px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .stock-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+  .stock-item:last-child { border-bottom: none; }
+  .stock-name { font-size: 0.85em; font-weight: 600; color: #1d1d1f; }
+  .stock-ticker { font-size: 0.68em; color: #6e6e73; margin-top: 2px; }
+  .stock-right { text-align: right; }
+  .stock-price { font-size: 0.85em; font-weight: 700; color: #1d1d1f; }
+  .stock-change { font-size: 0.7em; font-weight: 500; margin-top: 2px; }
+  .news-item { padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
   .news-item:last-child { border-bottom: none; }
-  .news-source { font-size: 0.68em; color: #007aff; font-weight: 600; margin-bottom: 3px; }
-  .news-title { font-size: 0.88em; font-weight: 600; color: #1d1d1f; line-height: 1.4; margin-bottom: 3px; }
-  .news-link { font-size: 0.74em; color: #007aff; text-decoration: none; font-weight: 500; }
-  .loading { text-align: center; color: #6e6e73; padding: 20px; font-size: 0.85em; }
-  .updated { text-align: center; font-size: 0.7em; color: #6e6e73; padding: 8px 0 20px 0; }
+  .news-source { font-size: 0.65em; color: #007aff; font-weight: 600; margin-bottom: 2px; }
+  .news-title { font-size: 0.85em; font-weight: 600; color: #1d1d1f; line-height: 1.4; margin-bottom: 4px; }
+  .news-link { font-size: 0.72em; color: #007aff; text-decoration: none; font-weight: 500; }
+  .loading { text-align: center; color: #6e6e73; padding: 16px; font-size: 0.82em; }
+  .updated { text-align: center; font-size: 0.68em; color: #6e6e73; padding: 8px 0 20px 0; }
 </style>
 </head>
 <body>
@@ -88,15 +88,7 @@
 </div>
 
 <div class="glass">
-  <div class="section-title">📊 지수 차트</div>
-  <div class="index-tabs" id="index-tabs">
-    <button class="index-tab active" onclick="selectIndex(0,this)">코스피</button>
-    <button class="index-tab" onclick="selectIndex(1,this)">코스닥</button>
-    <button class="index-tab" onclick="selectIndex(2,this)">나스닥</button>
-    <button class="index-tab" onclick="selectIndex(3,this)">S&P500</button>
-    <button class="index-tab" onclick="selectIndex(4,this)">달러/원</button>
-    <button class="index-tab" onclick="selectIndex(5,this)">WTI유가</button>
-  </div>
+  <div class="section-title" id="chart-title">📊 코스피 추이</div>
   <div class="range-tabs">
     <button class="range-tab active" onclick="selectRange('5d','1d',this)">1주</button>
     <button class="range-tab" onclick="selectRange('1mo','1d',this)">1달</button>
@@ -104,7 +96,12 @@
     <button class="range-tab" onclick="selectRange('6mo','1wk',this)">6달</button>
     <button class="range-tab" onclick="selectRange('1y','1mo',this)">1년</button>
   </div>
-  <canvas id="myChart" height="130"></canvas>
+  <canvas id="myChart" height="100"></canvas>
+</div>
+
+<div class="glass">
+  <div class="section-title">💼 주요 종목</div>
+  <div id="stock-list"><div class="loading">불러오는 중...</div></div>
 </div>
 
 <div class="glass">
@@ -117,50 +114,59 @@
 <script>
 const PROXY = 'https://api.allorigins.win/raw?url=';
 const SYMBOLS = [
-  { label: '🇰🇷 코스피', symbol: '^KS11', color: '#007aff' },
-  { label: '🇰🇷 코스닥', symbol: '^KQ11', color: '#5856d6' },
-  { label: '🇺🇸 나스닥', symbol: '^IXIC', color: '#34c759' },
-  { label: '🇺🇸 S&P500', symbol: '^GSPC', color: '#ff9500' },
-  { label: '💱 달러/원', symbol: 'USDKRW=X', color: '#ff3b30' },
-  { label: '🛢 WTI유가', symbol: 'CL=F', color: '#8e8e93' },
+  { label: '코스피', flag: '🇰🇷', symbol: '^KS11', color: '#007aff' },
+  { label: '코스닥', flag: '🇰🇷', symbol: '^KQ11', color: '#5856d6' },
+  { label: '나스닥', flag: '🇺🇸', symbol: '^IXIC', color: '#34c759' },
+  { label: 'S&P500', flag: '🇺🇸', symbol: '^GSPC', color: '#ff9500' },
+  { label: '달러/원', flag: '💱', symbol: 'USDKRW=X', color: '#ff3b30' },
+  { label: 'WTI유가', flag: '🛢', symbol: 'CL=F', color: '#8e8e93' },
+  { label: '미국채10Y', flag: '📊', symbol: '^TNX', color: '#af52de' },
 ];
-
+const STOCKS = [
+  { name: '삼성전자', ticker: '005930.KS' },
+  { name: 'SK하이닉스', ticker: '000660.KS' },
+  { name: 'NAVER', ticker: '035420.KS' },
+  { name: '애플', ticker: 'AAPL' },
+  { name: '엔비디아', ticker: 'NVDA' },
+  { name: '테슬라', ticker: 'TSLA' },
+];
 const NEWS_SOURCES = [
   { name: 'Investing.com', url: 'https://kr.investing.com/rss/news.rss' },
   { name: '한국경제', url: 'https://feeds.hankyung.com/app/stock.xml' },
   { name: '매일경제', url: 'https://www.mk.co.kr/rss/30100041/' },
   { name: '머니투데이', url: 'https://news.mt.co.kr/mtview/rss/stock.xml' },
 ];
-
-const INVEST_KEYWORDS = ['주식','증시','코스피','코스닥','나스닥','S&P','금리','환율','달러','유가','원자재','채권','ETF','펀드','투자','매수','매도','실적','수출','무역','경제','GDP','인플레','연준','Fed','반도체','배당','IPO','공모','상장'];
-
-const EXCLUDE_KEYWORDS = ['연예','드라마','영화','아이돌','가수','배우','스포츠','축구','야구','골프','패션','뷰티','다이어트','맛집','여행','결혼','이혼','열애'];
+const INVEST_KW = ['주식','증시','코스피','코스닥','나스닥','S&P','금리','환율','달러','유가','원자재','채권','ETF','펀드','투자','매수','매도','실적','수출','무역','경제','GDP','인플레','연준','Fed','반도체','배당','IPO','공모','상장','삼성','하이닉스','애플','엔비디아','테슬라'];
+const EXCLUDE_KW = ['연예','드라마','영화','아이돌','가수','배우','스포츠','축구','야구','골프','패션','뷰티','다이어트','맛집','여행','결혼','이혼','열애'];
 
 let myChart = null;
-let currentSymbolIdx = 0;
+let currentIdx = 0;
 let currentRange = '5d';
 let currentInterval = '1d';
+let sparkCharts = [];
 
 function isInvestNews(title) {
-  const t = title.toLowerCase();
-  const hasExclude = EXCLUDE_KEYWORDS.some(k => title.includes(k));
-  if (hasExclude) return false;
-  return INVEST_KEYWORDS.some(k => title.includes(k));
+  if (EXCLUDE_KW.some(k => title.includes(k))) return false;
+  return INVEST_KW.some(k => title.includes(k));
 }
 
 async function fetchMarket() {
   const row = document.getElementById('market-row');
   row.innerHTML = '';
   const fetches = SYMBOLS.map(s =>
-    fetch(PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(s.symbol)))
-      .then(r => r.json())
-      .catch(() => null)
+    fetch(PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(s.symbol) + '?interval=1d&range=5d'))
+      .then(r => r.json()).catch(() => null)
   );
   const results = await Promise.all(fetches);
+  sparkCharts.forEach(c => c && c.destroy());
+  sparkCharts = [];
   results.forEach((data, i) => {
     const s = SYMBOLS[i];
     const chip = document.createElement('div');
-    chip.className = 'market-chip';
+    chip.className = 'market-chip' + (i === currentIdx ? ' active' : '');
+    chip.onclick = () => selectChip(i);
+    let priceHtml = '<div class="m-price" style="color:#6e6e73">-</div><div class="m-change">-</div>';
+    let sparkData = [];
     try {
       const meta = data.chart.result[0].meta;
       const price = meta.regularMarketPrice;
@@ -168,22 +174,43 @@ async function fetchMarket() {
       const change = price - prev;
       const pct = (change / prev * 100).toFixed(2);
       const isUp = change >= 0;
-      chip.innerHTML =
-        '<div class="m-label">' + s.label + '</div>' +
+      priceHtml =
         '<div class="m-price">' + price.toLocaleString() + '</div>' +
-        '<div class="m-change ' + (isUp ? 'up' : 'down') + '">' +
-        (isUp ? '▲ +' : '▼ ') + pct + '%</div>';
-    } catch(e) {
-      chip.innerHTML = '<div class="m-label">' + s.label + '</div><div class="m-price" style="color:#6e6e73">-</div>';
-    }
+        '<div class="m-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲ +' : '▼ ') + pct + '%</div>';
+      sparkData = (data.chart.result[0].indicators.quote[0].close || []).filter(v => v != null);
+    } catch(e) {}
+    chip.innerHTML =
+      '<div class="m-label">' + s.flag + ' ' + s.label + '</div>' +
+      priceHtml +
+      '<div class="spark-wrap"><canvas id="spark-' + i + '" height="32"></canvas></div>';
     row.appendChild(chip);
+    if (sparkData.length > 1) {
+      setTimeout(() => {
+        const ctx = document.getElementById('spark-' + i);
+        if (!ctx) return;
+        const isUp = sparkData[sparkData.length-1] >= sparkData[0];
+        const sc = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: sparkData.map((_,j) => j),
+            datasets: [{ data: sparkData, borderColor: isUp ? '#34c759' : '#ff3b30', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: false }]
+          },
+          options: {
+            responsive: true, animation: false,
+            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+            scales: { x: { display: false }, y: { display: false } }
+          }
+        });
+        sparkCharts[i] = sc;
+      }, 50);
+    }
   });
 }
 
-function selectIndex(idx, btn) {
-  currentSymbolIdx = idx;
-  document.querySelectorAll('.index-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active');
+function selectChip(idx) {
+  currentIdx = idx;
+  document.querySelectorAll('.market-chip').forEach((c, i) => c.classList.toggle('active', i === idx));
+  document.getElementById('chart-title').textContent = '📊 ' + SYMBOLS[idx].label + ' 추이';
   loadChart();
 }
 
@@ -197,12 +224,9 @@ function selectRange(range, interval, btn) {
 
 async function loadChart() {
   if (myChart) { myChart.destroy(); myChart = null; }
-  const s = SYMBOLS[currentSymbolIdx];
+  const s = SYMBOLS[currentIdx];
   try {
-    const url = PROXY + encodeURIComponent(
-      'https://query1.finance.yahoo.com/v8/finance/chart/' +
-      encodeURIComponent(s.symbol) + '?interval=' + currentInterval + '&range=' + currentRange
-    );
+    const url = PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(s.symbol) + '?interval=' + currentInterval + '&range=' + currentRange);
     const res = await fetch(url);
     const data = await res.json();
     const closes = data.chart.result[0].indicators.quote[0].close.map(v => v ? +v.toFixed(2) : null);
@@ -212,56 +236,56 @@ async function loadChart() {
       return (d.getMonth()+1) + '/' + d.getDate();
     });
     const ctx = document.getElementById('myChart').getContext('2d');
-    const grad = ctx.createLinearGradient(0, 0, 0, 220);
-    grad.addColorStop(0, s.color + '40');
+    const grad = ctx.createLinearGradient(0, 0, 0, 160);
+    grad.addColorStop(0, s.color + '35');
     grad.addColorStop(1, s.color + '00');
     myChart = new Chart(ctx, {
       type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          label: s.label,
-          data: closes,
-          borderColor: s.color,
-          backgroundColor: grad,
-          tension: 0.4,
-          pointRadius: 0,
-          pointHoverRadius: 4,
-          borderWidth: 2,
-          fill: true,
-        }]
-      },
+      data: { labels, datasets: [{ data: closes, borderColor: s.color, backgroundColor: grad, tension: 0.4, pointRadius: 0, pointHoverRadius: 4, borderWidth: 2, fill: true }] },
       options: {
         responsive: true,
         interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            titleColor: '#1d1d1f',
-            bodyColor: s.color,
-            borderColor: 'rgba(0,0,0,0.08)',
-            borderWidth: 1,
-            padding: 10,
-            cornerRadius: 10,
-          }
+          tooltip: { backgroundColor: 'rgba(255,255,255,0.95)', titleColor: '#1d1d1f', bodyColor: s.color, borderColor: 'rgba(0,0,0,0.08)', borderWidth: 1, padding: 10, cornerRadius: 10 }
         },
         scales: {
-          x: {
-            ticks: { color: '#6e6e73', font: { size: 9 }, maxTicksLimit: 6 },
-            grid: { color: 'rgba(0,0,0,0.04)' }
-          },
-          y: {
-            ticks: { color: '#6e6e73', font: { size: 9 } },
-            grid: { color: 'rgba(0,0,0,0.04)' },
-            position: 'right'
-          }
+          x: { ticks: { color: '#6e6e73', font: { size: 9 }, maxTicksLimit: 6 }, grid: { color: 'rgba(0,0,0,0.04)' } },
+          y: { ticks: { color: '#6e6e73', font: { size: 9 } }, grid: { color: 'rgba(0,0,0,0.04)' }, position: 'right' }
         }
       }
     });
-  } catch(e) {
-    console.log('차트 오류:', e);
-  }
+  } catch(e) { console.log('차트 오류:', e); }
+}
+
+async function fetchStocks() {
+  const list = document.getElementById('stock-list');
+  list.innerHTML = '';
+  const fetches = STOCKS.map(s =>
+    fetch(PROXY + encodeURIComponent('https://query1.finance.yahoo.com/v8/finance/chart/' + encodeURIComponent(s.ticker)))
+      .then(r => r.json()).catch(() => null)
+  );
+  const results = await Promise.all(fetches);
+  results.forEach((data, i) => {
+    const s = STOCKS[i];
+    const div = document.createElement('div');
+    div.className = 'stock-item';
+    try {
+      const meta = data.chart.result[0].meta;
+      const price = meta.regularMarketPrice;
+      const prev = meta.chartPreviousClose;
+      const change = price - prev;
+      const pct = (change / prev * 100).toFixed(2);
+      const isUp = change >= 0;
+      div.innerHTML =
+        '<div><div class="stock-name">' + s.name + '</div><div class="stock-ticker">' + s.ticker + '</div></div>' +
+        '<div class="stock-right"><div class="stock-price">' + price.toLocaleString() + '</div>' +
+        '<div class="stock-change ' + (isUp ? 'up' : 'down') + '">' + (isUp ? '▲ +' : '▼ ') + pct + '%</div></div>';
+    } catch(e) {
+      div.innerHTML = '<div><div class="stock-name">' + s.name + '</div></div><div class="stock-right"><div class="stock-price" style="color:#6e6e73">-</div></div>';
+    }
+    list.appendChild(div);
+  });
 }
 
 async function fetchNews() {
@@ -269,10 +293,7 @@ async function fetchNews() {
   newsList.innerHTML = '';
   let total = 0;
   const fetches = NEWS_SOURCES.map(source =>
-    fetch(PROXY + encodeURIComponent(source.url))
-      .then(r => r.text())
-      .then(text => ({ source, text }))
-      .catch(() => null)
+    fetch(PROXY + encodeURIComponent(source.url)).then(r => r.text()).then(text => ({ source, text })).catch(() => null)
   );
   const results = await Promise.all(fetches);
   for (const result of results) {
@@ -293,23 +314,17 @@ async function fetchNews() {
           '<div class="news-title">' + title + '</div>' +
           '<a class="news-link" href="' + link + '" target="_blank">자세히 보기 →</a>';
         newsList.appendChild(div);
-        count++;
-        total++;
+        count++; total++;
       }
-    } catch(e) {
-      console.log(result.source.name + ' 오류:', e);
-    }
+    } catch(e) {}
   }
-  if (total === 0) {
-    newsList.innerHTML = '<div style="text-align:center;color:#ff3b30;padding:20px;font-size:0.85em;">뉴스를 불러오지 못했어요 😢</div>';
-  }
+  if (total === 0) newsList.innerHTML = '<div style="text-align:center;color:#ff3b30;padding:16px;font-size:0.82em;">뉴스를 불러오지 못했어요 😢</div>';
 }
 
 async function init() {
-  await Promise.all([fetchMarket(), loadChart(), fetchNews()]);
+  await Promise.all([fetchMarket(), loadChart(), fetchStocks(), fetchNews()]);
   document.getElementById('updated-time').textContent = '마지막 업데이트: ' + new Date().toLocaleString('ko-KR');
 }
-
 init();
 setInterval(init, 300000);
 </script>
