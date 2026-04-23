@@ -3,86 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Investment Dashboard UI</title>
-
+<title>Real Dashboard UI</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body {
+body{
   margin:0;
-  font-family:'Segoe UI';
-  background:#f2f4f8;
+  font-family:Arial;
+  background:#f4f6fa;
 }
 
-.header {
+.header{
   text-align:center;
   padding:16px;
   font-weight:700;
   border-bottom:2px solid #111;
 }
 
-.container { padding:12px; }
+.wrap{
+  padding:12px;
+}
 
-.grid {
+/* 상단 레이아웃 */
+.top{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
 }
 
-.card {
-  background:#fff;
-  border-radius:14px;
-  padding:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+/* 4분할 */
+.index-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
-.full { grid-column:1/-1; }
+/* 카드 */
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
 
-.title {
+.title{
   font-size:12px;
   font-weight:700;
   margin-bottom:6px;
 }
 
-.value {
-  font-size:18px;
+.value{
+  font-size:16px;
   font-weight:800;
 }
 
-.up { color:#16a34a; }
-.down { color:#dc2626; }
+.up{color:#16a34a;}
+.down{color:#dc2626;}
 
-canvas {
-  height:70px !important;
+canvas{
+  height:60px !important;
 }
 
-.news-item {
+/* 뉴스 */
+.news{
+  display:flex;
+  flex-direction:column;
+}
+
+.news-item{
   font-size:13px;
   padding:8px 0;
   border-bottom:1px solid #eee;
 }
 
-.summary {
-  font-size:13px;
-  line-height:1.4;
+/* 하단 */
+.section{
+  margin-top:16px;
 }
 
-.etf-scroll {
+.table{
+  width:100%;
+  font-size:12px;
+  border-collapse:collapse;
+}
+
+.table th, .table td{
+  padding:6px;
+  border-bottom:1px solid #eee;
+  text-align:right;
+}
+
+.table th:first-child,
+.table td:first-child{
+  text-align:left;
+}
+
+/* ETF */
+.etf-scroll{
   display:flex;
   gap:8px;
   overflow-x:auto;
 }
 
-.etf-card {
+.etf-card{
   min-width:120px;
   background:#fff;
   border-radius:10px;
   padding:8px;
-  box-shadow:0 1px 4px rgba(0,0,0,0.05);
-}
-
-.small-chart {
-  height:40px !important;
 }
 </style>
 </head>
@@ -91,102 +118,90 @@ canvas {
 
 <div class="header">Investment Daily Dashboard</div>
 
-<div class="container">
-<div class="grid">
+<div class="wrap">
 
-<!-- 요약 -->
-<div class="card">
-  <div class="title">📊 시장 요약</div>
-  <div class="summary">
-    미국 기술주 강세 → 위험자산 선호.<br>
-    달러 강세 지속 → 외국인 수급 부담.
+<!-- 상단 -->
+<div class="top">
+
+  <!-- 좌측 4지수 -->
+  <div class="index-grid">
+
+    <div class="card">
+      <div class="title">NASDAQ</div>
+      <div class="value up">17,200 (+1.2%)</div>
+      <canvas id="c1"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="title">KOSPI</div>
+      <div class="value down">2,580 (-0.8%)</div>
+      <canvas id="c2"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="title">USD/KRW</div>
+      <div class="value up">1,385 (+0.4%)</div>
+      <canvas id="c3"></canvas>
+    </div>
+
+    <div class="card">
+      <div class="title">WTI</div>
+      <div class="value up">78 (+0.9%)</div>
+      <canvas id="c4"></canvas>
+    </div>
+
   </div>
+
+  <!-- 우측 뉴스 -->
+  <div class="card news">
+    <div class="title">🔥 주요 뉴스</div>
+
+    <div class="news-item">연준 금리 인하 기대 확대</div>
+    <div class="news-item">AI 반도체 수요 증가</div>
+    <div class="news-item">삼성전자 실적 개선</div>
+    <div class="news-item">유가 상승 지속</div>
+
+  </div>
+
 </div>
 
-<!-- 환율 -->
-<div class="card">
-  <div class="title">💱 USD/KRW</div>
-  <div class="value up">1,385 (+0.45%)</div>
-  <canvas id="usdChart"></canvas>
-</div>
+<!-- 주식 -->
+<div class="section card">
+  <div class="title">주식 시세</div>
 
-<!-- 나스닥 -->
-<div class="card">
-  <div class="title">📈 NASDAQ</div>
-  <div class="value up">17,200 (+1.20%)</div>
-  <canvas id="nasdaqChart"></canvas>
-</div>
-
-<!-- 코스피 -->
-<div class="card">
-  <div class="title">🇰🇷 KOSPI</div>
-  <div class="value down">2,580 (-0.80%)</div>
-  <canvas id="kospiChart"></canvas>
+  <table class="table">
+    <tr>
+      <th>종목</th><th>가격</th><th>등락률</th>
+    </tr>
+    <tr><td>삼성전자</td><td>72,000</td><td class="up">+1.2%</td></tr>
+    <tr><td>SK하이닉스</td><td>180,000</td><td class="down">-0.5%</td></tr>
+    <tr><td>NAVER</td><td>210,000</td><td class="up">+0.8%</td></tr>
+  </table>
 </div>
 
 <!-- ETF -->
-<div class="card full">
-  <div class="title">📦 주요 ETF</div>
+<div class="section card">
+  <div class="title">ETF</div>
+
   <div class="etf-scroll">
-
-    <div class="etf-card">
-      SPY<br><b>520</b>
-      <canvas class="small-chart" id="e1"></canvas>
-    </div>
-
-    <div class="etf-card">
-      QQQ<br><b>440</b>
-      <canvas class="small-chart" id="e2"></canvas>
-    </div>
-
-    <div class="etf-card">
-      EEM<br><b>39</b>
-      <canvas class="small-chart" id="e3"></canvas>
-    </div>
-
+    <div class="etf-card">SPY<br>520</div>
+    <div class="etf-card">QQQ<br>440</div>
+    <div class="etf-card">EEM<br>39</div>
   </div>
 </div>
 
-<!-- 뉴스 -->
-<div class="card full">
-  <div class="title">🔥 주요 뉴스</div>
-
-  <div class="news-item">• 연준 금리 인하 기대감 확대</div>
-  <div class="news-item">• 삼성전자 실적 기대치 상회</div>
-  <div class="news-item">• AI 반도체 수요 지속 증가</div>
-  <div class="news-item">• 유가 상승세 지속</div>
-
-</div>
-
-</div>
 </div>
 
 <script>
-
-// 더미 차트 생성
-function makeChart(id){
-  const data = Array.from({length:20},()=>Math.random()*100);
-
+function make(id){
+  const d=Array.from({length:20},()=>Math.random()*100);
   new Chart(document.getElementById(id),{
     type:'line',
-    data:{
-      labels:data.map((_,i)=>i),
-      datasets:[{
-        data:data,
-        borderWidth:2,
-        tension:0.4,
-        pointRadius:0
-      }]
-    },
-    options:{
-      plugins:{legend:{display:false}},
-      scales:{x:{display:false},y:{display:false}}
-    }
+    data:{labels:d.map((_,i)=>i),datasets:[{data:d,tension:0.4,pointRadius:0}]},
+    options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}
   });
 }
-
-["usdChart","nasdaqChart","kospiChart","e1","e2","e3"].forEach(makeChart);
-
+["c1","c2","c3","c4"].forEach(make);
 </script>
 
 </body>
