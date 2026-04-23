@@ -2,37 +2,26 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{margin:0;background:#f3f5f9;font-family:Arial}
-
+body{margin:0;background:#f4f6fa;font-family:Arial}
 .wrap{padding:12px}
 
-.top{
- display:grid;
- grid-template-columns:1.2fr 1fr;
- gap:10px;
-}
-
-/* 좌측 */
-.grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:10px;
-}
+/* 상단 */
+.top{display:grid;grid-template-columns:1.2fr 1fr;gap:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 
 .card{
  background:#fff;
  border-radius:14px;
  padding:10px;
- box-shadow:0 2px 8px rgba(0,0,0,0.05);
+ box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
 .title{font-size:12px;font-weight:700;margin-bottom:6px}
 
+/* 리스트 */
 .item{
  display:flex;
  justify-content:space-between;
@@ -43,66 +32,59 @@ body{margin:0;background:#f3f5f9;font-family:Arial}
 .up{color:#16a34a}
 .down{color:#dc2626}
 
+canvas{height:50px!important}
+
 /* 뉴스 */
 .news-item{
  padding:8px 0;
  border-bottom:1px solid #eee;
  font-size:13px;
- cursor:pointer;
 }
 
-.badge{
- font-size:10px;
- background:#fef3c7;
- padding:2px 6px;
- border-radius:4px;
- margin-right:4px;
-}
-
-/* 하단 */
+/* 섹션 */
 .section{margin-top:14px}
 
-.row{
- display:flex;
- justify-content:space-between;
- padding:8px 0;
- border-bottom:1px solid #eee;
- cursor:pointer;
-}
-
-.etf-scroll{
+/* 가로 카드 */
+.scroll{
  display:flex;
  gap:8px;
  overflow-x:auto;
 }
 
-.etf{
- min-width:120px;
- padding:8px;
+.theme, .etf{
+ min-width:130px;
  background:#fff;
+ padding:8px;
  border-radius:10px;
  cursor:pointer;
 }
 
-canvas{height:50px!important}
 .small{height:30px!important}
+
+/* 리스트 */
+.list-row{
+ display:flex;
+ justify-content:space-between;
+ padding:8px 0;
+ border-bottom:1px solid #eee;
+ font-size:13px;
+}
 </style>
 </head>
 
 <body>
-
 <div class="wrap">
 
+<!-- 상단 -->
 <div class="top">
 
-<!-- 좌측 -->
 <div class="grid">
 
 <!-- 주식 -->
 <div class="card">
 <div class="title">주식</div>
 
-<div class="item"><span>삼성전자</span><span class="up">+1.2%</span></div>
+<div class="item"><span>AAPL</span><span class="up">+1.2%</span></div>
 <div class="item"><span>TSLA</span><span class="down">-0.5%</span></div>
 
 <canvas id="c1"></canvas>
@@ -112,8 +94,8 @@ canvas{height:50px!important}
 <div class="card">
 <div class="title">지수</div>
 
-<div class="item"><span>NASDAQ</span><span class="up">+1.2%</span></div>
-<div class="item"><span>KOSPI</span><span class="down">-0.8%</span></div>
+<div class="item"><span>NASDAQ</span><span class="up">+1.1%</span></div>
+<div class="item"><span>S&P500</span><span class="up">+0.8%</span></div>
 
 <canvas id="c2"></canvas>
 </div>
@@ -132,8 +114,8 @@ canvas{height:50px!important}
 <div class="card">
 <div class="title">원자재</div>
 
-<div class="item"><span>금</span><span class="up">+0.8%</span></div>
-<div class="item"><span>WTI</span><span class="up">+1.1%</span></div>
+<div class="item"><span>금</span><span class="up">+0.7%</span></div>
+<div class="item"><span>WTI</span><span class="up">+1.2%</span></div>
 
 <canvas id="c4"></canvas>
 </div>
@@ -142,36 +124,30 @@ canvas{height:50px!important}
 
 <!-- 뉴스 -->
 <div class="card">
-
 <div class="title">🔥 뉴스</div>
-
-<div class="news-item"><span class="badge">Reuters</span>금리 인하 기대 확대</div>
-<div class="news-item"><span class="badge">MK</span>AI 반도체 수요 증가</div>
-<div class="news-item"><span class="badge">HK</span>삼성전자 실적 호조</div>
-
+<div class="news-item">금리 인하 기대 확대</div>
+<div class="news-item">AI 반도체 수요 증가</div>
+<div class="news-item">삼성전자 실적 개선</div>
 </div>
 
 </div>
 
-<!-- 주식 테마 -->
+<!-- 주식 -->
 <div class="section card">
 
-<div class="title">📊 테마 (반도체 / AI / 방산)</div>
+<div class="title">📊 주식 시세</div>
 
-<div class="row" onclick="go('semiconductor')">
-반도체
-<canvas class="small" id="t1"></canvas>
+<!-- 테마 -->
+<div class="scroll">
+<div class="theme">반도체<canvas class="small" id="t1"></canvas></div>
+<div class="theme">AI<canvas class="small" id="t2"></canvas></div>
+<div class="theme">방산<canvas class="small" id="t3"></canvas></div>
 </div>
 
-<div class="row" onclick="go('ai')">
-AI
-<canvas class="small" id="t2"></canvas>
-</div>
-
-<div class="row" onclick="go('defense')">
-방산
-<canvas class="small" id="t3"></canvas>
-</div>
+<!-- 종목 리스트 -->
+<div class="list-row"><span>삼성전자</span><span class="up">+1.2%</span></div>
+<div class="list-row"><span>SK하이닉스</span><span class="down">-0.3%</span></div>
+<div class="list-row"><span>한화에어로</span><span class="up">+2.1%</span></div>
 
 </div>
 
@@ -180,66 +156,37 @@ AI
 
 <div class="title">📦 ETF</div>
 
-<div class="etf-scroll">
-
-<div class="etf" onclick="go('SPY')">
-SPY
-<canvas class="small" id="e1"></canvas>
+<!-- ETF 카드 -->
+<div class="scroll">
+<div class="etf">SPY<canvas class="small" id="e1"></canvas></div>
+<div class="etf">QQQ<canvas class="small" id="e2"></canvas></div>
+<div class="etf">EEM<canvas class="small" id="e3"></canvas></div>
 </div>
 
-<div class="etf" onclick="go('QQQ')">
-QQQ
-<canvas class="small" id="e2"></canvas>
-</div>
-
-<div class="etf" onclick="go('EEM')">
-EEM
-<canvas class="small" id="e3"></canvas>
-</div>
-
-</div>
+<!-- ETF 리스트 -->
+<div class="list-row"><span>SPY</span><span class="up">+0.8%</span></div>
+<div class="list-row"><span>QQQ</span><span class="up">+1.3%</span></div>
+<div class="list-row"><span>EEM</span><span class="down">-0.4%</span></div>
 
 </div>
 
 </div>
 
 <script>
-
-// 개선된 차트
 function chart(id){
  const d=Array.from({length:20},()=>Math.random()*100)
  const ctx=document.getElementById(id).getContext('2d')
-
- const grad=ctx.createLinearGradient(0,0,0,60)
- grad.addColorStop(0,'rgba(29,78,216,0.3)')
- grad.addColorStop(1,'rgba(29,78,216,0)')
-
+ const g=ctx.createLinearGradient(0,0,0,50)
+ g.addColorStop(0,'rgba(29,78,216,0.3)')
+ g.addColorStop(1,'rgba(29,78,216,0)')
  new Chart(ctx,{
   type:'line',
   data:{labels:d.map((_,i)=>i),
-  datasets:[{
-    data:d,
-    borderColor:'#1d4ed8',
-    backgroundColor:grad,
-    fill:true,
-    tension:0.4,
-    pointRadius:0,
-    borderWidth:2
-  }]},
-  options:{
-    plugins:{legend:{display:false}},
-    scales:{x:{display:false},y:{display:false}}
-  }
+  datasets:[{data:d,borderColor:'#1d4ed8',backgroundColor:g,fill:true,tension:0.4,pointRadius:0}]},
+  options:{plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}}}
  })
 }
-
 ["c1","c2","c3","c4","t1","t2","t3","e1","e2","e3"].forEach(chart)
-
-// 클릭 이동
-function go(name){
- alert(name + " 상세페이지 (추후 연결)")
-}
-
 </script>
 
 </body>
