@@ -11,95 +11,89 @@
     background: linear-gradient(160deg, #f0f4ff 0%, #e8f0fe 50%, #f3eeff 100%);
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', Arial, sans-serif;
-    padding: 16px;
-    max-width: 480px;
-    margin: 0 auto;
+    padding: 12px;
   }
-  h1 { text-align: center; padding: 14px 0 16px 0; font-size: 1.3em; font-weight: 700; color: #1d1d1f; }
+  h1 { text-align: center; padding: 12px 0 14px 0; font-size: 1.2em; font-weight: 700; color: #1d1d1f; }
 
-  /* 지수 2줄 그리드 */
   .market-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: 6px;
+    margin-bottom: 12px;
+    width: 100%;
   }
   .market-chip {
     background: rgba(255,255,255,0.85);
     backdrop-filter: blur(20px);
-    border-radius: 12px;
+    border-radius: 10px;
     border: 2px solid transparent;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    padding: 8px 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    padding: 6px 4px;
     cursor: pointer;
     transition: all 0.2s;
     text-align: center;
+    width: 100%;
   }
   .market-chip.active {
     border-color: #007aff;
     background: rgba(255,255,255,0.95);
-    box-shadow: 0 4px 14px rgba(0,122,255,0.15);
+    box-shadow: 0 3px 12px rgba(0,122,255,0.15);
   }
-  .m-label { font-size: 0.58em; color: #6e6e73; font-weight: 500; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .m-price { font-size: 0.82em; font-weight: 700; color: #1d1d1f; }
-  .m-change { font-size: 0.62em; font-weight: 500; margin-top: 1px; margin-bottom: 3px; }
+  .m-label { font-size: 0.55em; color: #6e6e73; font-weight: 500; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .m-price { font-size: 0.75em; font-weight: 700; color: #1d1d1f; }
+  .m-change { font-size: 0.58em; font-weight: 500; margin-top: 1px; margin-bottom: 2px; }
   .up { color: #34c759; } .down { color: #ff3b30; }
-  .spark-wrap { height: 26px; }
+  .spark-wrap { height: 22px; }
 
-  /* 글래스 */
   .glass {
     background: rgba(255,255,255,0.78);
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
-    border-radius: 20px;
+    border-radius: 18px;
     border: 1px solid rgba(255,255,255,0.95);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-    padding: 16px;
-    margin-bottom: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    padding: 14px;
+    margin-bottom: 12px;
+    width: 100%;
   }
-  .section-title { font-size: 0.92em; font-weight: 700; color: #1d1d1f; margin-bottom: 10px; }
+  .section-title { font-size: 0.9em; font-weight: 700; color: #1d1d1f; margin-bottom: 10px; }
 
-  /* 차트 탭 */
-  .range-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+  .range-tabs { display: flex; gap: 3px; margin-bottom: 10px; flex-wrap: wrap; }
   .range-tab {
     background: transparent; color: #6e6e73;
     border: none; border-radius: 6px;
-    padding: 4px 8px; font-size: 0.68em; font-weight: 600;
+    padding: 3px 7px; font-size: 0.65em; font-weight: 600;
     cursor: pointer; font-family: inherit;
   }
   .range-tab.active { background: rgba(0,122,255,0.12); color: #007aff; }
 
-  /* 종목 */
   .stock-item {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 9px 0; border-bottom: 1px solid rgba(0,0,0,0.05);
   }
   .stock-item:last-child { border-bottom: none; }
-  .stock-name { font-size: 0.85em; font-weight: 600; color: #1d1d1f; }
-  .stock-ticker { font-size: 0.65em; color: #6e6e73; margin-top: 2px; }
+  .stock-name { font-size: 0.83em; font-weight: 600; color: #1d1d1f; }
+  .stock-ticker { font-size: 0.63em; color: #6e6e73; margin-top: 2px; }
   .stock-right { text-align: right; }
-  .stock-price { font-size: 0.85em; font-weight: 700; color: #1d1d1f; }
-  .stock-change { font-size: 0.68em; font-weight: 500; margin-top: 2px; }
+  .stock-price { font-size: 0.83em; font-weight: 700; color: #1d1d1f; }
+  .stock-change { font-size: 0.66em; font-weight: 500; margin-top: 2px; }
 
-  /* 뉴스 */
-  .news-item { padding: 12px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .news-item { padding: 11px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
   .news-item:last-child { border-bottom: none; }
-  .news-source { font-size: 0.65em; color: #007aff; font-weight: 600; margin-bottom: 2px; }
-  .news-title { font-size: 0.85em; font-weight: 600; color: #1d1d1f; line-height: 1.4; margin-bottom: 4px; }
-  .news-link { font-size: 0.72em; color: #007aff; text-decoration: none; font-weight: 500; }
-  .loading { text-align: center; color: #6e6e73; padding: 16px; font-size: 0.82em; }
-  .updated { text-align: center; font-size: 0.68em; color: #6e6e73; padding: 8px 0 20px 0; }
+  .news-source { font-size: 0.63em; color: #007aff; font-weight: 600; margin-bottom: 2px; }
+  .news-title { font-size: 0.83em; font-weight: 600; color: #1d1d1f; line-height: 1.4; margin-bottom: 4px; }
+  .news-link { font-size: 0.7em; color: #007aff; text-decoration: none; font-weight: 500; }
+  .loading { text-align: center; color: #6e6e73; padding: 14px; font-size: 0.8em; }
+  .updated { text-align: center; font-size: 0.65em; color: #6e6e73; padding: 8px 0 16px 0; }
 </style>
 </head>
 <body>
 <h1>📈 투자 대시보드</h1>
 
-<!-- 지수 2줄 그리드 -->
 <div class="market-grid" id="market-grid">
   <div class="loading" style="grid-column:span 4">불러오는 중...</div>
 </div>
 
-<!-- 차트 -->
 <div class="glass">
   <div class="section-title" id="chart-title">📊 코스피 추이</div>
   <div class="range-tabs">
@@ -114,13 +108,11 @@
   <canvas id="myChart" height="110"></canvas>
 </div>
 
-<!-- 주요 종목 -->
 <div class="glass">
   <div class="section-title">💼 주요 종목</div>
   <div id="stock-list"><div class="loading">불러오는 중...</div></div>
 </div>
 
-<!-- 뉴스 -->
 <div class="glass">
   <div class="section-title">📰 투자 뉴스</div>
   <div id="news-list"><div class="loading">뉴스 불러오는 중...</div></div>
@@ -136,8 +128,8 @@ const SYMBOLS = [
   { label: '나스닥', flag: '🇺🇸', symbol: '^IXIC', color: '#34c759' },
   { label: 'S&P500', flag: '🇺🇸', symbol: '^GSPC', color: '#ff9500' },
   { label: '달러/원', flag: '💱', symbol: 'USDKRW=X', color: '#ff3b30' },
-  { label: 'WTI유가', flag: '🛢', symbol: 'CL=F', color: '#8e8e93' },
-  { label: '미국채10Y', flag: '📊', symbol: '^TNX', color: '#af52de' },
+  { label: 'WTI', flag: '🛢', symbol: 'CL=F', color: '#8e8e93' },
+  { label: '미국채', flag: '📊', symbol: '^TNX', color: '#af52de' },
 ];
 const STOCKS = [
   { name: '삼성전자', ticker: '005930.KS' },
@@ -199,7 +191,7 @@ async function fetchMarket() {
     chip.innerHTML =
       '<div class="m-label">' + s.flag + ' ' + s.label + '</div>' +
       priceHtml +
-      '<div class="spark-wrap"><canvas id="spark-' + i + '" height="26"></canvas></div>';
+      '<div class="spark-wrap"><canvas id="spark-' + i + '" height="22"></canvas></div>';
     grid.appendChild(chip);
     if (sparkData.length > 1) {
       setTimeout(() => {
@@ -210,7 +202,7 @@ async function fetchMarket() {
           type: 'line',
           data: {
             labels: sparkData.map((_,j) => j),
-            datasets: [{ data: sparkData, borderColor: isUp ? '#34c759' : '#ff3b30', borderWidth: 1.5, pointRadius: 0, tension: 0.4, fill: false }]
+            datasets: [{ data: sparkData, borderColor: isUp ? '#34c759' : '#ff3b30', borderWidth: 1.2, pointRadius: 0, tension: 0.4, fill: false }]
           },
           options: {
             responsive: true, animation: false,
@@ -335,7 +327,7 @@ async function fetchNews() {
       }
     } catch(e) {}
   }
-  if (total === 0) newsList.innerHTML = '<div style="text-align:center;color:#ff3b30;padding:16px;font-size:0.82em;">뉴스를 불러오지 못했어요 😢</div>';
+  if (total === 0) newsList.innerHTML = '<div style="text-align:center;color:#ff3b30;padding:14px;font-size:0.8em;">뉴스를 불러오지 못했어요 😢</div>';
 }
 
 async function init() {
