@@ -3,44 +3,43 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Investment Daily Dashboard</title>
+<title>Investment Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body {
   margin:0;
-  font-family: 'Arial';
+  font-family: Arial;
   background:#f2f4f8;
 }
 
 .header {
   text-align:center;
-  padding:16px;
-  border-bottom:2px solid #111;
+  padding:14px;
   font-weight:bold;
-  font-size:18px;
+  border-bottom:2px solid #111;
 }
 
-.container { padding:12px; }
+.container { padding:10px; }
 
 .grid {
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px;
+  gap:10px;
 }
 
 .card {
   background:white;
-  border-radius:14px;
-  padding:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  border-radius:12px;
+  padding:10px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
 
 .full { grid-column:1/-1; }
 
 .title {
-  font-size:13px;
+  font-size:12px;
   font-weight:700;
   margin-bottom:6px;
 }
@@ -59,11 +58,11 @@ canvas {
 
 .news-item {
   font-size:13px;
-  padding:8px 0;
+  padding:6px 0;
   border-bottom:1px solid #eee;
 }
 
-.summary-box {
+.summary {
   font-size:13px;
   line-height:1.4;
 }
@@ -79,30 +78,30 @@ canvas {
 
 <div class="card">
   <div class="title">📊 시장 요약</div>
-  <div id="summary" class="summary-box">로딩중...</div>
+  <div id="summary" class="summary">로딩중...</div>
 </div>
 
 <div class="card">
   <div class="title">💱 환율 (USD/KRW)</div>
-  <div id="usd" class="value"></div>
+  <div id="usd" class="value">-</div>
   <canvas id="usdChart"></canvas>
 </div>
 
 <div class="card">
   <div class="title">📈 나스닥</div>
-  <div id="nasdaq" class="value"></div>
+  <div id="nasdaq" class="value">-</div>
   <canvas id="nasdaqChart"></canvas>
 </div>
 
 <div class="card">
   <div class="title">🇰🇷 코스피</div>
-  <div id="kospi" class="value"></div>
+  <div id="kospi" class="value">-</div>
   <canvas id="kospiChart"></canvas>
 </div>
 
 <div class="card full">
   <div class="title">🔥 주요 뉴스</div>
-  <div id="news"></div>
+  <div id="news">로딩중...</div>
 </div>
 
 </div>
@@ -110,16 +109,26 @@ canvas {
 
 <script>
 
-// 공통 fetch
-async function fetchData(symbol) {
-  const proxy = "https://api.allorigins.win/raw?url=";
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=5d&interval=1h`;
-  const res = await fetch(proxy + encodeURIComponent(url));
-  const data = await res.json();
-  return data.chart.result[0];
+// 안전 fetch
+async function fetchData(symbol){
+  try{
+    const proxy = "https://api.allorigins.win/raw?url=";
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=5d&interval=1h`;
+
+    const res = await fetch(proxy + encodeURIComponent(url));
+    const json = await res.json();
+
+    if(!json.chart || !json.chart.result) return null;
+
+    return json.chart.result[0];
+
+  }catch(e){
+    console.log("에러:", symbol);
+    return null;
+  }
 }
 
-// 계산
+// 값 계산
 function calc(meta){
   const price = meta.regularMarketPrice;
   const prev = meta.chartPreviousClose;
@@ -128,14 +137,34 @@ function calc(meta){
   return {price, diff, pct};
 }
 
+// 렌더
+function render(id,data){
+  const el = document.getElementById(id);
+
+  if(!data){
+    el.innerText = "데이터 실패";
+    return;
+  }
+
+  const c = calc(data.meta);
+
+  el.innerHTML =
+    c.price.toFixed(0) +
+    " <span class='"+(c.diff>=0?"up":"down")+"'>("+c.pct+"%)</span>";
+}
+
 // 차트
-function drawChart(id, data, color){
+function draw(id,data,color){
+  if(!data) return;
+
+  const arr = data.indicators.quote[0].close.filter(v=>v);
+
   new Chart(document.getElementById(id),{
     type:'line',
     data:{
-      labels:data.map((_,i)=>i),
+      labels:arr.map((_,i)=>i),
       datasets:[{
-        data:data,
+        data:arr,
         borderColor:color,
         tension:0.4,
         pointRadius:0
@@ -148,69 +177,75 @@ function drawChart(id, data, color){
   });
 }
 
-// 인사이트 생성
+// 요약
 function makeSummary(k,n,u){
-  let txt = "";
+  let txt="";
 
-  if(n > 1) txt += "미국 기술주 강세 → 위험자산 선호. ";
-  if(n < -1) txt += "미국 기술주 약세 → 조정 압력. ";
-  if(u > 0.3) txt += "달러 강세 → 외국인 수급 부담. ";
-  if(k > 0.5) txt += "코스피 상승 흐름 유지. ";
-  if(k < -0.5) txt += "코스피 약세 흐름.";
+  if(n>1) txt+="미국 기술주 강세. ";
+  if(n<-1) txt+="미국 기술주 약세. ";
+  if(u>0.3) txt+="달러 강세. ";
+  if(k>0.5) txt+="코스피 상승. ";
+  if(k<-0.5) txt+="코스피 약세.";
 
-  return txt || "시장 혼조세.";
+  return txt || "시장 혼조.";
 }
 
 // 뉴스
 async function loadNews(){
-  const url = "https://feeds.hankyung.com/app/stock.xml";
-  const proxy = "https://api.allorigins.win/raw?url=";
+  try{
+    const proxy="https://api.allorigins.win/raw?url=";
+    const url="https://feeds.hankyung.com/app/stock.xml";
 
-  const res = await fetch(proxy + url);
-  const txt = await res.text();
+    const res = await fetch(proxy+url);
+    const txt = await res.text();
 
-  const xml = new DOMParser().parseFromString(txt,"text/xml");
-  const items = xml.querySelectorAll("item");
+    const xml = new DOMParser().parseFromString(txt,"text/xml");
+    const items = xml.querySelectorAll("item");
 
-  const container = document.getElementById("news");
+    const el = document.getElementById("news");
+    el.innerHTML="";
 
-  for(let i=0;i<5;i++){
-    const title = items[i]?.querySelector("title")?.textContent;
-    if(!title) continue;
+    for(let i=0;i<5;i++){
+      const t = items[i]?.querySelector("title")?.textContent;
+      if(!t) continue;
 
-    const div = document.createElement("div");
-    div.className = "news-item";
-    div.innerText = "• " + title;
-    container.appendChild(div);
+      const div=document.createElement("div");
+      div.className="news-item";
+      div.innerText="• "+t;
+
+      el.appendChild(div);
+    }
+
+  }catch(e){
+    document.getElementById("news").innerText="뉴스 실패";
   }
 }
 
-// 초기 실행
+// 실행
 async function init(){
 
   const kospi = await fetchData("^KS11");
   const nasdaq = await fetchData("^IXIC");
   const usd = await fetchData("USDKRW=X");
 
-  const kc = calc(kospi.meta);
-  const nc = calc(nasdaq.meta);
-  const uc = calc(usd.meta);
+  render("kospi", kospi);
+  render("nasdaq", nasdaq);
+  render("usd", usd);
 
-  document.getElementById("kospi").innerHTML =
-    kc.price.toFixed(0) + " <span class='"+(kc.diff>=0?"up":"down")+"'>("+kc.pct+"%)</span>";
+  if(kospi && nasdaq && usd){
+    const k = parseFloat(calc(kospi.meta).pct);
+    const n = parseFloat(calc(nasdaq.meta).pct);
+    const u = parseFloat(calc(usd.meta).pct);
 
-  document.getElementById("nasdaq").innerHTML =
-    nc.price.toFixed(0) + " <span class='"+(nc.diff>=0?"up":"down")+"'>("+nc.pct+"%)</span>";
+    document.getElementById("summary").innerText =
+      makeSummary(k,n,u);
+  } else {
+    document.getElementById("summary").innerText = "데이터 일부 실패";
+  }
 
-  document.getElementById("usd").innerHTML =
-    uc.price.toFixed(0) + " <span class='"+(uc.diff>=0?"up":"down")+"'>("+uc.pct+"%)</span>";
-
-  document.getElementById("summary").innerText =
-    makeSummary(parseFloat(kc.pct), parseFloat(nc.pct), parseFloat(uc.pct));
-
-  drawChart("kospiChart", kospi.indicators.quote[0].close.filter(v=>v), "#1d4ed8");
-  drawChart("nasdaqChart", nasdaq.indicators.quote[0].close.filter(v=>v), "#7c3aed");
-  drawChart("usdChart", usd.indicators.quote[0].close.filter(v=>v), "#dc2626");
+  draw("kospiChart", kospi, "#1d4ed8");
+  draw("nasdaqChart", nasdaq, "#7c3aed");
+  draw("usdChart", usd, "#dc2626");
 
   loadNews();
 }
