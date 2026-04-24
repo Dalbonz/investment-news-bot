@@ -1,0 +1,230 @@
+{
+  "updated": "2026-04-24T06:44:21Z",
+  "market": {
+    "kospi": {
+      "price": 6481.33,
+      "change": 5.52,
+      "pct": 0.09,
+      "high": 6516.54,
+      "low": 6403.74,
+      "vol": 859259
+    },
+    "kosdaq": {
+      "price": 1203.52,
+      "change": 22.4,
+      "pct": 1.9,
+      "high": 1203.72,
+      "low": 1172.32,
+      "vol": 1377846
+    },
+    "nasdaq": {
+      "price": 24438.504,
+      "change": -219.062,
+      "pct": -0.89,
+      "high": 24664.867,
+      "low": 24209.738,
+      "vol": 6705087000
+    },
+    "sp500": {
+      "price": 7108.4,
+      "change": -29.5,
+      "pct": -0.41,
+      "high": 7147.78,
+      "low": 7046.55,
+      "vol": 3238398000
+    },
+    "ndx": {
+      "price": 26782.625,
+      "change": -154.65,
+      "pct": -0.57,
+      "high": 27007.871,
+      "low": 26540.324,
+      "vol": 1291750000
+    },
+    "nikkei": {
+      "price": 59730.25,
+      "change": 590.02,
+      "pct": 1.0,
+      "high": 59763.68,
+      "low": 59225.37,
+      "vol": 0
+    },
+    "usdkrw": {
+      "price": 1483.47,
+      "change": 3.04,
+      "pct": 0.21,
+      "high": 1484.38,
+      "low": 1479.79,
+      "vol": 0
+    },
+    "usdjpy": {
+      "price": 159.628,
+      "change": -0.042,
+      "pct": -0.03,
+      "high": 159.84,
+      "low": 159.596,
+      "vol": 0
+    },
+    "eurusd": {
+      "price": 1.1686,
+      "change": -0.0002,
+      "pct": -0.02,
+      "high": 1.1692,
+      "low": 1.1677,
+      "vol": 0
+    },
+    "dxy": {
+      "price": 98.854,
+      "change": 0.084,
+      "pct": 0.09,
+      "high": 98.915,
+      "low": 98.784,
+      "vol": 0
+    },
+    "oil": {
+      "price": 96.07,
+      "change": 0.22,
+      "pct": 0.23,
+      "high": 97.6,
+      "low": 95.55,
+      "vol": 27786
+    },
+    "gold": {
+      "price": 4688.0,
+      "change": -36.0,
+      "pct": -0.76,
+      "high": 4726.7,
+      "low": 4672.2,
+      "vol": 24403
+    },
+    "silver": {
+      "price": 74.355,
+      "change": -1.149,
+      "pct": -1.52,
+      "high": 75.94,
+      "low": 74.315,
+      "vol": 5718
+    },
+    "copper": {
+      "price": 6.001,
+      "change": -0.0805,
+      "pct": -1.32,
+      "high": 6.047,
+      "low": 5.991,
+      "vol": 6033
+    },
+    "aapl": {
+      "price": 273.43,
+      "change": 0.26,
+      "pct": 0.1,
+      "high": 275.77,
+      "low": 271.65,
+      "vol": 33138070
+    },
+    "nvda": {
+      "price": 199.64,
+      "change": -2.86,
+      "pct": -1.41,
+      "high": 203.829,
+      "low": 197.221,
+      "vol": 108937228
+    },
+    "tsla": {
+      "price": 373.72,
+      "change": -13.79,
+      "pct": -3.56,
+      "high": 385.338,
+      "low": 368.39,
+      "vol": 93500126
+    },
+    "msft": {
+      "price": 415.75,
+      "change": -17.17,
+      "pct": -3.97,
+      "high": 423.36,
+      "low": 411.41,
+      "vol": 37996014
+    },
+    "spy": {
+      "price": 708.45,
+      "change": -2.76,
+      "pct": -0.39,
+      "high": 712.36,
+      "low": 702.28,
+      "vol": 52293495
+    },
+    "qqq": {
+      "price": 651.42,
+      "change": -3.69,
+      "pct": -0.56,
+      "high": 656.92,
+      "low": 645.525,
+      "vol": 39178683
+    },
+    "samsung": {
+      "price": 219500.0,
+      "change": -5000.0,
+      "pct": -2.23,
+      "high": 225000.0,
+      "low": 216500.0,
+      "vol": 18126656
+    },
+    "hynix": {
+      "price": 1225000.0,
+      "change": 0.0,
+      "pct": 0.0,
+      "high": 1242000.0,
+      "low": 1193000.0,
+      "vol": 2852236
+    },
+    "hanwha": {
+      "price": 1467000.0,
+      "change": 42000.0,
+      "pct": 2.95,
+      "high": 1525000.0,
+      "low": 1440000.0,
+      "vol": 262237
+    },
+    "hyundai": {
+      "price": 513000.0,
+      "change": -19000.0,
+      "pct": -3.57,
+      "high": 526000.0,
+      "low": 510000.0,
+      "vol": 1178736
+    }
+  },
+  "news": [
+    {
+      "source": "매일경제",
+      "title": "“신규고객 환영”…‘연 10% 금리·매일 이자 2배’ 내건 토스뱅크",
+      "link": "https://www.mk.co.kr/news/economy/12026315"
+    },
+    {
+      "source": "매일경제",
+      "title": "불장에 증권사가 다 벌어왔다…KB·신한금융, 1분기 사상최대 실적",
+      "link": "https://www.mk.co.kr/news/economy/12026113"
+    },
+    {
+      "source": "매일경제",
+      "title": "美·이란 불확실성에 뉴욕증시 하락...SW 위기론 재부상 [월가월부]",
+      "link": "https://www.mk.co.kr/news/economy/12026045"
+    },
+    {
+      "source": "Investing.com",
+      "title": "ATOSS Software, 강력한 1분기 실적 후 2026년 EBIT 마진 가이던스 상향",
+      "link": "https://kr.investing.com/news/stock-market-news/article-93CH-1911674"
+    },
+    {
+      "source": "Investing.com",
+      "title": "세리카 에너지, 자본 구조 최적화 위한 채권 발행 계획",
+      "link": "https://kr.investing.com/news/company-news/article-93CH-1911667"
+    },
+    {
+      "source": "Investing.com",
+      "title": "Satsuma Technology 180만 달러에 비트코인 22.77개 인수",
+      "link": "https://kr.investing.com/news/company-news/article-93CH-1911647"
+    }
+  ],
+  "ai_comment": "오늘의 시장 분석을 불러오지 못했어요."
+}
