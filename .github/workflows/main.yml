@@ -1,13 +1,13 @@
 name: Daily Investment News
-
 on:
   schedule:
-    - cron: '30 23 * * *'  # 한국시간 오전 8시 30분
+    - cron: '30 23 * * *'
   workflow_dispatch:
-
 jobs:
   send-news:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -24,3 +24,10 @@ jobs:
           GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python news_bot.py
+      - name: Commit data.json
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add data.json
+          git diff --staged --quiet || git commit -m "Update data.json"
+          git push
