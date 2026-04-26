@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-25T05:59:33Z",
+  "updated": "2026-04-26T06:27:08Z",
   "market": {
     "kospi": {
       "price": 6475.63,
@@ -197,33 +197,28 @@
   "news": [
     {
       "source": "매일경제",
-      "title": "현대차그룹 8조 집중투자 … 복정역에 R&D 통합 거점",
-      "link": "https://www.mk.co.kr/news/economy/12026858"
+      "title": "“이란전쟁 터지자 200억 달러 증발”…고유가에 눈뜨고 날린 무역수지 금액이",
+      "link": "https://www.mk.co.kr/news/economy/12027512"
     },
     {
       "source": "매일경제",
-      "title": "증권·운용 실적 호조에 … NH농협금융 순익 21% 급증",
-      "link": "https://www.mk.co.kr/news/economy/12026789"
+      "title": "기획예산처·재정경제부 ‘한 지붕 생활’ 끝… 세종청사 대이동",
+      "link": "https://www.mk.co.kr/news/economy/12027476"
     },
     {
       "source": "매일경제",
-      "title": "[표] 외국환율고시표",
-      "link": "https://www.mk.co.kr/news/economy/12026790"
+      "title": "“반도체 덕에 잘나가는 거 아니었나?”…내년 4분기 잠재성장률 1.5% ‘사상 최저’",
+      "link": "https://www.mk.co.kr/news/economy/12027446"
     },
     {
       "source": "Investing.com",
-      "title": "데이브 앤 버스터즈, 2025년 4분기 실적 부진에도 주가 급등",
-      "link": "https://kr.investing.com/news/transcripts/article-93CH-1913142"
+      "title": "비료 가격 상승이 세계 경제에 미치는 영향은?",
+      "link": "https://kr.investing.com/news/economy-news/article-1913213"
     },
     {
       "source": "Investing.com",
-      "title": "미국 반도체 수출 법안 진전에 중국, 글로벌 공급망 혼란 경고",
-      "link": "https://kr.investing.com/news/economy-news/article-1913137"
-    },
-    {
-      "source": "Investing.com",
-      "title": "중국농업은행, 2025년 하반기 견조한 실적 발표",
-      "link": "https://kr.investing.com/news/transcripts/article-93CH-1913128"
+      "title": "바이엘스도르프 AG, 2026년 1분기 부진한 실적에 주가 하락",
+      "link": "https://kr.investing.com/news/transcripts/article-93CH-1913204"
     }
   ],
   "ai_comment": "오늘의 시장 분석을 불러오지 못했어요."
