@@ -59,8 +59,7 @@ def get_market_data():
     market = {}
     for key, symbol in SYMBOLS.items():
         try:
-            # 현재가 + 5일 OHLCV 동시에
-            url = f'https://query1.finance.yahoo.com/v8/finance/chart/{symbol}?interval=1d&range=5d'
+            url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + symbol + '?interval=1d&range=5d'
             res = requests.get(url, headers=HEADERS, timeout=10)
             res.raise_for_status()
             d    = res.json()['chart']['result'][0]
@@ -74,13 +73,12 @@ def get_market_data():
             if key in PRICE_RANGE:
                 lo, hi = PRICE_RANGE[key]
                 if not (lo <= price <= hi):
-                    print(f'{key} 가격 이상: {price}')
+                    print(key + ' 가격 이상: ' + str(price))
                     continue
 
             chg = price - prev
             pct = round(chg / prev * 100, 2) if prev else 0
 
-            # OHLCV 캔들 데이터 (최근 5일)
             candles = []
             opens  = q.get('open',  [])
             highs  = q.get('high',  [])
@@ -99,7 +97,8 @@ def get_market_data():
                         'close': round(c, 4),
                         'vol':   int(vols[i] or 0) if i < len(vols) else 0,
                     })
-                except: pass
+                except:
+                    pass
 
             market[key] = {
                 'price':   round(price, 4),
@@ -110,9 +109,9 @@ def get_market_data():
                 'vol':     meta.get('regularMarketVolume', 0),
                 'candles': candles,
             }
-            print(f'{key}: {price}')
+            print(key + ': ' + str(price))
         except Exception as e:
-            print(f'{key} 오류: {e}')
+            print(key + ' 오류: ' + str(e))
     return market
 
 def get_news():
@@ -136,9 +135,9 @@ def get_news():
                 if not title or not is_invest_news(title): continue
                 all_news.append({'source': source['name'], 'title': title, 'link': link})
                 cnt += 1
-            print(f'{source["name"]}: {cnt}개')
+            print(source['name'] + ': ' + str(cnt) + '개')
         except Exception as e:
-            print(f'{source["name"]} 오류: {e}')
+            print(source['name'] + ' 오류: ' + str(e))
     return all_news
 
 def get_ai_comment(market):
@@ -153,30 +152,30 @@ def get_ai_comment(market):
         for k, label in name_map.items():
             if k in market:
                 m = market[k]
-                summary.append(f"{label}: {m['price']} ({m['pct']:+.2f}%)")
+                summary.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
 
         prompt = (
-            "당신은 전문 증권 애널리스트입니다. "
-            "아래 오늘의 시장 데이터를 보고 투자자를 위한 간결한 시황 분석 코멘트를 "
-            "한국어로 3~4문장으로 작성해주세요.\n\n"
-            "시장 데이터:\n" + "\n".join(summary)
+            '당신은 전문 증권 애널리스트입니다. '
+            '아래 오늘의 시장 데이터를 보고 투자자를 위한 간결한 시황 분석 코멘트를 '
+            '한국어로 3~4문장으로 작성해주세요.\n\n'
+            '시장 데이터:\n' + '\n'.join(summary)
         )
         res = requests.post(
             'https://api.openai.com/v1/chat/completions',
-            headers={'Authorization': f'Bearer {OPENAI_API_KEY}', 'Content-Type': 'application/json'},
+            headers={'Authorization': 'Bearer ' + OPENAI_API_KEY, 'Content-Type': 'application/json'},
             json={'model': 'gpt-4o-mini', 'messages': [{'role': 'user', 'content': prompt}], 'max_tokens': 300},
             timeout=20
         )
         result = res.json()
-        print('OpenAI 응답:', result)
+        print('OpenAI 응답: ' + str(result))
         if 'choices' in result:
             return result['choices'][0]['message']['content'].strip()
         elif 'error' in result:
-            print('OpenAI 에러:', result['error'])
+            print('OpenAI 에러: ' + str(result['error']))
             return '시장 분석 생성 중 오류가 발생했어요.'
         return '시장 분석을 불러오지 못했어요.'
     except Exception as e:
-        print('AI 코멘트 오류:', e)
+        print('AI 코멘트 오류: ' + str(e))
         return '시장 분석을 불러오지 못했어요.'
 
 def save_data_json(market, news, ai_comment):
@@ -191,72 +190,87 @@ def save_data_json(market, news, ai_comment):
     print('data.json 저장 완료!')
 
 def send_telegram(market, news, ai_comment):
-    def arrow(v): return '🔺' if v >= 0 else '🔻'
     today = datetime.now().strftime('%Y년 %m월 %d일')
-    msg = f'📈 <b>{today} 투자 브리핑</b>\n\n'
-    msg += f'🤖 <b>AI 시황 코멘트</b>\n{ai_comment}\n\n'
+    msg = '📈 <b>' + today + ' 투자 브리핑</b>\n\n'
+    msg += '🤖 <b>AI 시황 코멘트</b>\n' + ai_comment + '\n\n'
     msg += '📊 <b>주요 증시</b>\n'
     for k, label in [('kospi','코스피'),('kosdaq','코스닥'),('nasdaq','나스닥'),('sp500','S&P500')]:
         if k in market:
             m = market[k]
-            msg += f"{label}: {m['price']:,.2f} {arrow(m['change'])} ({m['pct']:+.2f}%)\n"
+            arrow = '🔺' if m['change'] >= 0 else '🔻'
+            msg += label + ': ' + '{:,.2f}'.format(m['price']) + ' ' + arrow + ' (' + ('+' if m['pct']>=0 else '') + '{:.2f}'.format(m['pct']) + '%)\n'
     msg += '\n💱 <b>환율</b>\n'
     for k, label in [('usdkrw','달러/원'),('usdjpy','엔/달러'),('eurusd','유로/달러')]:
         if k in market:
             m = market[k]
-            msg += f"{label}: {m['price']:,.2f} {arrow(m['change'])} ({m['pct']:+.2f}%)\n"
+            arrow = '🔺' if m['change'] >= 0 else '🔻'
+            msg += label + ': ' + '{:,.2f}'.format(m['price']) + ' ' + arrow + ' (' + ('+' if m['pct']>=0 else '') + '{:.2f}'.format(m['pct']) + '%)\n'
     msg += '\n🛢 <b>원자재</b>\n'
     for k, label in [('oil','WTI'),('gold','금'),('silver','은')]:
         if k in market:
             m = market[k]
-            msg += f"{label}: {m['price']:,.2f} {arrow(m['change'])} ({m['pct']:+.2f}%)\n"
+            arrow = '🔺' if m['change'] >= 0 else '🔻'
+            msg += label + ': ' + '{:,.2f}'.format(m['price']) + ' ' + arrow + ' (' + ('+' if m['pct']>=0 else '') + '{:.2f}'.format(m['pct']) + '%)\n'
     msg += '\n📰 <b>주요 뉴스</b>\n'
     cur = ''
     for item in news:
         if item['source'] != cur:
             cur = item['source']
-            msg += f"\n📌 <b>[{cur}]</b>\n"
-        msg += f"• {item['title']}\n<a href=\"{item['link']}\">🔗 자세히 보기</a>\n\n"
+            msg += '\n📌 <b>[' + cur + ']</b>\n'
+        msg += '• ' + item['title'] + '\n<a href="' + item['link'] + '">🔗 자세히 보기</a>\n\n'
     msg += '🌐 <a href="https://dalbonz.github.io/investment-news-bot">📊 대시보드 바로가기</a>'
     res = requests.post(
-        f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage',
+        'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage',
         data={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'HTML'},
         timeout=15
     )
-    print('텔레그램 응답:', res.status_code)
+    print('텔레그램 응답: ' + str(res.status_code))
 
 def send_email(market, news, ai_comment):
-    def color(v): return '#16a34a' if v >= 0 else '#dc2626'
     today = datetime.now().strftime('%Y년 %m월 %d일')
     rows = ''
     for k, label in [('kospi','코스피'),('kosdaq','코스닥'),('nasdaq','나스닥'),('sp500','S&P500'),('usdkrw','달러/원'),('oil','WTI유가'),('gold','금')]:
         if k in market:
             m = market[k]
-            rows += f"<tr><td style='padding:6px'>{label}</td><td style='padding:6px;text-align:right'>{m['price']:,.2f}</td><td style='padding:6px;text-align:right;color:{color(m[\"change\"])}'>{m['pct']:+.2f}%</td></tr>"
+            chg_color = '#16a34a' if m['change'] >= 0 else '#dc2626'
+            rows += '<tr>'
+            rows += '<td style="padding:6px">' + label + '</td>'
+            rows += '<td style="padding:6px;text-align:right">' + '{:,.2f}'.format(m['price']) + '</td>'
+            rows += '<td style="padding:6px;text-align:right;color:' + chg_color + '">' + ('+' if m['pct']>=0 else '') + '{:.2f}'.format(m['pct']) + '%</td>'
+            rows += '</tr>'
+
     news_html = ''
     cur = ''
     for item in news:
         if item['source'] != cur:
             cur = item['source']
-            news_html += f"<h4 style='color:#1a73e8;margin-top:16px'>📌 {cur}</h4>"
-        news_html += f"<div style='margin-bottom:10px;padding:10px;background:#f9f9f9;border-radius:8px'><b>{item['title']}</b><br><a href='{item['link']}' style='color:#1a73e8;font-size:0.9em'>🔗 자세히 보기</a></div>"
-    html = f"""
-    <html><body style='font-family:Arial;max-width:640px;margin:0 auto;padding:20px;color:#222'>
-    <h2 style='border-bottom:2px solid #1a73e8;padding-bottom:8px'>📈 {today} 투자 브리핑</h2>
-    <div style='background:#f0f7ff;padding:15px;border-radius:10px;margin:16px 0;line-height:1.7'>
-      <b>🤖 AI 시황 코멘트</b><br><br>{ai_comment}
-    </div>
-    <h3>📊 주요 시장</h3>
-    <table style='width:100%;border-collapse:collapse;font-size:14px;border:1px solid #eee'>
-      <tr style='background:#f8fafc'><th style='padding:6px;text-align:left'>지수</th><th style='padding:6px;text-align:right'>현재가</th><th style='padding:6px;text-align:right'>등락률</th></tr>
-      {rows}
-    </table><br>
-    <a href='https://dalbonz.github.io/investment-news-bot' style='background:#1a73e8;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block'>📊 대시보드 바로가기</a>
-    <h3 style='margin-top:24px'>📰 주요 뉴스</h3>{news_html}
-    </body></html>
-    """
+            news_html += '<h4 style="color:#1a73e8;margin-top:16px">📌 ' + cur + '</h4>'
+        news_html += '<div style="margin-bottom:10px;padding:10px;background:#f9f9f9;border-radius:8px">'
+        news_html += '<b>' + item['title'] + '</b><br>'
+        news_html += '<a href="' + item['link'] + '" style="color:#1a73e8;font-size:0.9em">🔗 자세히 보기</a>'
+        news_html += '</div>'
+
+    html = (
+        '<html><body style="font-family:Arial;max-width:640px;margin:0 auto;padding:20px;color:#222">'
+        '<h2 style="border-bottom:2px solid #1a73e8;padding-bottom:8px">📈 ' + today + ' 투자 브리핑</h2>'
+        '<div style="background:#f0f7ff;padding:15px;border-radius:10px;margin:16px 0;line-height:1.7">'
+        '<b>🤖 AI 시황 코멘트</b><br><br>' + ai_comment +
+        '</div>'
+        '<h3>📊 주요 시장</h3>'
+        '<table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #eee">'
+        '<tr style="background:#f8fafc">'
+        '<th style="padding:6px;text-align:left">지수</th>'
+        '<th style="padding:6px;text-align:right">현재가</th>'
+        '<th style="padding:6px;text-align:right">등락률</th>'
+        '</tr>' + rows +
+        '</table><br>'
+        '<a href="https://dalbonz.github.io/investment-news-bot" style="background:#1a73e8;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;display:inline-block">📊 대시보드 바로가기</a>'
+        '<h3 style="margin-top:24px">📰 주요 뉴스</h3>' + news_html +
+        '</body></html>'
+    )
+
     msg = MIMEMultipart('alternative')
-    msg['Subject'] = f'📈 {today} 투자 브리핑'
+    msg['Subject'] = '📈 ' + today + ' 투자 브리핑'
     msg['From']    = GMAIL_USER
     msg['To']      = GMAIL_USER
     msg.attach(MIMEText(html, 'html'))
