@@ -26,21 +26,6 @@ SYMBOLS = {
     'hanwha':  '012450.KS', 'hyundai':'005380.KS',
 }
 
-PRICE_RANGE = {
-    'kospi':  (1000, 10000),   'kosdaq': (500, 5000),
-    'nasdaq': (10000, 30000), 'sp500':  (3000, 10000),
-    'ndx':    (10000, 35000), 'nikkei': (20000, 70000),
-    'usdkrw': (1000, 2000),   'usdjpy': (100, 200),
-    'eurusd': (0.8, 1.5),     'dxy':    (80, 130),
-    'oil':    (30, 150),      'gold':   (1500, 3500),
-    'silver': (15, 60),       'copper': (2, 6),
-    'aapl':   (100, 500),     'nvda':   (50, 1500),
-    'tsla':   (100, 1500),    'msft':   (200, 700),
-    'spy':    (300, 800),     'qqq':    (200, 700),
-    'samsung':(30000, 150000),'hynix':  (50000, 300000),
-    'hanwha': (100000, 800000),'hyundai':(100000, 400000),
-}
-
 RSS_SOURCES = [
     {'name': '매일경제',     'url': 'https://www.mk.co.kr/rss/30100041/'},
     {'name': '머니투데이',   'url': 'https://news.mt.co.kr/mtview/rss/stock.xml'},
@@ -69,15 +54,8 @@ def get_market_data():
 
             price = meta['regularMarketPrice']
             prev  = meta.get('chartPreviousClose', price)
-
-            if key in PRICE_RANGE:
-                lo, hi = PRICE_RANGE[key]
-                if not (lo <= price <= hi):
-                    print(key + ' 가격 이상: ' + str(price))
-                    continue
-
-            chg = price - prev
-            pct = round(chg / prev * 100, 2) if prev else 0
+            chg   = price - prev
+            pct   = round(chg / prev * 100, 2) if prev else 0
 
             candles = []
             opens  = q.get('open',  [])
@@ -238,7 +216,6 @@ def send_email(market, news, ai_comment):
             rows += '<td style="padding:6px;text-align:right">' + '{:,.2f}'.format(m['price']) + '</td>'
             rows += '<td style="padding:6px;text-align:right;color:' + chg_color + '">' + ('+' if m['pct']>=0 else '') + '{:.2f}'.format(m['pct']) + '%</td>'
             rows += '</tr>'
-
     news_html = ''
     cur = ''
     for item in news:
@@ -249,7 +226,6 @@ def send_email(market, news, ai_comment):
         news_html += '<b>' + item['title'] + '</b><br>'
         news_html += '<a href="' + item['link'] + '" style="color:#1a73e8;font-size:0.9em">🔗 자세히 보기</a>'
         news_html += '</div>'
-
     html = (
         '<html><body style="font-family:Arial;max-width:640px;margin:0 auto;padding:20px;color:#222">'
         '<h2 style="border-bottom:2px solid #1a73e8;padding-bottom:8px">📈 ' + today + ' 투자 브리핑</h2>'
@@ -268,7 +244,6 @@ def send_email(market, news, ai_comment):
         '<h3 style="margin-top:24px">📰 주요 뉴스</h3>' + news_html +
         '</body></html>'
     )
-
     msg = MIMEMultipart('alternative')
     msg['Subject'] = '📈 ' + today + ' 투자 브리핑'
     msg['From']    = GMAIL_USER
