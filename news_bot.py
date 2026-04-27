@@ -12,7 +12,7 @@ OPENAI_API_KEY   = os.environ.get('OPENAI_API_KEY', '')
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
 SYMBOLS = {
-    'kospi':   '^KS11',  'kosdaq':  '^KQ11',
+    'kospi':   '000001.KS',  'kosdaq':  'KOSDAQ.KQ',
     'nasdaq':  '^IXIC',  'sp500':   '^GSPC',
     'ndx':     '^NDX',   'nikkei':  '^N225',
     'usdkrw':  'USDKRW=X', 'usdjpy': 'USDJPY=X',
