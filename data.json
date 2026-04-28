@@ -1,5 +1,5 @@
 {
-  "updated": "2026-04-28T07:48:38Z",
+  "updated": "2026-04-28T07:55:59Z",
   "market": {
     "nasdaq": {
       "price": 24887.1,
@@ -202,9 +202,9 @@
       ]
     },
     "usdkrw": {
-      "price": 1473.7,
-      "change": -12.1,
-      "pct": -0.81,
+      "price": 1473.42,
+      "change": -12.38,
+      "pct": -0.83,
       "high": 1475.25,
       "low": 1471.38,
       "vol": 0,
@@ -242,19 +242,19 @@
           "vol": 0
         },
         {
-          "time": 1777362511,
+          "time": 1777362950,
           "open": 1473.99,
           "high": 1475.25,
           "low": 1471.38,
-          "close": 1473.7,
+          "close": 1473.42,
           "vol": 0
         }
       ]
     },
     "usdjpy": {
-      "price": 159.459,
-      "change": 0.086,
-      "pct": 0.05,
+      "price": 159.512,
+      "change": 0.139,
+      "pct": 0.09,
       "high": 159.566,
       "low": 158.948,
       "vol": 0,
@@ -292,19 +292,19 @@
           "vol": 0
         },
         {
-          "time": 1777362512,
+          "time": 1777362953,
           "open": 159.402,
           "high": 159.566,
           "low": 158.948,
-          "close": 159.459,
+          "close": 159.512,
           "vol": 0
         }
       ]
     },
     "eurusd": {
-      "price": 1.1697,
-      "change": -0.0047,
-      "pct": -0.4,
+      "price": 1.1701,
+      "change": -0.0043,
+      "pct": -0.37,
       "high": 1.173,
       "low": 1.169,
       "vol": 0,
@@ -342,18 +342,18 @@
           "vol": 0
         },
         {
-          "time": 1777362503,
+          "time": 1777362923,
           "open": 1.1726,
           "high": 1.173,
           "low": 1.169,
-          "close": 1.1697,
+          "close": 1.1701,
           "vol": 0
         }
       ]
     },
     "dxy": {
-      "price": 98.672,
-      "change": -0.128,
+      "price": 98.67,
+      "change": -0.13,
       "pct": -0.13,
       "high": 98.726,
       "low": 98.426,
@@ -388,18 +388,18 @@
           "open": 98.467,
           "high": 98.726,
           "low": 98.426,
-          "close": 98.672,
+          "close": 98.67,
           "vol": 0
         }
       ]
     },
     "oil": {
-      "price": 99.01,
-      "change": 3.16,
-      "pct": 3.3,
+      "price": 98.88,
+      "change": 3.03,
+      "pct": 3.16,
       "high": 99.22,
       "low": 96.24,
-      "vol": 30575,
+      "vol": 31274,
       "candles": [
         {
           "time": 1776916800,
@@ -430,18 +430,18 @@
           "open": 96.67,
           "high": 99.22,
           "low": 96.24,
-          "close": 99.01,
-          "vol": 30575
+          "close": 98.88,
+          "vol": 31274
         }
       ]
     },
     "gold": {
-      "price": 4642.5,
-      "change": -62.6,
-      "pct": -1.33,
+      "price": 4642.9,
+      "change": -62.2,
+      "pct": -1.32,
       "high": 4716.5,
       "low": 4636.5,
-      "vol": 36287,
+      "vol": 36730,
       "candles": [
         {
           "time": 1776916800,
@@ -472,18 +472,18 @@
           "open": 4697.5,
           "high": 4716.5,
           "low": 4636.5,
-          "close": 4642.5,
-          "vol": 36287
+          "close": 4642.8999,
+          "vol": 36730
         }
       ]
     },
     "silver": {
-      "price": 73.77,
-      "change": -1.695,
-      "pct": -2.25,
+      "price": 73.78,
+      "change": -1.685,
+      "pct": -2.23,
       "high": 76.155,
       "low": 72.785,
-      "vol": 15567,
+      "vol": 15741,
       "candles": [
         {
           "time": 1776916800,
@@ -514,18 +514,18 @@
           "open": 75.46,
           "high": 76.155,
           "low": 72.785,
-          "close": 73.77,
-          "vol": 15567
+          "close": 73.78,
+          "vol": 15741
         }
       ]
     },
     "copper": {
-      "price": 6.057,
-      "change": -0.019,
-      "pct": -0.31,
+      "price": 6.058,
+      "change": -0.018,
+      "pct": -0.3,
       "high": 6.1,
       "low": 6.048,
-      "vol": 7175,
+      "vol": 7306,
       "candles": [
         {
           "time": 1776916800,
@@ -556,8 +556,8 @@
           "open": 6.081,
           "high": 6.0995,
           "low": 6.0475,
-          "close": 6.057,
-          "vol": 7175
+          "close": 6.0585,
+          "vol": 7306
         }
       ]
     },
@@ -1080,18 +1080,18 @@
     },
     {
       "source": "Investing.com",
-      "title": "RBC, 생고방 주식 ’가격 결정력’으로 투자의견 상향",
-      "link": "https://kr.investing.com/news/analyst-ratings/article-93CH-1915491"
+      "title": "스칸디 스탠다드 2026년 1분기 실적: EBIT 35% 급증, 2027년 타깃 향해 순항",
+      "link": "https://kr.investing.com/news/company-news/article-93CH-1915524"
     },
     {
       "source": "Investing.com",
-      "title": "BP 2026년 1분기 실적: 정제 급증과 중동 불안 속 이익 두 배 증가",
-      "link": "https://kr.investing.com/news/company-news/article-93CH-1915487"
+      "title": "SSH Communications Security, 2026년 1분기 실적 발표: 엇갈린 결과",
+      "link": "https://kr.investing.com/news/transcripts/article-93CH-1915521"
     },
     {
       "source": "Investing.com",
-      "title": "Zalaris 2026년 1분기 실적: 관리형 서비스 급증, 컨설팅 둔화",
-      "link": "https://kr.investing.com/news/company-news/article-93CH-1915486"
+      "title": "보나바, 2026년 1분기 실적 발표: 난관 속 회복력 입증",
+      "link": "https://kr.investing.com/news/transcripts/article-93CH-1915518"
     }
   ],
   "ai_comment": "시장 분석 생성 중 오류가 발생했어요."
