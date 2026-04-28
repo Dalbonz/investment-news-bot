@@ -12,7 +12,7 @@ OPENAI_API_KEY   = os.environ.get('OPENAI_API_KEY', '')
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
 SYMBOLS = {
-    'kospi':   '000001.KS',  'kosdaq':  'KOSDAQ.KQ',
+    'kospi':   '^KS11',      'kosdaq':  '^KQ11',
     'nasdaq':  '^IXIC',  'sp500':   '^GSPC',
     'ndx':     '^NDX',   'nikkei':  '^N225',
     'usdkrw':  'USDKRW=X', 'usdjpy': 'USDJPY=X',
@@ -28,9 +28,9 @@ SYMBOLS = {
 
 RSS_SOURCES = [
     {'name': '매일경제',     'url': 'https://www.mk.co.kr/rss/30100041/'},
-    {'name': '머니투데이',   'url': 'https://news.mt.co.kr/mtview/rss/stock.xml'},
+    {'name': '머니투데이',   'url': 'https://news.mt.co.kr/rss/rss_index.xml'},
     {'name': 'Investing.com','url': 'https://kr.investing.com/rss/news.rss'},
-    {'name': '연합뉴스',     'url': 'https://www.yonhapnewstv.co.kr/feed/'},
+    {'name': '연합뉴스',     'url': 'https://www.yna.co.kr/rss/economy.xml'},
 ]
 
 INVEST_KW  = ['주식','증시','코스피','코스닥','나스닥','S&P','금리','환율','달러','유가','원자재','채권','ETF','펀드','투자','매수','매도','실적','수출','무역','경제','GDP','인플레','연준','Fed','반도체','배당','IPO','공모','상장']
@@ -88,6 +88,8 @@ def get_market_data():
                 'candles': candles,
             }
             print(key + ': ' + str(price))
+            if key in ('kospi', 'kosdaq'):
+                print('>>> ' + key + ' 실제값: ' + str(price))
         except Exception as e:
             print(key + ' 오류: ' + str(e))
     return market
