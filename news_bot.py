@@ -3,11 +3,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 
-TELEGRAM_TOKEN   = os.environ['TELEGRAM_TOKEN']
-TELEGRAM_CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
-GMAIL_USER       = os.environ['GMAIL_USER']
-GMAIL_PASSWORD   = os.environ['GMAIL_PASSWORD']
-OPENAI_API_KEY   = os.environ.get('OPENAI_API_KEY', '')
+TELEGRAM_TOKEN      = os.environ['TELEGRAM_TOKEN']
+TELEGRAM_CHAT_ID    = os.environ['TELEGRAM_CHAT_ID']
+TELEGRAM_CHAT_ID_WIFE = os.environ.get('TELEGRAM_CHAT_ID_WIFE', '')
+GMAIL_USER          = os.environ['GMAIL_USER']
+GMAIL_PASSWORD      = os.environ['GMAIL_PASSWORD']
+OPENAI_API_KEY      = os.environ.get('OPENAI_API_KEY', '')
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
@@ -145,7 +146,6 @@ def get_ai_comment(market):
             if k in market:
                 m = market[k]
                 summary.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
-
         prompt = (
             '당신은 전문 증권 애널리스트입니다. '
             '아래 오늘의 시장 데이터를 보고 투자자를 위한 간결한 시황 분석 코멘트를 '
@@ -181,7 +181,7 @@ def save_data_json(market, news, ai_comment):
         json.dump(data, f, ensure_ascii=False, indent=2)
     print('data.json 저장 완료!')
 
-def send_telegram(market, news, ai_comment):
+def build_telegram_msg(market, news, ai_comment):
     today = datetime.now().strftime('%Y년 %m월 %d일')
     msg = '📈 <b>' + today + ' 투자 브리핑</b>\n\n'
     msg += '🤖 <b>AI 시황 코멘트</b>\n' + ai_comment + '\n\n'
@@ -211,12 +211,25 @@ def send_telegram(market, news, ai_comment):
             msg += '\n📌 <b>[' + cur + ']</b>\n'
         msg += '• ' + item['title'] + '\n<a href="' + item['link'] + '">🔗 자세히 보기</a>\n\n'
     msg += '🌐 <a href="https://dalbonz.github.io/investment-news-bot">📊 대시보드 바로가기</a>'
+    return msg
+
+def send_telegram(market, news, ai_comment):
+    msg = build_telegram_msg(market, news, ai_comment)
+    # 본인 발송
     res = requests.post(
         'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage',
         data={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'HTML'},
         timeout=15
     )
-    print('텔레그램 응답: ' + str(res.status_code))
+    print('텔레그램(본인) 응답: ' + str(res.status_code))
+    # 와이프 발송
+    if TELEGRAM_CHAT_ID_WIFE:
+        res2 = requests.post(
+            'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage',
+            data={'chat_id': TELEGRAM_CHAT_ID_WIFE, 'text': msg, 'parse_mode': 'HTML'},
+            timeout=15
+        )
+        print('텔레그램(와이프) 응답: ' + str(res2.status_code))
 
 def send_email(market, news, ai_comment):
     today = datetime.now().strftime('%Y년 %m월 %d일')
