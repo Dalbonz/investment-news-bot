@@ -24,7 +24,7 @@ body{background:#f4f6fa;font-family:'Malgun Gothic',Arial,sans-serif;font-size:1
 .card-tabs{display:flex;gap:4px;margin-bottom:6px}
 .card-tab{background:transparent;border:1px solid #e0e0e0;border-radius:10px;font-size:10px;font-weight:700;color:#888;padding:2px 8px;cursor:pointer;font-family:inherit}
 .card-tab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
-.chart-box{height:80px;margin:4px 0;position:relative}
+.chart-box{height:80px;margin:4px 0;position:relative;overflow:hidden}
 .row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0;border-bottom:1px solid #f4f4f4}
 .row:last-child{border-bottom:none}
 .rn{font-weight:600;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
@@ -78,7 +78,6 @@ tr:hover td{background:#f8fafc}
 .detail-tabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap}
 .detail-tab{background:transparent;border:1px solid #e0e0e0;border-radius:8px;font-size:10px;font-weight:700;color:#888;padding:4px 10px;cursor:pointer;font-family:inherit}
 .detail-tab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
-/* 주기별 변동 요약 */
 .period-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:8px 0}
 .ps-item{background:#f8fafc;border-radius:8px;padding:8px;text-align:center}
 .ps-item .pl{font-size:10px;color:#888;margin-bottom:3px}
@@ -160,11 +159,9 @@ tr:hover td{background:#f8fafc}
     </tr></thead><tbody id="etftb"></tbody></table>
   </div>
 </div>
-
 <div class="updated" id="upd"></div>
 </div>
 
-<!-- 상세 팝업 -->
 <div class="overlay" id="overlay" onclick="closeDetail()"></div>
 <div class="detail-panel" id="detail-panel">
   <button class="detail-close" onclick="closeDetail()">✕</button>
@@ -182,7 +179,6 @@ tr:hover td{background:#f8fafc}
     <button class="detail-tab" onclick="detailTab('max','1mo',this)">최대</button>
   </div>
   <div class="detail-chart-wrap" id="detail-chart-wrap"></div>
-  <!-- 주기별 변동 요약 -->
   <div class="period-summary" id="period-summary"></div>
   <div style="text-align:center;margin-top:10px">
     <a id="naver-link" href="#" target="_blank" style="font-size:12px;color:#1d4ed8;font-weight:700">네이버 증권에서 보기 →</a>
@@ -194,7 +190,6 @@ const PROXY=[
   u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
   u=>'https://corsproxy.io/?'+encodeURIComponent(u),
 ];
-
 const STOCK_KR=[
   {k:'samsung',l:'삼성전자'},{k:'hynix',l:'SK하이닉스'},{k:'hyundai',l:'현대차'},
   {k:'hanwha',l:'한화에어로'},{k:'naver',l:'NAVER'},
@@ -203,7 +198,6 @@ const STOCK_US=[
   {k:'nvda',l:'NVDA'},{k:'tsla',l:'TSLA'},{k:'aapl',l:'AAPL'},
   {k:'msft',l:'MSFT'},{k:'googl',l:'GOOGL'},
 ];
-
 const KR50=[
   {n:'삼성전자',s:'005930.KS'},{n:'SK하이닉스',s:'000660.KS'},{n:'LG에너지',s:'373220.KS'},
   {n:'삼성바이오',s:'207940.KS'},{n:'현대차',s:'005380.KS'},{n:'기아',s:'000270.KS'},
@@ -223,7 +217,6 @@ const KR50=[
   {n:'LIG넥스원',s:'079550.KS'},{n:'현대로템',s:'064350.KS'},{n:'HD현대',s:'267250.KS'},
   {n:'포스코퓨처엠',s:'003670.KS'},{n:'두산밥캣',s:'241560.KS'},
 ];
-
 const THEMES_DEF={
   '한국주요50':KR50,'실시간▲상승':[],'실시간▼하락':[],
   '반도체':[{n:'삼성전자',s:'005930.KS'},{n:'SK하이닉스',s:'000660.KS'},{n:'삼성전기',s:'009150.KS'},{n:'NVDA',s:'NVDA'},{n:'TSMC',s:'TSM'}],
@@ -233,13 +226,11 @@ const THEMES_DEF={
   '2차전지':[{n:'LG에너지',s:'373220.KS'},{n:'삼성SDI',s:'006400.KS'},{n:'LG화학',s:'051910.KS'},{n:'에코프로비엠',s:'247540.KQ'}],
   '건설':[{n:'현대건설',s:'000720.KS'},{n:'GS건설',s:'006360.KS'},{n:'대우건설',s:'047040.KS'}],
 };
-
 const ETF_LIST=[
   {n:'SPDR S&P500',s:'SPY'},{n:'인베스코QQQ',s:'QQQ'},{n:'iShares EM',s:'EEM'},
   {n:'iShares EAFE',s:'EFA'},{n:'VanEck Gold',s:'GDX'},{n:'US Oil',s:'USO'},
 ];
-
-const NAVER={up:'#c84a31',down:'#1261c4',upBg:'rgba(200,74,49,0.06)',downBg:'rgba(18,97,196,0.06)',grid:'#f0f0f0',text:'#888',border:'#e0e0e0'};
+const NAVER={up:'#c84a31',down:'#1261c4',upBg:'rgba(200,74,49,0.07)',downBg:'rgba(18,97,196,0.07)',grid:'#f0f0f0',text:'#888',border:'#e0e0e0'};
 
 let jsonData=null,allNews=[],kr50Cache=[],detailChartInst=null,currentDetailSymbol='';
 const miniCharts={};
@@ -267,21 +258,32 @@ async function yfetch(symbol,interval,range){
   return null;
 }
 
-// 미니차트: 네이버 스타일 (얇은 선, 연한 그라데이션, 축 숨김)
+// 미니차트: 축은 최소한만 보이게, 선 얇게
 function makeMiniChart(containerId,candles,isUp){
   const el=document.getElementById(containerId);
-  if(!el)return;
-  if(miniCharts[containerId]){miniCharts[containerId].remove();}
+  if(!el||!candles||candles.length<2)return;
+  if(miniCharts[containerId]){try{miniCharts[containerId].remove();}catch(e){}}
   el.innerHTML='';
+  const w=el.clientWidth||200;
   const color=isUp?NAVER.up:NAVER.down;
   const bgColor=isUp?NAVER.upBg:NAVER.downBg;
   const chart=LightweightCharts.createChart(el,{
-    width:el.clientWidth||140,height:80,
-    layout:{background:{color:'transparent'},textColor:'transparent',fontSize:0},
-    grid:{vertLines:{color:'transparent'},horzLines:{color:'transparent'}},
-    rightPriceScale:{visible:false},
-    leftPriceScale:{visible:false},
-    timeScale:{visible:false},
+    width:w,height:80,
+    layout:{background:{color:'transparent'},textColor:NAVER.text,fontSize:9},
+    grid:{vertLines:{color:'transparent'},horzLines:{color:'rgba(200,200,200,0.3)'}},
+    rightPriceScale:{
+      borderVisible:false,
+      visible:true,
+      scaleMargins:{top:0.1,bottom:0.05},
+      drawTicks:false,
+    },
+    timeScale:{
+      borderVisible:false,
+      visible:true,
+      timeVisible:false,
+      fixLeftEdge:true,
+      fixRightEdge:true,
+    },
     crosshair:{mode:LightweightCharts.CrosshairMode.Hidden},
     handleScroll:false,handleScale:false,
   });
@@ -294,12 +296,14 @@ function makeMiniChart(containerId,candles,isUp){
     lastValueVisible:false,
     crosshairMarkerVisible:false,
   });
-  if(candles&&candles.length>1){
-    series.setData(candles.map(c=>({time:c.time,value:c.close})).sort((a,b)=>a.time-b.time));
-  }
+  const sorted=candles.map(c=>({time:c.time,value:c.close})).sort((a,b)=>a.time-b.time);
+  series.setData(sorted);
   chart.timeScale().fitContent();
   miniCharts[containerId]=chart;
-  new ResizeObserver(()=>{if(el.clientWidth>0)chart.resize(el.clientWidth,80);}).observe(el);
+  new ResizeObserver(()=>{
+    const nw=el.clientWidth;
+    if(nw>0)chart.resize(nw,80);
+  }).observe(el);
 }
 
 function switchStockTab(tab,btn){
@@ -323,7 +327,9 @@ function renderStockCard(list){
     row.innerHTML='<span class="rn">'+item.l+'</span><span class="'+c+'">'+fmt(m.price)+' <small>'+sign(m.change)+fmt(m.pct)+'%</small></span>';
     el.appendChild(row);
   });
-  if(firstKey)makeMiniChart('cb1',jsonData.market[firstKey].candles,jsonData.market[firstKey].change>=0);
+  if(firstKey){
+    setTimeout(()=>makeMiniChart('cb1',jsonData.market[firstKey].candles,jsonData.market[firstKey].change>=0),50);
+  }
 }
 
 function renderSection(mid,cbId,keys,labels){
@@ -340,7 +346,10 @@ function renderSection(mid,cbId,keys,labels){
     el.appendChild(row);
   });
   const firstKey=keys.find(k=>jsonData.market[k]?.candles?.length>1);
-  if(firstKey){const m=jsonData.market[firstKey];makeMiniChart(cbId,m.candles,m.change>=0);}
+  if(firstKey){
+    const m=jsonData.market[firstKey];
+    setTimeout(()=>makeMiniChart(cbId,m.candles,m.change>=0),50);
+  }
 }
 
 function renderNews(tab){
@@ -481,7 +490,7 @@ async function loadETF(){
       s.setData(spark.map(c=>({time:c.time,value:c.close})).sort((a,b)=>a.time-b.time));
       ch.timeScale().fitContent();
       new ResizeObserver(()=>{if(el.clientWidth>0)ch.resize(el.clientWidth,40);}).observe(el);
-    },100);
+    },150);
   });
   window.addEventListener('resize',()=>{grid.style.gridTemplateColumns='repeat('+getEtfCols()+',1fr)';});
 }
@@ -497,38 +506,26 @@ async function openDetail(name,symbol){
   const code=symbol.replace('.KS','').replace('.KQ','');
   const isKR=symbol.includes('.KS')||symbol.includes('.KQ');
   document.getElementById('naver-link').href=isKR?'https://finance.naver.com/item/main.naver?code='+code:'https://finance.naver.com/world/sise.naver?symbol='+symbol;
-  // 첫번째 탭 초기화
   document.querySelectorAll('.detail-tab').forEach((b,i)=>{b.classList.toggle('on',i===0);});
   await loadDetailChart(symbol,'1d','5m');
 }
 
 async function loadDetailChart(symbol,range,interval){
-  if(detailChartInst){detailChartInst.remove();detailChartInst=null;}
+  if(detailChartInst){try{detailChartInst.remove();}catch(e){}detailChartInst=null;}
   const wrap=document.getElementById('detail-chart-wrap');
   wrap.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:12px">로딩 중...</div>';
   document.getElementById('period-summary').innerHTML='';
   const data=await yfetch(symbol,interval,range);
-  if(!data){
-    wrap.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:12px">데이터 없음</div>';
-    return;
-  }
+  if(!data){wrap.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:12px">데이터 없음</div>';return;}
   try{
     const meta=data.chart.result[0].meta;
     const q=data.chart.result[0].indicators.quote[0];
     const ts=data.chart.result[0].timestamp||[];
-    const closes=q.close||[];
-    const opens=q.open||[];
-    const highs=q.high||[];
-    const lows=q.low||[];
-    const vols=q.volume||[];
-
-    const price=meta.regularMarketPrice;
-    const prev=meta.chartPreviousClose||price;
+    const closes=q.close||[],opens=q.open||[],highs=q.high||[],lows=q.low||[],vols=q.volume||[];
+    const price=meta.regularMarketPrice,prev=meta.chartPreviousClose||price;
     const chg=price-prev,pct=chg/prev*100;
     const c=cls(chg),isUp=chg>=0,color=isUp?NAVER.up:NAVER.down;
-
-    // 유효한 데이터만 필터
-    const validIdx=ts.map((t,i)=>i).filter(i=>closes[i]!=null);
+    const validIdx=ts.map((_,i)=>i).filter(i=>closes[i]!=null);
     const firstClose=validIdx.length?closes[validIdx[0]]:prev;
     const lastClose=validIdx.length?closes[validIdx[validIdx.length-1]]:price;
     const periodHigh=validIdx.length?Math.max(...validIdx.map(i=>highs[i]||closes[i])):0;
@@ -537,12 +534,10 @@ async function loadDetailChart(symbol,range,interval){
     const periodChg=lastClose-firstClose;
     const periodPct=firstClose?periodChg/firstClose*100:0;
 
-    // 현재가 & 당일 등락 표시
     document.getElementById('d-price').innerHTML=
       '<span>'+price.toLocaleString(undefined,{maximumFractionDigits:2})+'</span>'+
       '<span class="'+c+'" style="font-size:14px;margin-left:8px">'+sign(chg)+chg.toFixed(2)+' ('+sign(pct)+pct.toFixed(2)+'%)</span>';
 
-    // 상단 정보 그리드 (유효값 없으면 전일종가 기준으로 표시)
     const open=meta.regularMarketOpen||firstClose||prev;
     const high=meta.regularMarketDayHigh>0?meta.regularMarketDayHigh:periodHigh||prev;
     const low=meta.regularMarketDayLow>0?meta.regularMarketDayLow:periodLow||prev;
@@ -557,7 +552,6 @@ async function loadDetailChart(symbol,range,interval){
       {l:'등락률',v:'<span class="'+c+'">'+sign(pct)+pct.toFixed(2)+'%</span>'},
     ].map(x=>'<div class="detail-item"><div class="dl">'+x.l+'</div><div class="dv">'+x.v+'</div></div>').join('');
 
-    // 차트
     wrap.innerHTML='';
     const chart=LightweightCharts.createChart(wrap,{
       width:wrap.clientWidth||320,height:220,
@@ -567,47 +561,20 @@ async function loadDetailChart(symbol,range,interval){
       timeScale:{borderColor:NAVER.border,timeVisible:true,secondsVisible:false},
       crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
     });
-
     if(interval==='5m'||interval==='1h'){
-      const lineSeries=chart.addAreaSeries({
-        lineColor:color,topColor:isUp?NAVER.upBg:NAVER.downBg,
-        bottomColor:'transparent',lineWidth:1.5,
-        priceLineVisible:true,lastValueVisible:true,
-      });
-      lineSeries.setData(
-        ts.map((t,i)=>({time:t,value:closes[i]??null}))
-          .filter(d=>d.value!==null)
-          .sort((a,b)=>a.time-b.time)
-      );
+      const s=chart.addAreaSeries({lineColor:color,topColor:isUp?NAVER.upBg:NAVER.downBg,bottomColor:'transparent',lineWidth:1.5,priceLineVisible:true,lastValueVisible:true});
+      s.setData(ts.map((t,i)=>({time:t,value:closes[i]??null})).filter(d=>d.value!==null).sort((a,b)=>a.time-b.time));
     }else{
-      const candleSeries=chart.addCandlestickSeries({
-        upColor:NAVER.up,downColor:NAVER.down,
-        borderUpColor:NAVER.up,borderDownColor:NAVER.down,
-        wickUpColor:NAVER.up,wickDownColor:NAVER.down,
-      });
-      candleSeries.setData(
-        ts.map((t,i)=>({
-          time:t,
-          open:opens[i]??closes[i],
-          high:highs[i]??closes[i],
-          low:lows[i]??closes[i],
-          close:closes[i]??0,
-        })).filter(d=>d.close).sort((a,b)=>a.time-b.time)
-      );
-      const volSeries=chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol'});
+      const cs=chart.addCandlestickSeries({upColor:NAVER.up,downColor:NAVER.down,borderUpColor:NAVER.up,borderDownColor:NAVER.down,wickUpColor:NAVER.up,wickDownColor:NAVER.down});
+      cs.setData(ts.map((t,i)=>({time:t,open:opens[i]??closes[i],high:highs[i]??closes[i],low:lows[i]??closes[i],close:closes[i]??0})).filter(d=>d.close).sort((a,b)=>a.time-b.time));
+      const vs=chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol'});
       chart.priceScale('vol').applyOptions({scaleMargins:{top:0.8,bottom:0}});
-      volSeries.setData(
-        ts.map((t,i)=>({
-          time:t,value:vols[i]||0,
-          color:(closes[i]||0)>=(opens[i]||0)?'rgba(200,74,49,0.3)':'rgba(18,97,196,0.3)',
-        })).filter(d=>d.value).sort((a,b)=>a.time-b.time)
-      );
+      vs.setData(ts.map((t,i)=>({time:t,value:vols[i]||0,color:(closes[i]||0)>=(opens[i]||0)?'rgba(200,74,49,0.3)':'rgba(18,97,196,0.3)'})).filter(d=>d.value).sort((a,b)=>a.time-b.time));
     }
     chart.timeScale().fitContent();
     detailChartInst=chart;
     new ResizeObserver(()=>{if(wrap.clientWidth>0)chart.resize(wrap.clientWidth,220);}).observe(wrap);
 
-    // 주기별 변동 요약
     const pc=cls(periodChg);
     document.getElementById('period-summary').innerHTML=[
       {l:'기간 시작가',v:fmt(firstClose,2)},
@@ -617,7 +584,6 @@ async function loadDetailChart(symbol,range,interval){
       {l:'기간 등락률',v:'<span class="'+pc+'">'+sign(periodPct)+periodPct.toFixed(2)+'%</span>'},
       {l:'기간 거래량',v:periodVol?(periodVol/1000).toFixed(0)+'K':'-'},
     ].map(x=>'<div class="ps-item"><div class="pl">'+x.l+'</div><div class="pv">'+x.v+'</div></div>').join('');
-
   }catch(e){console.log('상세 차트 오류:',e);wrap.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0">차트 오류</div>';}
 }
 
@@ -630,7 +596,7 @@ function detailTab(range,interval,btn){
 function closeDetail(){
   document.getElementById('detail-panel').classList.remove('show');
   document.getElementById('overlay').classList.remove('show');
-  if(detailChartInst){detailChartInst.remove();detailChartInst=null;}
+  if(detailChartInst){try{detailChartInst.remove();}catch(e){}detailChartInst=null;}
 }
 
 async function init(){
