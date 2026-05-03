@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-02T06:28:33Z",
+  "updated": "2026-05-03T07:28:26Z",
   "market": {
     "kospi": {
       "price": 6598.87,
@@ -508,7 +508,7 @@
           "vol": 0
         },
         {
-          "time": 1777670964,
+          "time": 1777670713,
           "open": 9.387,
           "high": 9.439,
           "low": 9.341,
@@ -566,7 +566,7 @@
           "vol": 0
         },
         {
-          "time": 1777670964,
+          "time": 1777670713,
           "open": 1728.2,
           "high": 1731.8,
           "low": 1722.5,
@@ -624,7 +624,7 @@
           "vol": 0
         },
         {
-          "time": 1777670964,
+          "time": 1777670713,
           "open": 2002.96,
           "high": 2007.21,
           "low": 1993.78,
@@ -642,7 +642,7 @@
       "vol": 0,
       "candles": [
         {
-          "time": 1777691665,
+          "time": 1777691714,
           "open": 215.559,
           "high": 215.559,
           "low": 215.559,
@@ -758,7 +758,7 @@
           "vol": 0
         },
         {
-          "time": 1777670964,
+          "time": 1777670953,
           "open": 1.174,
           "high": 1.1788,
           "low": 1.1721,
@@ -769,20 +769,12 @@
     },
     "dxy": {
       "price": 98.211,
-      "change": -0.269,
-      "pct": -0.27,
+      "change": -0.409,
+      "pct": -0.41,
       "high": 98.244,
       "low": 97.72,
       "vol": 0,
       "candles": [
-        {
-          "time": 1777262400,
-          "open": 99.33,
-          "high": 99.34,
-          "low": 98.21,
-          "close": 98.48,
-          "vol": 0
-        },
         {
           "time": 1777348800,
           "open": 98.47,
@@ -819,20 +811,12 @@
     },
     "oil": {
       "price": 101.94,
-      "change": 5.57,
-      "pct": 5.78,
+      "change": 2.01,
+      "pct": 2.01,
       "high": 106.65,
       "low": 99.3,
       "vol": 241919,
       "candles": [
-        {
-          "time": 1777262400,
-          "open": 95.6,
-          "high": 97.67,
-          "low": 94.59,
-          "close": 96.37,
-          "vol": 219055
-        },
         {
           "time": 1777348800,
           "open": 96.67,
@@ -863,26 +847,18 @@
           "high": 106.65,
           "low": 99.3,
           "close": 101.94,
-          "vol": 341994
+          "vol": 241919
         }
       ]
     },
     "brent": {
       "price": 108.17,
-      "change": -0.06,
-      "pct": -0.06,
+      "change": -3.09,
+      "pct": -2.78,
       "high": 112.43,
       "low": 106.27,
       "vol": 37287,
       "candles": [
-        {
-          "time": 1777262400,
-          "open": 106.5,
-          "high": 109.79,
-          "low": 105.85,
-          "close": 108.23,
-          "vol": 29439
-        },
         {
           "time": 1777348800,
           "open": 108.3,
@@ -913,26 +889,18 @@
           "high": 112.43,
           "low": 106.27,
           "close": 108.17,
-          "vol": 58572
+          "vol": 37287
         }
       ]
     },
     "natgas": {
       "price": 2.78,
-      "change": 0.23,
-      "pct": 9.02,
+      "change": 0.221,
+      "pct": 8.64,
       "high": 2.821,
       "low": 2.746,
       "vol": 107096,
       "candles": [
-        {
-          "time": 1777262400,
-          "open": 2.505,
-          "high": 2.63,
-          "low": 2.505,
-          "close": 2.55,
-          "vol": 65552
-        },
         {
           "time": 1777348800,
           "open": 2.539,
@@ -963,26 +931,18 @@
           "high": 2.821,
           "low": 2.746,
           "close": 2.78,
-          "vol": 172760
+          "vol": 107096
         }
       ]
     },
     "gold": {
       "price": 4644.5,
-      "change": -30.9,
-      "pct": -0.66,
+      "change": 53.0,
+      "pct": 1.15,
       "high": 4673.0,
       "low": 4570.0,
       "vol": 91619,
       "candles": [
-        {
-          "time": 1777262400,
-          "open": 4707.6001,
-          "high": 4711.1001,
-          "low": 4675.3999,
-          "close": 4675.3999,
-          "vol": 538
-        },
         {
           "time": 1777348800,
           "open": 4680.8999,
@@ -1009,30 +969,22 @@
         },
         {
           "time": 1777608000,
-          "open": 4636.7002,
-          "high": 4636.7002,
-          "low": 4581.7002,
-          "close": 4629.8999,
-          "vol": 77
+          "open": 4636.8999,
+          "high": 4673.0,
+          "low": 4570.0,
+          "close": 4644.5,
+          "vol": 91619
         }
       ]
     },
     "silver": {
       "price": 76.431,
-      "change": 1.428,
-      "pct": 1.9,
+      "change": 3.226,
+      "pct": 4.41,
       "high": 77.525,
       "low": 73.435,
       "vol": 33297,
       "candles": [
-        {
-          "time": 1777262400,
-          "open": 75.265,
-          "high": 75.335,
-          "low": 74.755,
-          "close": 75.003,
-          "vol": 7
-        },
         {
           "time": 1777348800,
           "open": 73.205,
@@ -1059,30 +1011,22 @@
         },
         {
           "time": 1777608000,
-          "open": 74.42,
-          "high": 76.88,
-          "low": 73.11,
-          "close": 75.951,
-          "vol": 498
+          "open": 74.315,
+          "high": 77.525,
+          "low": 73.435,
+          "close": 76.431,
+          "vol": 33297
         }
       ]
     },
     "copper": {
       "price": 5.9845,
-      "change": -0.0335,
-      "pct": -0.56,
+      "change": 0.07,
+      "pct": 1.18,
       "high": 6.04,
       "low": 5.9565,
       "vol": 28052,
       "candles": [
-        {
-          "time": 1777262400,
-          "open": 6.022,
-          "high": 6.022,
-          "low": 6.018,
-          "close": 6.018,
-          "vol": 914
-        },
         {
           "time": 1777348800,
           "open": 5.9145,
@@ -1109,11 +1053,11 @@
         },
         {
           "time": 1777608000,
-          "open": 5.9335,
-          "high": 5.936,
-          "low": 5.912,
-          "close": 5.932,
-          "vol": 1622
+          "open": 6.027,
+          "high": 6.04,
+          "low": 5.9565,
+          "close": 5.9845,
+          "vol": 28052
         }
       ]
     },
@@ -1740,56 +1684,56 @@
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "포어프론트 테크 홀딩스, 1억 달러 SPAC IPO Nasdaq 상장 마감",
-      "link": "https://kr.investing.com/news/company-news/article-93CH-1924207"
+      "title": "AI 붐과 석유 수출이 전쟁 위험 상쇄하며 신흥시장 사상 최고치 기록",
+      "link": "https://kr.investing.com/news/economy-news/article-1924288"
     },
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "포어프론트 테크, 나스닥에서 1억 달러 규모 IPO 완료",
-      "link": "https://kr.investing.com/news/stock-market-news/article-432SI-1924206"
+      "title": "호주, 재정적자 우려 속 메디케어 클리닉에 18억 호주달러 지원",
+      "link": "https://kr.investing.com/news/economy-news/article-1924280"
     },
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "다카이치 일본 총리, 투자 급감 문제 해결 위해 하노이 방문",
-      "link": "https://kr.investing.com/news/economy-news/article-1924203"
+      "title": "항공유 가격 급등으로 항공업계 40억 달러 마진 압박 직면",
+      "link": "https://kr.investing.com/news/economy-news/article-1924271"
     },
     {
       "source": "한국경제",
       "category": "국내",
-      "title": "나스닥 25000 돌파…골드만 왜 \"조정\" 외치나 [김현석의 월스트리트나우]",
-      "link": "https://www.hankyung.com/article/202605021358i"
+      "title": "[삼성중공업 분석] 아쉬운 실적에도 2분기 반등 기대 커지는 이유",
+      "link": "https://www.hankyung.com/article/202605032717i"
     },
     {
       "source": "한국경제",
       "category": "국내",
-      "title": "유가는 폭등했는데…'석유 공룡' 순이익은 반토막 수준",
-      "link": "https://www.hankyung.com/article/2026050214567"
+      "title": "현대경제연구원, 韓 성장률 2.7%로 상향…반도체·추경 효과",
+      "link": "https://www.hankyung.com/article/2026050326617"
     },
     {
       "source": "한국경제",
       "category": "국내",
-      "title": "트럼프, EU 자동차에 25% 관세 폭탄…글로벌 무역전쟁 다시 시작되나",
-      "link": "https://www.hankyung.com/article/202605021341i"
+      "title": "게임스톱, 이베이 인수 추진…'수집품 경제' 확대에 베팅",
+      "link": "https://www.hankyung.com/article/202605032503i"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "[부고] 조건형(한국투자증권 포트폴리오매니지먼트그룹장)씨 모친상",
-      "link": "https://www.yna.co.kr/view/AKR20260502029100505"
+      "title": "국민성장펀드, 소버린AI 업스테이지에 5천600억원…2호 직접투자",
+      "link": "https://www.yna.co.kr/view/AKR20260502045100002"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "日, 대미투자 1차 프로젝트 위해 민간은행 협력 대출",
-      "link": "https://www.yna.co.kr/view/AKR20260502025200073"
+      "title": "전남 농수산식품 수출 올해 들어 20.9% 증가",
+      "link": "https://www.yna.co.kr/view/AKR20260430173300054"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "[마이더스] 해외주식 양도세 관리 요령",
-      "link": "https://www.yna.co.kr/view/AKR20260430090400980"
+      "title": "현대硏, 올해 성장률 2.7%로 0.8%p 상향…\"반도체 수출 호조\"",
+      "link": "https://www.yna.co.kr/view/AKR20260502037000002"
     }
   ],
   "ai_comment": "시장 분석 생성 중 오류가 발생했어요."
