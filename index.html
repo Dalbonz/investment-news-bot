@@ -90,6 +90,8 @@ tr:hover td{background:#f8fafc}
 .pf-sl{font-size:10px;color:#888;margin-bottom:4px}
 .pf-sv{font-size:15px;font-weight:800;color:#111}
 .pf-sv.up{color:#c84a31}.pf-sv.down{color:#1261c4}
+.pftable td:first-child{color:#222;cursor:default}
+.pftable td:first-child:hover{text-decoration:none}
 </style>
 </head>
 <body>
@@ -169,7 +171,7 @@ tr:hover td{background:#f8fafc}
   <div class="sec-title">💼 내 포트폴리오</div>
   <div class="pf-summary" id="pf-summary"></div>
   <div class="tw">
-    <table>
+    <table class="pftable">
       <thead><tr>
         <th>종목</th><th>수량</th><th>평단가</th><th>현재가</th><th>수익률</th><th>평가금액</th><th>손익</th>
       </tr></thead>
@@ -303,11 +305,11 @@ function drawSparkSVG(el,values,isUp,h){
   const gid='sg'+Math.random().toString(36).slice(2);
   el.innerHTML=`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block">
     <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="${color}" stop-opacity="0.20"/>
+      <stop offset="0%" stop-color="${color}" stop-opacity="0.12"/>
       <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
     </linearGradient></defs>
     <path d="${fill}" fill="url(#${gid})"/>
-    <path d="${line}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${line}" fill="none" stroke="${color}" stroke-width="1" stroke-linejoin="round" stroke-linecap="round"/>
   </svg>`;
 }
 
@@ -557,10 +559,13 @@ async function loadDetailChart(symbol,range,interval){
       '<span>'+price.toLocaleString(undefined,{maximumFractionDigits:2})+'</span>'+
       '<span class="'+c+'" style="font-size:14px;margin-left:8px">'+sign(chg)+chg.toFixed(2)+' ('+sign(pct)+pct.toFixed(2)+'%)</span>';
 
-    const open=meta.regularMarketOpen||firstClose||prev;
-    const high=meta.regularMarketDayHigh>0?meta.regularMarketDayHigh:periodHigh||prev;
-    const low=meta.regularMarketDayLow>0?meta.regularMarketDayLow:periodLow||prev;
-    const vol=meta.regularMarketVolume||periodVol;
+    const mKey=Object.keys(KEY_TO_YF).find(k=>KEY_TO_YF[k]===symbol);
+    const mC=(jsonData?.market?.[mKey]?.candles||[]);
+    const lc=mC[mC.length-1]||{};
+    const open=meta.regularMarketOpen||lc.open||firstClose||prev;
+    const high=meta.regularMarketDayHigh>0?meta.regularMarketDayHigh:(periodHigh>0?periodHigh:lc.high||prev);
+    const low=meta.regularMarketDayLow>0?meta.regularMarketDayLow:(periodLow>0?periodLow:lc.low||prev);
+    const vol=meta.regularMarketVolume||periodVol||lc.vol||0;
 
     document.getElementById('d-grid').innerHTML=[
       {l:'시가',v:fmt(open,2)},
