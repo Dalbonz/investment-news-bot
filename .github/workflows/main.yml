@@ -23,6 +23,7 @@ jobs:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          TELEGRAM_CHAT_ID_WIFE: ${{ secrets.TELEGRAM_CHAT_ID_WIFE }}
         run: python news_bot.py
       - name: Commit data.json
         run: |

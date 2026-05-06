@@ -170,13 +170,95 @@ def get_ai_comment(market):
         print('AI 코멘트 오류: ' + str(e))
         return '시장 분석을 불러오지 못했어요.'
 
-def save_data_json(market, news, ai_comment):
+def get_portfolio_data(market):
+    try:
+        with open('portfolio.json', 'r', encoding='utf-8') as f:
+            pf = json.load(f)
+    except FileNotFoundError:
+        return None
+    except Exception as e:
+        print('portfolio.json 오류: ' + str(e))
+        return None
+
+    usdkrw = market.get('usdkrw', {}).get('price', 1300.0)
+    sym_to_key = {v: k for k, v in SYMBOLS.items()}
+
+    holdings_out = []
+    total_cost_krw = 0.0
+    total_value_krw = 0.0
+
+    for h in pf.get('holdings', []):
+        symbol     = h['symbol']
+        qty        = h['qty']
+        avg_price  = h['avg_price']
+        currency   = h.get('currency', 'KRW')
+        name       = h['name']
+
+        # 이미 fetch된 시장 데이터에서 현재가 조회
+        current_price = None
+        mkey = sym_to_key.get(symbol)
+        if mkey and mkey in market:
+            current_price = market[mkey]['price']
+
+        # 없으면 직접 fetch
+        if current_price is None:
+            try:
+                url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + symbol + '?interval=1d&range=1d'
+                res = requests.get(url, headers=HEADERS, timeout=10)
+                res.raise_for_status()
+                current_price = res.json()['chart']['result'][0]['meta']['regularMarketPrice']
+                print(name + ' 포트폴리오 가격: ' + str(current_price))
+            except Exception as e:
+                print(name + ' 가격 오류: ' + str(e))
+                current_price = avg_price
+
+        rate           = usdkrw if currency == 'USD' else 1.0
+        avg_price_krw  = avg_price * rate
+        curr_price_krw = current_price * rate
+        cost_krw       = avg_price_krw * qty
+        value_krw      = curr_price_krw * qty
+        pnl_krw        = value_krw - cost_krw
+        pnl_pct        = pnl_krw / cost_krw * 100 if cost_krw else 0
+
+        total_cost_krw  += cost_krw
+        total_value_krw += value_krw
+
+        holdings_out.append({
+            'name':              name,
+            'symbol':            symbol,
+            'qty':               qty,
+            'avg_price':         round(avg_price, 4),
+            'currency':          currency,
+            'current_price':     round(current_price, 4),
+            'current_price_krw': round(curr_price_krw, 2),
+            'value_krw':         round(value_krw, 2),
+            'cost_krw':          round(cost_krw, 2),
+            'pnl_krw':           round(pnl_krw, 2),
+            'pnl_pct':           round(pnl_pct, 2),
+        })
+
+    total_pnl_krw = total_value_krw - total_cost_krw
+    total_pnl_pct = total_pnl_krw / total_cost_krw * 100 if total_cost_krw else 0
+
+    print('포트폴리오 완료: 평가 ' + str(round(total_value_krw)) + 'KRW')
+    return {
+        'holdings':        holdings_out,
+        'total_cost_krw':  round(total_cost_krw, 2),
+        'total_value_krw': round(total_value_krw, 2),
+        'total_pnl_krw':   round(total_pnl_krw, 2),
+        'total_pnl_pct':   round(total_pnl_pct, 2),
+        'usdkrw':          round(usdkrw, 2),
+    }
+
+def save_data_json(market, news, ai_comment, portfolio=None):
     data = {
         'updated':    datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
         'market':     market,
         'news':       news,
         'ai_comment': ai_comment,
     }
+    if portfolio:
+        data['portfolio'] = portfolio
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print('data.json 저장 완료!')
@@ -286,7 +368,8 @@ def main():
     market     = get_market_data()
     news       = get_news()
     ai_comment = get_ai_comment(market)
-    save_data_json(market, news, ai_comment)
+    portfolio  = get_portfolio_data(market)
+    save_data_json(market, news, ai_comment, portfolio)
     send_telegram(market, news, ai_comment)
     send_email(market, news, ai_comment)
     print('완료!')

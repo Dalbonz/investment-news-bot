@@ -1,0 +1,7 @@
+{
+  "holdings": [
+    {"name": "삼성전자", "symbol": "005930.KS", "qty": 10, "avg_price": 70000, "currency": "KRW"},
+    {"name": "엔비디아",  "symbol": "NVDA",       "qty": 5,  "avg_price": 130.0, "currency": "USD"}
+  ],
+  "base_currency": "KRW"
+}
