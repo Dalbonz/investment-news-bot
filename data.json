@@ -1,13 +1,13 @@
 {
-  "updated": "2026-05-06T00:47:08Z",
+  "updated": "2026-05-06T01:39:08Z",
   "market": {
     "kospi": {
-      "price": 7318.8,
-      "change": 703.77,
-      "pct": 10.64,
-      "high": 7318.8,
+      "price": 7313.15,
+      "change": 698.12,
+      "pct": 10.55,
+      "high": 7338.61,
       "low": 7093.01,
-      "vol": 233515,
+      "vol": 421955,
       "candles": [
         {
           "time": 1777334400,
@@ -44,20 +44,20 @@
         {
           "time": 1778025600,
           "open": 7093.0098,
-          "high": 7318.7998,
+          "high": 7338.6099,
           "low": 7093.0098,
-          "close": 7318.7998,
-          "vol": 233515
+          "close": 7313.1499,
+          "vol": 421955
         }
       ]
     },
     "kosdaq": {
-      "price": 1198.61,
-      "change": -27.57,
-      "pct": -2.25,
+      "price": 1205.77,
+      "change": -20.41,
+      "pct": -1.66,
       "high": 1220.9,
-      "low": 1198.52,
-      "vol": 332302,
+      "low": 1197.01,
+      "vol": 615070,
       "candles": [
         {
           "time": 1777334400,
@@ -95,9 +95,9 @@
           "time": 1778025600,
           "open": 1220.9,
           "high": 1220.9,
-          "low": 1198.52,
-          "close": 1198.61,
-          "vol": 332302
+          "low": 1197.01,
+          "close": 1205.77,
+          "vol": 615070
         }
       ]
     },
@@ -402,11 +402,11 @@
       ]
     },
     "usdkrw": {
-      "price": 1457.78,
-      "change": -29.6,
-      "pct": -1.99,
+      "price": 1456.98,
+      "change": -30.4,
+      "pct": -2.04,
       "high": 1474.88,
-      "low": 1456.72,
+      "low": 1454.84,
       "vol": 0,
       "candles": [
         {
@@ -442,21 +442,21 @@
           "vol": 0
         },
         {
-          "time": 1778028417,
+          "time": 1778031535,
           "open": 1474.74,
           "high": 1474.88,
-          "low": 1456.72,
-          "close": 1457.78,
+          "low": 1454.84,
+          "close": 1456.98,
           "vol": 0
         }
       ]
     },
     "jpykrw": {
-      "price": 9.231,
-      "change": -0.054,
-      "pct": -0.58,
+      "price": 9.227,
+      "change": -0.058,
+      "pct": -0.62,
       "high": 9.339,
-      "low": 9.231,
+      "low": 9.215,
       "vol": 0,
       "candles": [
         {
@@ -492,21 +492,21 @@
           "vol": 0
         },
         {
-          "time": 1778028315,
+          "time": 1778031316,
           "open": 9.318,
           "high": 9.339,
-          "low": 9.231,
-          "close": 9.231,
+          "low": 9.215,
+          "close": 9.227,
           "vol": 0
         }
       ]
     },
     "eurkrw": {
-      "price": 1708.2,
-      "change": -28.4,
-      "pct": -1.64,
+      "price": 1708.4,
+      "change": -28.2,
+      "pct": -1.62,
       "high": 1728.4,
-      "low": 1708.2,
+      "low": 1705.9,
       "vol": 0,
       "candles": [
         {
@@ -542,21 +542,21 @@
           "vol": 0
         },
         {
-          "time": 1778028315,
+          "time": 1778031316,
           "open": 1723.9,
           "high": 1728.4,
-          "low": 1708.2,
-          "close": 1708.2,
+          "low": 1705.9,
+          "close": 1708.4,
           "vol": 0
         }
       ]
     },
     "gbpkrw": {
-      "price": 1977.65,
-      "change": -28.5579,
-      "pct": -1.42,
+      "price": 1977.61,
+      "change": -28.5979,
+      "pct": -1.43,
       "high": 2000.79,
-      "low": 1977.65,
+      "low": 1974.97,
       "vol": 0,
       "candles": [
         {
@@ -592,37 +592,37 @@
           "vol": 0
         },
         {
-          "time": 1778028315,
+          "time": 1778031316,
           "open": 1995.45,
           "high": 2000.79,
-          "low": 1977.65,
-          "close": 1977.65,
+          "low": 1974.97,
+          "close": 1977.61,
           "vol": 0
         }
       ]
     },
     "cnykrw": {
-      "price": 216.01,
-      "change": 0.145,
-      "pct": 0.07,
+      "price": 213.799,
+      "change": -2.066,
+      "pct": -0.96,
       "high": 216.01,
-      "low": 215.95,
+      "low": 213.799,
       "vol": 0,
       "candles": [
         {
-          "time": 1778024714,
+          "time": 1778031316,
           "open": 215.95,
           "high": 216.01,
-          "low": 215.95,
-          "close": 216.01,
+          "low": 213.799,
+          "close": 213.799,
           "vol": 0
         }
       ]
     },
     "usdjpy": {
-      "price": 157.571,
-      "change": -2.613,
-      "pct": -1.63,
+      "price": 157.632,
+      "change": -2.552,
+      "pct": -1.59,
       "high": 157.93,
       "low": 157.525,
       "vol": 0,
@@ -660,19 +660,19 @@
           "vol": 0
         },
         {
-          "time": 1778028419,
+          "time": 1778031537,
           "open": 157.847,
           "high": 157.93,
           "low": 157.525,
-          "close": 157.571,
+          "close": 157.632,
           "vol": 0
         }
       ]
     },
     "eurusd": {
-      "price": 1.1722,
-      "change": 0.0037,
-      "pct": 0.32,
+      "price": 1.1723,
+      "change": 0.0038,
+      "pct": 0.33,
       "high": 1.1727,
       "low": 1.1695,
       "vol": 0,
@@ -710,21 +710,21 @@
           "vol": 0
         },
         {
-          "time": 1778028375,
+          "time": 1778031496,
           "open": 1.1701,
           "high": 1.1727,
           "low": 1.1695,
-          "close": 1.1722,
+          "close": 1.1723,
           "vol": 0
         }
       ]
     },
     "dxy": {
-      "price": 98.279,
-      "change": 0.199,
-      "pct": 0.2,
+      "price": 98.249,
+      "change": 0.169,
+      "pct": 0.17,
       "high": 98.342,
-      "low": 98.268,
+      "low": 98.234,
       "vol": 0,
       "candles": [
         {
@@ -752,22 +752,22 @@
           "vol": 0
         },
         {
-          "time": 1778027819,
+          "time": 1778030936,
           "open": 98.308,
           "high": 98.342,
-          "low": 98.268,
-          "close": 98.279,
+          "low": 98.234,
+          "close": 98.249,
           "vol": 0
         }
       ]
     },
     "oil": {
-      "price": 101.1,
-      "change": -3.97,
-      "pct": -3.78,
+      "price": 100.97,
+      "change": -4.1,
+      "pct": -3.9,
       "high": 102.7,
       "low": 99.12,
-      "vol": 18692,
+      "vol": 22685,
       "candles": [
         {
           "time": 1777521600,
@@ -794,22 +794,22 @@
           "vol": 268707
         },
         {
-          "time": 1778027818,
+          "time": 1778030933,
           "open": 102.7,
           "high": 102.7,
           "low": 99.12,
-          "close": 101.1,
-          "vol": 18692
+          "close": 100.97,
+          "vol": 22685
         }
       ]
     },
     "brent": {
-      "price": 108.76,
-      "change": -5.25,
-      "pct": -4.6,
+      "price": 108.46,
+      "change": -5.55,
+      "pct": -4.87,
       "high": 110.45,
       "low": 106.7,
-      "vol": 3554,
+      "vol": 3962,
       "candles": [
         {
           "time": 1777521600,
@@ -836,22 +836,22 @@
           "vol": 40576
         },
         {
-          "time": 1778027727,
+          "time": 1778030934,
           "open": 110.45,
           "high": 110.45,
           "low": 106.7,
-          "close": 108.76,
-          "vol": 3554
+          "close": 108.46,
+          "vol": 3962
         }
       ]
     },
     "natgas": {
-      "price": 2.774,
-      "change": 0.007,
-      "pct": 0.25,
+      "price": 2.777,
+      "change": 0.01,
+      "pct": 0.36,
       "high": 2.785,
       "low": 2.764,
-      "vol": 1110,
+      "vol": 1565,
       "candles": [
         {
           "time": 1777521600,
@@ -878,22 +878,22 @@
           "vol": 111530
         },
         {
-          "time": 1778027790,
+          "time": 1778030925,
           "open": 2.781,
           "high": 2.785,
           "low": 2.764,
-          "close": 2.774,
-          "vol": 1110
+          "close": 2.777,
+          "vol": 1565
         }
       ]
     },
     "gold": {
-      "price": 4618.8,
-      "change": 4.1,
-      "pct": 0.09,
-      "high": 4621.0,
+      "price": 4635.3,
+      "change": 20.6,
+      "pct": 0.45,
+      "high": 4636.5,
       "low": 4556.1,
-      "vol": 9137,
+      "vol": 13801,
       "candles": [
         {
           "time": 1777521600,
@@ -920,22 +920,22 @@
           "vol": 113
         },
         {
-          "time": 1778027820,
+          "time": 1778030938,
           "open": 4569.2998,
-          "high": 4621.0,
+          "high": 4636.5,
           "low": 4556.1001,
-          "close": 4618.7998,
-          "vol": 9137
+          "close": 4635.2998,
+          "vol": 13801
         }
       ]
     },
     "silver": {
-      "price": 74.4,
-      "change": 0.866,
-      "pct": 1.18,
-      "high": 74.545,
+      "price": 75.39,
+      "change": 1.856,
+      "pct": 2.52,
+      "high": 75.435,
       "low": 73.05,
-      "vol": 2395,
+      "vol": 4016,
       "candles": [
         {
           "time": 1777521600,
@@ -962,22 +962,22 @@
           "vol": 598
         },
         {
-          "time": 1778027805,
+          "time": 1778030937,
           "open": 73.3,
-          "high": 74.545,
+          "high": 75.435,
           "low": 73.05,
-          "close": 74.4,
-          "vol": 2395
+          "close": 75.39,
+          "vol": 4016
         }
       ]
     },
     "copper": {
-      "price": 6.004,
-      "change": 0.078,
-      "pct": 1.32,
-      "high": 6.012,
+      "price": 6.044,
+      "change": 0.118,
+      "pct": 1.99,
+      "high": 6.048,
       "low": 5.983,
-      "vol": 1545,
+      "vol": 3306,
       "candles": [
         {
           "time": 1777521600,
@@ -1004,12 +1004,12 @@
           "vol": 1399
         },
         {
-          "time": 1778027773,
+          "time": 1778030908,
           "open": 5.9895,
-          "high": 6.0125,
+          "high": 6.048,
           "low": 5.983,
-          "close": 6.0045,
-          "vol": 1545
+          "close": 6.0445,
+          "vol": 3306
         }
       ]
     },
@@ -1364,12 +1364,12 @@
       ]
     },
     "samsung": {
-      "price": 260500.0,
-      "change": 36000.0,
-      "pct": 16.04,
+      "price": 259000.0,
+      "change": 34500.0,
+      "pct": 15.37,
       "high": 261500.0,
       "low": 251000.0,
-      "vol": 15218622,
+      "vol": 21745329,
       "candles": [
         {
           "time": 1777334400,
@@ -1408,18 +1408,18 @@
           "open": 254000.0,
           "high": 261500.0,
           "low": 251000.0,
-          "close": 260500.0,
-          "vol": 15218622
+          "close": 259000.0,
+          "vol": 21745329
         }
       ]
     },
     "hynix": {
-      "price": 1579500.0,
-      "change": 287500.0,
-      "pct": 22.25,
+      "price": 1588000.0,
+      "change": 296000.0,
+      "pct": 22.91,
       "high": 1601000.0,
       "low": 1557000.0,
-      "vol": 1856236,
+      "vol": 2652350,
       "candles": [
         {
           "time": 1777334400,
@@ -1458,18 +1458,18 @@
           "open": 1590000.0,
           "high": 1601000.0,
           "low": 1557000.0,
-          "close": 1579500.0,
-          "vol": 1856236
+          "close": 1588000.0,
+          "vol": 2652350
         }
       ]
     },
     "hanwha": {
-      "price": 1425000.0,
-      "change": -29000.0,
-      "pct": -1.99,
+      "price": 1434000.0,
+      "change": -20000.0,
+      "pct": -1.38,
       "high": 1473000.0,
       "low": 1405000.0,
-      "vol": 55389,
+      "vol": 77968,
       "candles": [
         {
           "time": 1777334400,
@@ -1508,18 +1508,18 @@
           "open": 1473000.0,
           "high": 1473000.0,
           "low": 1405000.0,
-          "close": 1425000.0,
-          "vol": 55389
+          "close": 1434000.0,
+          "vol": 77968
         }
       ]
     },
     "hyundai": {
-      "price": 558500.0,
-      "change": 34500.0,
-      "pct": 6.58,
+      "price": 553000.0,
+      "change": 29000.0,
+      "pct": 5.53,
       "high": 564000.0,
       "low": 541000.0,
-      "vol": 545640,
+      "vol": 814599,
       "candles": [
         {
           "time": 1777334400,
@@ -1558,8 +1558,8 @@
           "open": 545000.0,
           "high": 564000.0,
           "low": 541000.0,
-          "close": 558500.0,
-          "vol": 545640
+          "close": 553000.0,
+          "vol": 814599
         }
       ]
     },
@@ -1568,8 +1568,8 @@
       "change": -6000.0,
       "pct": -2.79,
       "high": 213000.0,
-      "low": 209000.0,
-      "vol": 177504,
+      "low": 208000.0,
+      "vol": 292778,
       "candles": [
         {
           "time": 1777334400,
@@ -1607,9 +1607,9 @@
           "time": 1778025600,
           "open": 210500.0,
           "high": 213000.0,
-          "low": 209000.0,
+          "low": 208000.0,
           "close": 209000.0,
-          "vol": 177504
+          "vol": 292778
         }
       ]
     }
@@ -1618,7 +1618,7 @@
     {
       "source": "매일경제",
       "category": "분석",
-      "title": "두 달만에 1460원대…휴전 유지·코스피 7000에 원화값 상승세",
+      "title": "원화값 두 달만에 1460원대…휴전 합의 유지·코스피 7000에 상승세",
       "link": "https://www.mk.co.kr/news/economy/12037081"
     },
     {
@@ -1636,20 +1636,20 @@
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "트럼프, 호르무즈 작전 중단…유가 하락세 지속",
-      "link": "https://kr.investing.com/news/commodities-news/article-1928753"
+      "title": "CrowdStrike Holdings CEO 조지 커츠, 135만 달러 상당 주식 매각",
+      "link": "https://kr.investing.com/news/insider-trading-news/article-93CH-1928783"
     },
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "아큐티스 이사 하워드 웰거스, 회사 주식 164,219달러 매각",
-      "link": "https://kr.investing.com/news/insider-trading-news/article-93CH-1928751"
+      "title": "시오노기(4507 JP), 2030년까지 8800억엔 이상 투자 방침...美 희귀질환 중심 사업 재편",
+      "link": "https://kr.investing.com/news/stock-market-news/article-1928774"
     },
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "암젠 SVP 낸시 그리지엘, 회사 주식 40만 달러 상당 매각",
-      "link": "https://kr.investing.com/news/insider-trading-news/article-93CH-1928748"
+      "title": "日 코이즈미, 필리핀 회담 앞두고 ’아부쿠마형 경비함’ 수출 논의",
+      "link": "https://kr.investing.com/news/stock-market-news/article-1928773"
     },
     {
       "source": "한국경제",
@@ -1672,20 +1672,20 @@
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "코스피, 7,000 돌파…'꿈의 7천피' 시대 열렸다(종합2보)",
-      "link": "https://www.yna.co.kr/view/AKR20260506044700008"
+      "title": "[코스피 7,000] 올해 코스닥 상승률은 절반수준…'이천스닥' 언제",
+      "link": "https://www.yna.co.kr/view/AKR20260506043800008"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "천안시, 중소·중견 제조기업 매출채권보험료 20% 지원",
-      "link": "https://www.yna.co.kr/view/AKR20260506044800063"
+      "title": "[코스피 7,000] '불장'에 증권사도 활짝 웃었다…역대급 실적 눈앞",
+      "link": "https://www.yna.co.kr/view/AKR20260506053500008"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "경기도, '수출기업 지원' 펀드 2천246억 조성…목표액 4.5배",
-      "link": "https://www.yna.co.kr/view/AKR20260506042500061"
+      "title": "[코스피 7,000] '파죽지세' 어디까지 가나…\"8,600도 꿈 아니다\"",
+      "link": "https://www.yna.co.kr/view/AKR20260506035000008"
     }
   ],
   "ai_comment": "시장 분석 생성 중 오류가 발생했어요.",
@@ -1697,12 +1697,12 @@
         "qty": 10,
         "avg_price": 70000,
         "currency": "KRW",
-        "current_price": 260500.0,
-        "current_price_krw": 260500.0,
-        "value_krw": 2605000.0,
+        "current_price": 259000.0,
+        "current_price_krw": 259000.0,
+        "value_krw": 2590000.0,
         "cost_krw": 700000.0,
-        "pnl_krw": 1905000.0,
-        "pnl_pct": 272.14
+        "pnl_krw": 1890000.0,
+        "pnl_pct": 270.0
       },
       {
         "name": "엔비디아",
@@ -1711,17 +1711,17 @@
         "avg_price": 130.0,
         "currency": "USD",
         "current_price": 196.5,
-        "current_price_krw": 286453.77,
-        "value_krw": 1432268.85,
-        "cost_krw": 947557.0,
-        "pnl_krw": 484711.85,
+        "current_price_krw": 286296.57,
+        "value_krw": 1431482.85,
+        "cost_krw": 947037.0,
+        "pnl_krw": 484445.85,
         "pnl_pct": 51.15
       }
     ],
-    "total_cost_krw": 1647557.0,
-    "total_value_krw": 4037268.85,
-    "total_pnl_krw": 2389711.85,
-    "total_pnl_pct": 145.05,
-    "usdkrw": 1457.78
+    "total_cost_krw": 1647037.0,
+    "total_value_krw": 4021482.85,
+    "total_pnl_krw": 2374445.85,
+    "total_pnl_pct": 144.16,
+    "usdkrw": 1456.98
   }
 }
