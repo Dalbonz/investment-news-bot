@@ -28,6 +28,8 @@ SYMBOLS = {
     'tsla':    'TSLA',       'msft':    'MSFT',
     'googl':   'GOOGL',
     'spy':     'SPY',        'qqq':     'QQQ',
+    'eem':     'EEM',        'efa':     'EFA',
+    'gdx':     'GDX',        'uso':     'USO',
     'samsung': '005930.KS',  'hynix':   '000660.KS',
     'hanwha':  '012450.KS',  'hyundai': '005380.KS',
     'naver':   '035420.KS',

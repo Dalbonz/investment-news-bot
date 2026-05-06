@@ -92,6 +92,14 @@ tr:hover td{background:#f8fafc}
 .pf-sv.up{color:#c84a31}.pf-sv.down{color:#1261c4}
 .pftable td:first-child{color:#222;cursor:default}
 .pftable td:first-child:hover{text-decoration:none}
+.pf-editor{display:none;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:66%;min-width:320px;background:#fff;border-radius:16px 16px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,.18);padding:16px;z-index:101;max-height:85vh;overflow-y:auto}
+.pf-editor.show{display:block}
+@media(max-width:767px){.pf-editor{width:100%}}
+.pf-edit-table{width:100%;border-collapse:collapse;font-size:12px}
+.pf-edit-table th{background:#f8fafc;color:#888;font-weight:700;padding:6px 4px;text-align:left;border-bottom:1px solid #eee;white-space:nowrap}
+.pf-edit-table td{padding:3px 2px;vertical-align:middle}
+.pf-edit-input{width:100%;border:1px solid #e0e0e0;border-radius:6px;padding:4px 6px;font-size:12px;font-family:inherit;box-sizing:border-box}
+.pf-edit-select{width:100%;border:1px solid #e0e0e0;border-radius:6px;padding:4px 6px;font-size:12px;font-family:inherit}
 </style>
 </head>
 <body>
@@ -167,8 +175,11 @@ tr:hover td{background:#f8fafc}
     </tr></thead><tbody id="etftb"></tbody></table>
   </div>
 </div>
-<div class="sec" id="pf-sec" style="display:none">
-  <div class="sec-title">💼 내 포트폴리오</div>
+<div class="sec" id="pf-sec">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <div style="font-weight:700;font-size:15px;color:#1d1d1f">💼 내 포트폴리오</div>
+    <button onclick="openPfEditor()" style="background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">편집</button>
+  </div>
   <div class="pf-summary" id="pf-summary"></div>
   <div class="tw">
     <table class="pftable">
@@ -202,6 +213,27 @@ tr:hover td{background:#f8fafc}
   <div class="period-summary" id="period-summary"></div>
   <div style="text-align:center;margin-top:10px">
     <a id="naver-link" href="#" target="_blank" style="font-size:12px;color:#1d4ed8;font-weight:700">네이버 증권에서 보기 →</a>
+  </div>
+</div>
+
+<div class="overlay" id="pf-overlay" onclick="closePfEditor()"></div>
+<div class="pf-editor" id="pf-editor">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <div style="font-size:16px;font-weight:800">💼 포트폴리오 편집</div>
+    <button onclick="closePfEditor()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;line-height:1">✕</button>
+  </div>
+  <div style="overflow-x:auto">
+    <table class="pf-edit-table">
+      <thead><tr>
+        <th>종목명</th><th>심볼</th><th>수량</th><th>평단가</th><th>통화</th><th></th>
+      </tr></thead>
+      <tbody id="pf-edit-tbody"></tbody>
+    </table>
+  </div>
+  <button onclick="addPfRow()" style="margin-top:10px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 종목 추가</button>
+  <div style="display:flex;gap:8px;margin-top:10px">
+    <button onclick="savePfEditor()" style="flex:1;background:#1d4ed8;color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">저장</button>
+    <button onclick="closePfEditor()" style="background:#f4f6fa;color:#444;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">취소</button>
   </div>
 </div>
 
@@ -257,6 +289,7 @@ const KEY_TO_YF={
   kospi:'^KS11',kosdaq:'^KQ11',dow:'^DJI',sp500:'^GSPC',nasdaq:'^IXIC',vix:'^VIX',dxy:'DX-Y.NYB',
   usdkrw:'USDKRW=X',jpykrw:'JPYKRW=X',eurkrw:'EURKRW=X',gbpkrw:'GBPKRW=X',cnykrw:'CNYKRW=X',
   gold:'GC=F',silver:'SI=F',brent:'BZ=F',oil:'CL=F',natgas:'NG=F',copper:'HG=F',
+  spy:'SPY',qqq:'QQQ',eem:'EEM',efa:'EFA',gdx:'GDX',uso:'USO',
 };
 
 let jsonData=null,allNews=[],kr50Cache=[],detailChartInst=null,currentDetailSymbol='';
@@ -482,7 +515,7 @@ async function loadETF(){
   const results=await Promise.all(ETF_LIST.map(s=>yfetch(s.s,'1d','5d')));
   ETF_LIST.forEach((d,i)=>{
     let price=0,chg=0,spark=[],vol='-';
-    const jsonKey={SPY:'spy',QQQ:'qqq'}[d.s];
+    const jsonKey={SPY:'spy',QQQ:'qqq',EEM:'eem',EFA:'efa',GDX:'gdx',USO:'uso'}[d.s];
     if(jsonKey&&jsonData?.market?.[jsonKey]){const m=jsonData.market[jsonKey];price=m.price;chg=m.change;if(m.candles)spark=m.candles;}
     if(results[i]){
       try{
@@ -637,23 +670,16 @@ function fmtMan(krw){
   return (krw/10000).toFixed(0)+'만';
 }
 
-function renderPortfolio(){
-  const sec=document.getElementById('pf-sec');
-  const pf=jsonData?.portfolio;
-  if(!pf||!pf.holdings?.length){sec.style.display='none';return;}
-  sec.style.display='block';
-
+function renderPortfolioUI(pf){
   const tc=cls(pf.total_pnl_krw);
   document.getElementById('pf-summary').innerHTML=[
-    {l:'총 투자금액', v:'₩'+fmtMan(pf.total_cost_krw),  c:''},
-    {l:'총 평가금액', v:'₩'+fmtMan(pf.total_value_krw), c:''},
-    {l:'총 손익',     v:(pf.total_pnl_krw>=0?'+':'')+'₩'+fmtMan(pf.total_pnl_krw), c:tc},
-    {l:'수익률',      v:(pf.total_pnl_pct>=0?'+':'')+pf.total_pnl_pct.toFixed(2)+'%', c:tc},
+    {l:'총 투자금액',v:'₩'+fmtMan(pf.total_cost_krw),c:''},
+    {l:'총 평가금액',v:'₩'+fmtMan(pf.total_value_krw),c:''},
+    {l:'총 손익',v:(pf.total_pnl_krw>=0?'+':'')+'₩'+fmtMan(pf.total_pnl_krw),c:tc},
+    {l:'수익률',v:(pf.total_pnl_pct>=0?'+':'')+pf.total_pnl_pct.toFixed(2)+'%',c:tc},
   ].map(x=>`<div class="pf-si"><div class="pf-sl">${x.l}</div><div class="pf-sv ${x.c}">${x.v}</div></div>`).join('');
-
   document.getElementById('pftb').innerHTML=pf.holdings.map(h=>{
-    const c=cls(h.pnl_pct);
-    const s=h.pnl_pct>=0?'+':'';
+    const c=cls(h.pnl_pct);const s=h.pnl_pct>=0?'+':'';
     return `<tr>
       <td><span style="font-weight:700">${h.name}</span><br><small style="color:#aaa;font-size:10px">${h.symbol}</small></td>
       <td>${h.qty.toLocaleString()}</td>
@@ -664,6 +690,84 @@ function renderPortfolio(){
       <td class="${c}">${s}₩${fmtMan(h.pnl_krw)}</td>
     </tr>`;
   }).join('');
+}
+
+async function renderPortfolio(){
+  document.getElementById('pf-sec').style.display='block';
+  let holdings=null;
+  try{const s=localStorage.getItem('pf_holdings');if(s)holdings=JSON.parse(s);}catch(e){}
+  if(!holdings?.length){
+    if(jsonData?.portfolio?.holdings?.length){renderPortfolioUI(jsonData.portfolio);return;}
+    document.getElementById('pf-summary').innerHTML='';
+    document.getElementById('pftb').innerHTML='<tr><td colspan="7" style="text-align:center;color:#bbb;padding:16px;font-size:12px">편집 버튼을 눌러 포트폴리오를 설정해주세요</td></tr>';
+    return;
+  }
+  document.getElementById('pftb').innerHTML='<tr><td colspan="7" style="text-align:center;color:#bbb;padding:16px;font-size:12px">가격 조회 중...</td></tr>';
+  const usdkrw=jsonData?.market?.usdkrw?.price||1350;
+  const resolved=await Promise.all(holdings.map(async h=>{
+    let cur=null;
+    const mKey=Object.keys(KEY_TO_YF).find(k=>KEY_TO_YF[k]===h.symbol);
+    if(mKey&&jsonData?.market?.[mKey])cur=jsonData.market[mKey].price;
+    if(!cur){const d=await yfetch(h.symbol,'1d','5d');if(d?.chart?.result?.[0])cur=d.chart.result[0].meta.regularMarketPrice;}
+    if(!cur)cur=h.avg_price;
+    const rate=h.currency==='USD'?usdkrw:1;
+    const cost_krw=h.avg_price*rate*h.qty,value_krw=cur*rate*h.qty;
+    const pnl_krw=value_krw-cost_krw,pnl_pct=cost_krw?pnl_krw/cost_krw*100:0;
+    return{name:h.name,symbol:h.symbol,qty:h.qty,avg_price:h.avg_price,currency:h.currency,current_price:cur,current_price_krw:cur*rate,value_krw,cost_krw,pnl_krw,pnl_pct};
+  }));
+  const total_cost_krw=resolved.reduce((s,h)=>s+h.cost_krw,0);
+  const total_value_krw=resolved.reduce((s,h)=>s+h.value_krw,0);
+  const total_pnl_krw=total_value_krw-total_cost_krw;
+  const total_pnl_pct=total_cost_krw?total_pnl_krw/total_cost_krw*100:0;
+  renderPortfolioUI({holdings:resolved,total_cost_krw,total_value_krw,total_pnl_krw,total_pnl_pct});
+}
+
+let pfEditData=[];
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function collectPfEditData(){
+  pfEditData=[];
+  document.getElementById('pf-edit-tbody').querySelectorAll('tr').forEach(row=>{
+    const inp=row.querySelectorAll('input');const sel=row.querySelector('select');
+    if(!inp.length)return;
+    pfEditData.push({name:inp[0].value,symbol:inp[1].value,qty:parseFloat(inp[2].value)||0,avg_price:parseFloat(inp[3].value)||0,currency:sel?.value||'KRW'});
+  });
+}
+function renderPfEditRows(){
+  document.getElementById('pf-edit-tbody').innerHTML=pfEditData.map((h,i)=>`
+    <tr>
+      <td><input class="pf-edit-input" value="${escHtml(h.name)}" placeholder="종목명" style="min-width:60px"></td>
+      <td><input class="pf-edit-input" value="${escHtml(h.symbol)}" placeholder="심볼" style="min-width:80px"></td>
+      <td><input class="pf-edit-input" type="number" value="${h.qty}" style="min-width:50px"></td>
+      <td><input class="pf-edit-input" type="number" value="${h.avg_price}" style="min-width:70px"></td>
+      <td><select class="pf-edit-select" style="min-width:58px">
+        <option value="KRW"${h.currency==='KRW'?' selected':''}>KRW</option>
+        <option value="USD"${h.currency==='USD'?' selected':''}>USD</option>
+      </select></td>
+      <td><button onclick="deletePfRow(${i})" style="background:none;border:none;color:#e53e3e;font-size:18px;cursor:pointer;padding:0 4px;line-height:1">×</button></td>
+    </tr>`).join('');
+}
+function openPfEditor(){
+  let stored=null;
+  try{const s=localStorage.getItem('pf_holdings');if(s)stored=JSON.parse(s);}catch(e){}
+  if(stored){pfEditData=stored;}
+  else if(jsonData?.portfolio?.holdings){pfEditData=jsonData.portfolio.holdings.map(h=>({name:h.name,symbol:h.symbol,qty:h.qty,avg_price:h.avg_price,currency:h.currency||'KRW'}));}
+  else{pfEditData=[];}
+  renderPfEditRows();
+  document.getElementById('pf-editor').classList.add('show');
+  document.getElementById('pf-overlay').classList.add('show');
+}
+function closePfEditor(){
+  document.getElementById('pf-editor').classList.remove('show');
+  document.getElementById('pf-overlay').classList.remove('show');
+}
+function addPfRow(){collectPfEditData();pfEditData.push({name:'',symbol:'',qty:1,avg_price:0,currency:'KRW'});renderPfEditRows();}
+function deletePfRow(i){collectPfEditData();pfEditData.splice(i,1);renderPfEditRows();}
+async function savePfEditor(){
+  collectPfEditData();
+  const holdings=pfEditData.filter(h=>h.name&&h.symbol&&h.qty>0).map(h=>({...h,symbol:h.symbol.toUpperCase()}));
+  localStorage.setItem('pf_holdings',JSON.stringify(holdings));
+  closePfEditor();
+  await renderPortfolio();
 }
 
 async function init(){
@@ -678,8 +782,7 @@ async function init(){
   renderSection('m3','cb3',['usdkrw','jpykrw','eurkrw','gbpkrw','cnykrw'],['달러/원','엔/원','유로/원','파운드/원','위안/원']);
   renderSection('m4','cb4',['gold','silver','brent','oil','natgas','copper'],['금','은','브렌트유','WTI','천연가스','구리']);
   buildThemes();
-  renderPortfolio();
-  await Promise.all([loadStockTable('한국주요50'),loadETF()]);
+  await Promise.all([renderPortfolio(),loadStockTable('한국주요50'),loadETF()]);
   const upd=jsonData?.updated?new Date(new Date(jsonData.updated).getTime()+9*3600000).toLocaleString('ko-KR'):new Date().toLocaleString('ko-KR');
   document.getElementById('upd').textContent='마지막 업데이트: '+upd+' (KST)';
 }
