@@ -172,6 +172,9 @@ def get_ai_comment(market):
         '}'
     )
 
+    key_hint = ANTHROPIC_API_KEY[:8] + '...' + ANTHROPIC_API_KEY[-4:] if len(ANTHROPIC_API_KEY) > 12 else '(short key?)'
+    print('ANTHROPIC_API_KEY hint: ' + key_hint + ' (len=' + str(len(ANTHROPIC_API_KEY)) + ')')
+
     raw = ''
     try:
         res = requests.post(
@@ -182,20 +185,21 @@ def get_ai_comment(market):
                 'content-type':        'application/json',
             },
             json={
-                'model':      'claude-haiku-4-5-20251001',
+                'model':      'claude-3-5-haiku-20241022',
                 'max_tokens': 800,
                 'messages':   [{'role': 'user', 'content': prompt}],
             },
             timeout=30,
         )
-        result = res.json()
         print('Claude 응답 status: ' + str(res.status_code))
+        print('Claude 응답 헤더: ' + str(dict(res.headers)))
+        result = res.json()
+        print('Claude 응답 body: ' + str(result)[:500])
 
         if res.status_code != 200:
             err      = result.get('error', {})
             err_type = err.get('type', '').lower()
             err_msg  = err.get('message', '').lower()
-            print('Claude 에러: ' + str(result))
             if any(w in err_type + err_msg for w in ('credit', 'billing', 'quota', 'balance')):
                 return {
                     'kr':   '⚠️ API 크레딧 부족으로 한국 시황 분석을 생성하지 못했습니다.',
