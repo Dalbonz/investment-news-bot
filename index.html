@@ -13,7 +13,9 @@ body{background:#f4f6fa;font-family:'Malgun Gothic',Arial,sans-serif;font-size:1
 .header h2{font-size:28px;font-weight:800;text-decoration:underline;text-underline-offset:4px}
 .header .date{font-size:12px;color:#888;margin-top:3px}
 .ai-box{background:#f0f7ff;border-left:4px solid #1d4ed8;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;line-height:1.7;color:#1e3a5f}
-.ai-label{font-size:14px;font-weight:700;color:#1d4ed8;margin-bottom:4px}
+.ai-label{font-size:14px;font-weight:700;color:#1d4ed8;margin-bottom:8px}
+.ai-section{padding:6px 0;border-bottom:1px solid rgba(29,78,216,0.12)}
+.ai-section:last-child{border-bottom:none;padding-bottom:0}
 .top{display:grid;gap:8px;margin-bottom:8px}
 .grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 @media(min-width:768px){.top{grid-template-columns:1.3fr 1fr}}
@@ -1302,7 +1304,16 @@ async function init(){
   await Promise.all([loadJSON(),loadPortfolioJSON()]);
   const now=jsonData?.updated?new Date(new Date(jsonData.updated).getTime()+9*3600000):new Date();
   document.getElementById('header-date').textContent=now.toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'short'})+' 기준';
-  document.getElementById('ai-comment').textContent=jsonData?.ai_comment||'시황 데이터를 불러오지 못했어요.';
+  const ac=jsonData?.ai_comment;
+  const aiEl=document.getElementById('ai-comment');
+  if(ac&&typeof ac==='object'){
+    aiEl.innerHTML=
+      '<div class="ai-section">'+( ac.kr  ||'')+'</div>'+
+      '<div class="ai-section">'+( ac.us  ||'')+'</div>'+
+      '<div class="ai-section">'+( ac.tips||'')+'</div>';
+  }else{
+    aiEl.textContent=ac||'시황 데이터를 불러오지 못했어요.';
+  }
   allNews=jsonData?.news||[];
   renderNews('all');
 

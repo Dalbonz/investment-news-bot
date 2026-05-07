@@ -8,7 +8,7 @@ TELEGRAM_CHAT_ID    = os.environ['TELEGRAM_CHAT_ID']
 TELEGRAM_CHAT_ID_WIFE = os.environ.get('TELEGRAM_CHAT_ID_WIFE', '')
 GMAIL_USER          = os.environ['GMAIL_USER']
 GMAIL_PASSWORD      = os.environ['GMAIL_PASSWORD']
-OPENAI_API_KEY      = os.environ.get('OPENAI_API_KEY', '')
+ANTHROPIC_API_KEY   = os.environ.get('ANTHROPIC_API_KEY', '')
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
@@ -135,42 +135,94 @@ def get_news():
             print(source['name'] + ' 오류: ' + str(e))
     return all_news
 
+_FALLBACK_COMMENT = {
+    'kr':   '한국 시황 분석을 불러오지 못했어요.',
+    'us':   '미국 시황 분석을 불러오지 못했어요.',
+    'tips': '투자 포인트를 불러오지 못했어요.',
+}
+
 def get_ai_comment(market):
-    if not OPENAI_API_KEY:
-        return '오늘의 시장 분석을 불러오지 못했어요.'
+    if not ANTHROPIC_API_KEY:
+        return dict(_FALLBACK_COMMENT)
+
+    kr_rows, us_rows, other_rows = [], [], []
+    for k, label in [('kospi','코스피'),('kosdaq','코스닥'),('usdkrw','달러/원'),('jpykrw','엔/원'),('eurkrw','유로/원')]:
+        if k in market:
+            m = market[k]
+            kr_rows.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
+    for k, label in [('nasdaq','나스닥'),('sp500','S&P500'),('dow','다우'),('nvda','엔비디아'),('aapl','애플'),('msft','마이크로소프트'),('tsla','테슬라'),('googl','구글')]:
+        if k in market:
+            m = market[k]
+            us_rows.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
+    for k, label in [('oil','WTI유가'),('gold','금'),('vix','VIX'),('silver','은')]:
+        if k in market:
+            m = market[k]
+            other_rows.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
+
+    prompt = (
+        '당신은 전문 증권 애널리스트입니다. 아래 시장 데이터를 바탕으로 투자자를 위한 시황 분석을 한국어로 작성하세요.\n\n'
+        '한국 시장:\n' + '\n'.join(kr_rows) + '\n\n'
+        '미국 시장:\n' + '\n'.join(us_rows) + '\n\n'
+        '기타(원자재/변동성):\n' + '\n'.join(other_rows) + '\n\n'
+        '아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):\n'
+        '{\n'
+        '  "kr": "🇰🇷 한국 시황: [코스피/코스닥/환율 중심 2~3문장]",\n'
+        '  "us": "🇺🇸 미국 시황: [나스닥/S&P500/빅테크 중심 2~3문장]",\n'
+        '  "tips": "💡 오늘의 투자 포인트: [주목 섹터/종목 2~3문장]"\n'
+        '}'
+    )
+
+    raw = ''
     try:
-        name_map = {
-            'kospi':'코스피','kosdaq':'코스닥','nasdaq':'나스닥','sp500':'S&P500',
-            'usdkrw':'달러/원','oil':'WTI유가','gold':'금','nvda':'엔비디아','tsla':'테슬라'
-        }
-        summary = []
-        for k, label in name_map.items():
-            if k in market:
-                m = market[k]
-                summary.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
-        prompt = (
-            '당신은 전문 증권 애널리스트입니다. '
-            '아래 오늘의 시장 데이터를 보고 투자자를 위한 간결한 시황 분석 코멘트를 '
-            '한국어로 3~4문장으로 작성해주세요.\n\n'
-            '시장 데이터:\n' + '\n'.join(summary)
-        )
         res = requests.post(
-            'https://api.openai.com/v1/chat/completions',
-            headers={'Authorization': 'Bearer ' + OPENAI_API_KEY, 'Content-Type': 'application/json'},
-            json={'model': 'gpt-4o-mini', 'messages': [{'role': 'user', 'content': prompt}], 'max_tokens': 300},
-            timeout=20
+            'https://api.anthropic.com/v1/messages',
+            headers={
+                'x-api-key':          ANTHROPIC_API_KEY,
+                'anthropic-version':   '2023-06-01',
+                'content-type':        'application/json',
+            },
+            json={
+                'model':      'claude-haiku-4-5-20251001',
+                'max_tokens': 800,
+                'messages':   [{'role': 'user', 'content': prompt}],
+            },
+            timeout=30,
         )
         result = res.json()
-        print('OpenAI 응답: ' + str(result))
-        if 'choices' in result:
-            return result['choices'][0]['message']['content'].strip()
-        elif 'error' in result:
-            print('OpenAI 에러: ' + str(result['error']))
-            return '시장 분석 생성 중 오류가 발생했어요.'
-        return '시장 분석을 불러오지 못했어요.'
+        print('Claude 응답 status: ' + str(res.status_code))
+
+        if res.status_code != 200:
+            err      = result.get('error', {})
+            err_type = err.get('type', '').lower()
+            err_msg  = err.get('message', '').lower()
+            print('Claude 에러: ' + str(result))
+            if any(w in err_type + err_msg for w in ('credit', 'billing', 'quota', 'balance')):
+                return {
+                    'kr':   '⚠️ API 크레딧 부족으로 한국 시황 분석을 생성하지 못했습니다.',
+                    'us':   '⚠️ API 크레딧 부족으로 미국 시황 분석을 생성하지 못했습니다.',
+                    'tips': '💳 Anthropic Console(console.anthropic.com)에서 크레딧을 충전하면 AI 시황 분석이 재개됩니다.',
+                }
+            return dict(_FALLBACK_COMMENT)
+
+        raw = result['content'][0]['text'].strip()
+        # strip markdown code fence if present
+        if raw.startswith('```'):
+            raw = raw.split('```')[1]
+            if raw.startswith('json'):
+                raw = raw[4:]
+        parsed = json.loads(raw)
+        return {
+            'kr':   parsed.get('kr',   ''),
+            'us':   parsed.get('us',   ''),
+            'tips': parsed.get('tips', ''),
+        }
+
+    except json.JSONDecodeError as e:
+        print('JSON 파싱 오류: ' + str(e) + ' / raw: ' + raw[:300])
+        return dict(_FALLBACK_COMMENT)
     except Exception as e:
         print('AI 코멘트 오류: ' + str(e))
-        return '시장 분석을 불러오지 못했어요.'
+        return dict(_FALLBACK_COMMENT)
 
 def get_portfolio_data(market):
     try:
@@ -268,7 +320,13 @@ def save_data_json(market, news, ai_comment, portfolio=None):
 def build_telegram_msg(market, news, ai_comment):
     today = datetime.now().strftime('%Y년 %m월 %d일')
     msg = '📈 <b>' + today + ' 투자 브리핑</b>\n\n'
-    msg += '🤖 <b>AI 시황 코멘트</b>\n' + ai_comment + '\n\n'
+    msg += '🤖 <b>AI 시황 분석</b>\n'
+    if isinstance(ai_comment, dict):
+        msg += ai_comment.get('kr',   '') + '\n\n'
+        msg += ai_comment.get('us',   '') + '\n\n'
+        msg += ai_comment.get('tips', '') + '\n\n'
+    else:
+        msg += str(ai_comment) + '\n\n'
     msg += '📊 <b>주요 증시</b>\n'
     for k, label in [('kospi','코스피'),('kosdaq','코스닥'),('nasdaq','나스닥'),('sp500','S&P500')]:
         if k in market:
@@ -337,11 +395,19 @@ def send_email(market, news, ai_comment):
         news_html += '<b>' + item['title'] + '</b><br>'
         news_html += '<a href="' + item['link'] + '" style="color:#1a73e8;font-size:0.9em">🔗 자세히 보기</a>'
         news_html += '</div>'
+    if isinstance(ai_comment, dict):
+        ai_html = (
+            '<div style="margin-bottom:10px">' + ai_comment.get('kr',   '') + '</div>'
+            '<div style="margin-bottom:10px">' + ai_comment.get('us',   '') + '</div>'
+            '<div>'                             + ai_comment.get('tips', '') + '</div>'
+        )
+    else:
+        ai_html = str(ai_comment)
     html = (
         '<html><body style="font-family:Arial;max-width:640px;margin:0 auto;padding:20px;color:#222">'
         '<h2 style="border-bottom:2px solid #1a73e8;padding-bottom:8px">📈 ' + today + ' 투자 브리핑</h2>'
-        '<div style="background:#f0f7ff;padding:15px;border-radius:10px;margin:16px 0;line-height:1.7">'
-        '<b>🤖 AI 시황 코멘트</b><br><br>' + ai_comment +
+        '<div style="background:#f0f7ff;padding:15px;border-radius:10px;margin:16px 0;line-height:1.8">'
+        '<b>🤖 AI 시황 분석</b><br><br>' + ai_html +
         '</div>'
         '<h3>📊 주요 시장</h3>'
         '<table style="width:100%;border-collapse:collapse;font-size:14px;border:1px solid #eee">'
