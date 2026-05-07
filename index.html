@@ -143,6 +143,45 @@ tr:hover td{background:#f8fafc}
 .sav-item .sv{font-size:13px;font-weight:700;color:#1d1d1f}
 .sav-rate{color:#059669}
 .pf-realized{display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:11px;color:#16a34a;font-weight:700}
+/* ── Dark portfolio ── */
+.pf-dark{background:#0d1117;border-radius:10px;padding:14px;color:#e6edf3}
+.pf-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+@media(max-width:600px){.pf-kpi-row{grid-template-columns:repeat(2,1fr)}}
+.pf-kpi{background:#161b22;border:1px solid #30363d;border-radius:10px;padding:12px}
+.pf-kpi-badge{display:inline-block;font-size:9px;font-weight:800;padding:2px 8px;border-radius:4px;margin-bottom:8px;letter-spacing:.3px}
+.pf-kpi-num{font-size:20px;font-weight:900;color:#e6edf3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf-kpi-won{font-size:12px;font-weight:400;color:#8b949e;margin-left:2px}
+.pf-kpi-chg{font-size:11px;font-weight:700;margin-top:3px}
+.pf-dark .pf-summary{display:block!important;margin-bottom:0}
+.pf-dark .pf-tab{color:#8b949e;border-color:#30363d;background:transparent}
+.pf-dark .pf-tab.on{background:#c8fa00;color:#0d1117;border-color:#c8fa00}
+.pf-dark th{background:#161b22!important;color:#8b949e!important;border-bottom:1px solid #21262d!important}
+.pf-dark td{border-bottom:1px solid #1c2128!important;color:#c9d1d9!important}
+.pf-dark tr:hover td{background:#1c2128!important}
+.pf-dark .pftable td:first-child{color:#c9d1d9!important;cursor:default!important}
+.pf-dark .cash-item{border-bottom-color:#21262d}
+.pf-dark .cash-bank{color:#c9d1d9}
+.pf-dark .cash-amt{color:#e6edf3}
+.pf-dark .cash-bank-icon{background:#1c2128}
+.pf-dark .cash-total-row{border-top-color:#30363d;color:#e6edf3}
+.pf-dark .sav-card{background:#161b22;border-color:#30363d}
+.pf-dark .sav-bank{color:#e6edf3}
+.pf-dark .sav-type{background:#1c2128;color:#8b949e}
+.pf-dark .sav-item .sl{color:#8b949e}
+.pf-dark .sav-item .sv{color:#c9d1d9}
+.pf-dark .sav-rate{color:#3fb950}
+.pf-dark .no-data{color:#484f58}
+.pf-dark .pf-realized{background:#0d2818;border-color:#1a4731;color:#3fb950}
+.pf-dark #pf-edit-btn{background:#1c2128;color:#8b949e;border-color:#30363d}
+.pf-dark #pf-save-btn{background:#c8fa00;color:#0d1117;border:none}
+.pf-dark #pf-cancel-btn{background:#1c2128;color:#8b949e;border:none}
+.pf-dark .pf-edit-input,.pf-dark .pf-edit-select{background:#1c2128;border-color:#30363d;color:#c9d1d9}
+.pf-dark .pf-edit-table th{background:#161b22!important;color:#8b949e!important}
+.pf-dark .autocomplete-list{background:#1c2128;border-color:#30363d}
+.pf-dark .ac-item{border-bottom-color:#21262d;color:#c9d1d9}
+.pf-dark .ac-item:hover{background:#21262d}
+.pf-dark .pf-legend-item{color:#c9d1d9}
+.pf-spark-td{width:72px;padding:2px 4px!important;vertical-align:middle}
 </style>
 </head>
 <body>
@@ -237,9 +276,9 @@ tr:hover td{background:#f8fafc}
 </div>
 
 <!-- 포트폴리오 -->
-<div class="sec" id="pf-sec">
+<div class="sec pf-dark" id="pf-sec">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div style="font-weight:700;font-size:15px;color:#1d1d1f">💼 내 포트폴리오</div>
+    <div style="font-weight:700;font-size:15px;color:#e6edf3">💼 내 포트폴리오</div>
     <div style="display:flex;gap:6px">
       <button id="pf-edit-btn" onclick="togglePfEdit()" style="background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✏️ 편집</button>
       <button id="pf-save-btn" onclick="savePfInline()" style="display:none;background:#1d4ed8;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ 저장</button>
@@ -262,7 +301,7 @@ tr:hover td{background:#f8fafc}
       <div class="tw">
         <table class="pftable">
           <thead><tr>
-            <th>종목</th><th>수량</th><th>평단가</th><th>현재가</th><th>전일비</th><th>1달비</th><th>6달비</th><th>1년비</th><th>평가금액</th><th>수익률/손익</th>
+            <th>종목</th><th>수량</th><th>평단가</th><th>현재가</th><th>전일비</th><th>1달비</th><th>6달비</th><th>1년비</th><th>평가금액</th><th>수익률/손익</th><th>차트</th>
           </tr></thead>
           <tbody id="pftb"></tbody>
         </table>
@@ -429,12 +468,12 @@ function calcPeriodChg(curPrice,closes,ts){
   return{d1:pct(prev1d),mo1:pct(find(30)),mo6:pct(find(180)),y1:pct(find(365))};
 }
 
-function drawDonutChartData(el,data,centerLabel){
+function drawDonutChartData(el,data,centerLabel,dark=false){
   if(!data?.length){el.innerHTML='';return;}
   const total=data.reduce((s,d)=>s+(d.v||0),0);
   if(!total){el.innerHTML='';return;}
   const withPct=data.filter(d=>d.v>0).map((d,i)=>({...d,pct:d.v/total*100,color:d.color||PF_COLORS[i%PF_COLORS.length]}));
-  const r=48,cx=60,cy=60,sw=18;
+  const r=dark?54:48,cx=dark?70:60,cy=dark?70:60,sw=dark?22:18,sz=dark?140:120;
   let cA=-Math.PI/2;
   const arcs=withPct.map(d=>{
     const a=d.v/total*2*Math.PI;
@@ -444,18 +483,28 @@ function drawDonutChartData(el,data,centerLabel){
     cA=na;return arc;
   });
   const lbl=centerLabel||`${withPct.length}개`;
-  const svg=`<svg width="120" height="120" viewBox="0 0 120 120">
-    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#f0f0f0" stroke-width="${sw}"/>
+  const bgC=dark?'#1c2128':'#f0f0f0',txtC=dark?'#e6edf3':'#1d1d1f',subC=dark?'#8b949e':'#888';
+  const svg=`<svg width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${bgC}" stroke-width="${sw}"/>
     ${arcs.join('')}
-    <text x="${cx}" y="${cy-5}" text-anchor="middle" font-size="11" font-weight="700" fill="#1d1d1f" font-family="'Malgun Gothic',Arial,sans-serif">${lbl}</text>
-    <text x="${cx}" y="${cy+9}" text-anchor="middle" font-size="9" fill="#888" font-family="'Malgun Gothic',Arial,sans-serif">포트폴리오</text>
+    <text x="${cx}" y="${cy-5}" text-anchor="middle" font-size="${dark?13:11}" font-weight="700" fill="${txtC}" font-family="'Malgun Gothic',Arial,sans-serif">${lbl}</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="9" fill="${subC}" font-family="'Malgun Gothic',Arial,sans-serif">포트폴리오</text>
   </svg>`;
-  const legend=withPct.map(d=>`<div class="pf-legend-item"><div class="pf-legend-dot" style="background:${d.color}"></div><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${d.n}</span><span style="color:#888;flex-shrink:0;margin-left:4px">${d.pct.toFixed(1)}%</span></div>`).join('');
+  const legend=withPct.map(d=>`<div class="pf-legend-item"><div class="pf-legend-dot" style="background:${d.color}"></div><span style="flex:1;overflow:hidden;text-overflow:ellipsis">${d.n}</span><span style="color:${subC};flex-shrink:0;margin-left:4px">${d.pct.toFixed(1)}%</span></div>`).join('');
   el.innerHTML=`<div class="pf-donut-wrap"><div style="flex-shrink:0">${svg}</div><div class="pf-legend">${legend}</div></div>`;
 }
 function drawDonutChart(el,holdings){
   const data=holdings.filter(h=>h.value_krw>0).map((h,i)=>({n:h.name,v:h.value_krw,color:PF_COLORS[i%PF_COLORS.length]}));
-  drawDonutChartData(el,data);
+  drawDonutChartData(el,data,'',true);
+}
+function pfSparkSVG(vals,isUp){
+  if(!vals?.length)return'';
+  const mn=Math.min(...vals),mx=Math.max(...vals),rng=mx-mn||mn*0.02||1;
+  const c=isUp?'#3fb950':'#f85149';
+  const pts=vals.map((v,i)=>[1+(i/(vals.length-1))*68,2+(1-(v-mn)/rng)*24]);
+  let d=`M${pts[0][0].toFixed(1)},${pts[0][1].toFixed(1)}`;
+  for(let i=1;i<pts.length;i++){const cx=(pts[i-1][0]+pts[i][0])/2;d+=` C${cx.toFixed(1)},${pts[i-1][1].toFixed(1)} ${cx.toFixed(1)},${pts[i][1].toFixed(1)} ${pts[i][0].toFixed(1)},${pts[i][1].toFixed(1)}`;}
+  return`<svg width="70" height="28" viewBox="0 0 70 28"><path d="${d}" fill="none" stroke="${c}" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
 }
 
 async function loadJSON(){
@@ -910,14 +959,16 @@ function renderPortfolioUI(holdings){
     const c=cls(h.pnl_pct);const sg=h.pnl_pct>=0?'+':'';
     const mkt=h.market==='KR'?'<span class="mkt-badge mkt-kr">🇰🇷</span>':h.market==='US'?'<span class="mkt-badge mkt-us">🇺🇸</span>':'';
     const lk=h.locked?'<span class="lock-tag" title="거래제한">🔒</span>':'';
+    const spark=pfSparkSVG(h.spark,h.pnl_pct>=0);
     return `<tr>
-      <td style="color:#222;cursor:default">${mkt}${lk}<span style="font-weight:700">${h.name}</span><br><small style="color:#aaa;font-size:10px">${h.symbol}</small></td>
+      <td style="cursor:default">${mkt}${lk}<span style="font-weight:700;color:#e6edf3">${h.name}</span><br><small style="color:#8b949e;font-size:10px">${h.symbol}</small></td>
       <td>${h.qty.toLocaleString()}</td>
-      <td>${fmtPfPrice(h.avg_price,h.currency)}</td>
-      <td>${fmtPfPrice(h.current_price,h.currency)}</td>
+      <td style="color:#8b949e">${fmtPfPrice(h.avg_price,h.currency)}</td>
+      <td style="color:#e6edf3;font-weight:700">${fmtPfPrice(h.current_price,h.currency)}</td>
       <td>${fp(h.periods?.d1)}</td><td>${fp(h.periods?.mo1)}</td><td>${fp(h.periods?.mo6)}</td><td>${fp(h.periods?.y1)}</td>
-      <td>₩${fmtMan(h.value_krw)}</td>
-      <td class="${c}">${sg}${h.pnl_pct.toFixed(2)}%<br><small style="font-size:9px">${sg}₩${fmtMan(h.pnl_krw)}</small></td>
+      <td style="color:#e6edf3">₩${fmtMan(h.value_krw)}</td>
+      <td class="${c}" style="font-weight:700">${sg}${h.pnl_pct.toFixed(2)}%<br><small style="font-size:9px;font-weight:400">${sg}₩${fmtMan(h.pnl_krw)}</small></td>
+      <td class="pf-spark-td">${spark}</td>
     </tr>`;
   }).join('');
 }
@@ -968,7 +1019,8 @@ async function renderPortfolio(){
     const rate=h.currency==='USD'?usdkrw:1;
     const cost_krw=h.avg_price*rate*h.qty,value_krw=cur*rate*h.qty;
     const pnl_krw=value_krw-cost_krw,pnl_pct=cost_krw?pnl_krw/cost_krw*100:0;
-    return{name:h.name,symbol:h.symbol,qty:h.qty,avg_price:h.avg_price,currency:h.currency,market:mkt,locked:h.locked||false,current_price:cur,value_krw,cost_krw,pnl_krw,pnl_pct,periods};
+    const spark=closes.filter(v=>v!=null).slice(-60);
+    return{name:h.name,symbol:h.symbol,qty:h.qty,avg_price:h.avg_price,currency:h.currency,market:mkt,locked:h.locked||false,current_price:cur,value_krw,cost_krw,pnl_krw,pnl_pct,periods,spark};
   }));
   const totalStockCost=resolved.reduce((s,h)=>s+h.cost_krw,0);
   const totalStockVal=resolved.reduce((s,h)=>s+h.value_krw,0);
@@ -988,20 +1040,25 @@ async function renderPortfolio(){
 function renderSummaryAndChart(stockKrw,pnlKrw,pnlPct,cashKrw,savingsKrw){
   const totalKrw=stockKrw+cashKrw+savingsKrw;
   const pc=cls(pnlKrw);
-  document.getElementById('pf-summary').innerHTML=[
-    {l:'총 자산',     v:'₩'+fmtMan(totalKrw),c:''},
-    {l:'주식 평가액', v:'₩'+fmtMan(stockKrw),c:''},
-    {l:'주식 손익',   v:(pnlKrw>=0?'+':'')+'₩'+fmtMan(Math.abs(pnlKrw)),c:pc},
-    {l:'주식 수익률', v:(pnlPct>=0?'+':'')+pnlPct.toFixed(2)+'%',c:pc},
-  ].map(x=>`<div class="pf-si"><div class="pf-sl">${x.l}</div><div class="pf-sv ${x.c}">${x.v}</div></div>`).join('');
+  const kpis=[
+    {badge:'현금 합계',   bc:'#7c3aed',bbg:'rgba(124,58,237,0.15)', v:cashKrw,    chg:null},
+    {badge:'예적금 합계', bc:'#db2777',bbg:'rgba(219,39,119,0.15)', v:savingsKrw, chg:null},
+    {badge:'주식 합계',   bc:'#c8fa00',bbg:'rgba(200,250,0,0.12)',  v:stockKrw,   chg:pnlPct, pnl:pnlKrw},
+    {badge:'총 자산',     bc:'#e6edf3',bbg:'rgba(230,237,243,0.08)',v:totalKrw,   chg:null},
+  ];
+  document.getElementById('pf-summary').innerHTML=`<div class="pf-kpi-row">${kpis.map(k=>{
+    const numStr=k.v>=100000000?(k.v/100000000).toFixed(1)+'억':Math.round(k.v/10000).toLocaleString()+'만';
+    const chgHtml=k.chg!=null?`<div class="pf-kpi-chg ${cls(k.chg)}">${k.chg>=0?'+':''}${k.chg.toFixed(2)}% &nbsp;<small style="font-weight:400;font-size:10px">(${k.pnl>=0?'+':''}₩${fmtMan(Math.abs(k.pnl))})</small></div>`:'';
+    return`<div class="pf-kpi"><div class="pf-kpi-badge" style="background:${k.bbg};color:${k.bc}">${k.badge}</div><div class="pf-kpi-num">${numStr}<span class="pf-kpi-won">원</span></div>${chgHtml}</div>`;
+  }).join('')}</div>`;
   const wrap=document.getElementById('pf-chart-wrap');
   if(wrap){
     const assetData=[
-      {n:`주식 (₩${fmtMan(stockKrw)})`,v:stockKrw,color:'#1d4ed8'},
-      {n:`예적금 (₩${fmtMan(savingsKrw)})`,v:savingsKrw,color:'#059669'},
-      {n:`현금 (₩${fmtMan(cashKrw)})`,v:cashKrw,color:'#0891b2'},
+      {n:`주식 ${((stockKrw/totalKrw||0)*100).toFixed(1)}%`,  v:stockKrw,   color:'#c8fa00'},
+      {n:`예적금 ${((savingsKrw/totalKrw||0)*100).toFixed(1)}%`,v:savingsKrw,color:'#db2777'},
+      {n:`현금 ${((cashKrw/totalKrw||0)*100).toFixed(1)}%`,   v:cashKrw,    color:'#7c3aed'},
     ].filter(d=>d.v>0);
-    drawDonutChartData(wrap,assetData,'자산배분');
+    drawDonutChartData(wrap,assetData,'자산배분',true);
   }
 }
 
