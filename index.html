@@ -20,14 +20,19 @@ body{background:#f4f6fa;font-family:'Malgun Gothic',Arial,sans-serif;font-size:1
 @media(max-width:767px){.top{grid-template-columns:1fr}.grid4{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.grid4{grid-template-columns:1fr}.header h2{font-size:20px}}
 .card{background:#fff;border-radius:10px;padding:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);min-width:0}
-.card-title{font-weight:700;font-size:15px;margin-bottom:6px;color:#1d1d1f}
-.card-tabs{display:flex;gap:4px;margin-bottom:6px}
+.card-title{font-weight:700;font-size:14px;color:#1d1d1f}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.card-tabs{display:flex;gap:4px;margin-bottom:5px}
 .card-tab{background:transparent;border:1px solid #e0e0e0;border-radius:10px;font-size:10px;font-weight:700;color:#888;padding:2px 8px;cursor:pointer;font-family:inherit}
 .card-tab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
-.chart-box{height:80px;margin:4px 0;position:relative;overflow:hidden}
-.row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 0;border-bottom:1px solid #f4f4f4}
+.cptabs{display:flex;gap:2px;flex-shrink:0}
+.cptab{background:none;border:1px solid #e8e8e8;border-radius:5px;font-size:9px;font-weight:700;color:#bbb;padding:2px 5px;cursor:pointer;font-family:inherit}
+.cptab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
+.chart-box{height:80px;margin:3px 0;position:relative;overflow:hidden}
+.row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:3px 2px;border-bottom:1px solid #f4f4f4;cursor:pointer;border-radius:3px;transition:background 0.1s}
 .row:last-child{border-bottom:none}
-.rn{font-weight:600;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+.row:hover{background:#f0f4ff}
+.rn{font-weight:600;color:#1d4ed8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
 .up{color:#c84a31}.down{color:#1261c4}.flat{color:#888}
 .ntab{background:transparent;border:1px solid #e0e0e0;border-radius:12px;font-size:10px;font-weight:700;color:#888;padding:3px 10px;cursor:pointer;font-family:inherit}
 .ntab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
@@ -43,16 +48,19 @@ body{background:#f4f6fa;font-family:'Malgun Gothic',Arial,sans-serif;font-size:1
 .nt:hover{color:#1d4ed8}
 .sec{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .sec-title{font-weight:700;font-size:15px;margin-bottom:8px;color:#1d1d1f}
+.sec-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .scroll-x{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
 .scroll-x::-webkit-scrollbar{display:none}
 .chip{background:#f0f4ff;color:#1d4ed8;border:none;border-radius:14px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit}
 .chip.on{background:#1d4ed8;color:#fff}
-.etf-grid{display:grid;gap:6px;margin-bottom:8px}
-.etfc{background:#f8fafc;border:1px solid #e8edf5;border-radius:8px;padding:8px;min-width:0}
-.etfn{font-size:10px;font-weight:700;color:#1d4ed8;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.etfp{font-size:14px;font-weight:800;color:#111}
+.etf-grid{display:grid;gap:6px;margin-bottom:4px}
+.etfc{background:#f8fafc;border:1px solid #e8edf5;border-radius:8px;padding:8px 10px;min-width:0;cursor:pointer;transition:background 0.1s;display:grid;grid-template-columns:1fr auto;gap:4px;align-items:center}
+.etfc:hover{background:#eef3fc}
+.etfc-info{min-width:0}
+.etfn{font-size:10px;font-weight:700;color:#1d4ed8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.etfp{font-size:14px;font-weight:800;color:#111;margin-top:1px}
 .etfch{font-size:11px;font-weight:600;margin-top:1px}
-.etf-spark{height:40px;margin-top:4px}
+.etf-spark{height:44px;width:90px;flex-shrink:0}
 .tw{overflow-x:auto;margin-top:6px}
 .stock-scroll{max-height:300px;overflow-y:auto}
 table{width:100%;border-collapse:collapse;font-size:11px}
@@ -114,8 +122,12 @@ tr:hover td{background:#f8fafc}
 </div>
 <div class="top">
   <div class="grid4">
+    <!-- 주식 카드 -->
     <div class="card">
-      <div class="card-title">주식</div>
+      <div class="card-header">
+        <div class="card-title">주식</div>
+        <div class="cptabs" id="cp-cb1"></div>
+      </div>
       <div class="card-tabs">
         <button class="card-tab on" onclick="switchStockTab('kr',this)">🇰🇷 한국</button>
         <button class="card-tab" onclick="switchStockTab('us',this)">🇺🇸 미국</button>
@@ -123,24 +135,37 @@ tr:hover td{background:#f8fafc}
       <div class="chart-box" id="cb1"></div>
       <div id="m1"></div>
     </div>
+    <!-- 지수 카드 -->
     <div class="card">
-      <div class="card-title">지수</div>
+      <div class="card-header">
+        <div class="card-title">지수</div>
+        <div class="cptabs" id="cp-cb2"></div>
+      </div>
       <div class="chart-box" id="cb2"></div>
       <div id="m2"></div>
     </div>
+    <!-- 외환 카드 -->
     <div class="card">
-      <div class="card-title">외환</div>
+      <div class="card-header">
+        <div class="card-title">외환</div>
+        <div class="cptabs" id="cp-cb3"></div>
+      </div>
       <div class="chart-box" id="cb3"></div>
       <div id="m3"></div>
     </div>
+    <!-- 원자재 카드 -->
     <div class="card">
-      <div class="card-title">원자재</div>
+      <div class="card-header">
+        <div class="card-title">원자재</div>
+        <div class="cptabs" id="cp-cb4"></div>
+      </div>
       <div class="chart-box" id="cb4"></div>
       <div id="m4"></div>
     </div>
   </div>
+  <!-- 뉴스 -->
   <div class="card">
-    <div class="card-title">📰 뉴스</div>
+    <div class="card-title" style="margin-bottom:8px">📰 뉴스</div>
     <div style="display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap">
       <button class="ntab on" onclick="filterNews('all',this)">전체</button>
       <button class="ntab" onclick="filterNews('속보',this)">⚡속보</button>
@@ -151,6 +176,7 @@ tr:hover td{background:#f8fafc}
   </div>
 </div>
 
+<!-- 주식 시세 -->
 <div class="sec">
   <div class="sec-title">📊 주식 시세</div>
   <div class="scroll-x" id="themes"></div>
@@ -166,15 +192,16 @@ tr:hover td{background:#f8fafc}
   </div>
 </div>
 
+<!-- ETF -->
 <div class="sec">
-  <div class="sec-title">📦 주요 ETF</div>
-  <div class="etf-grid" id="etf-grid"></div>
-  <div class="tw">
-    <table><thead><tr>
-      <th>ETF</th><th>현재가</th><th>전일비</th><th>등락률</th><th>거래량</th>
-    </tr></thead><tbody id="etftb"></tbody></table>
+  <div class="sec-header">
+    <div class="sec-title" style="margin:0">📦 주요 ETF</div>
+    <div class="cptabs" id="cp-etf"></div>
   </div>
+  <div class="etf-grid" id="etf-grid"></div>
 </div>
+
+<!-- 포트폴리오 -->
 <div class="sec" id="pf-sec">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
     <div style="font-weight:700;font-size:15px;color:#1d1d1f">💼 내 포트폴리오</div>
@@ -193,6 +220,7 @@ tr:hover td{background:#f8fafc}
 <div class="updated" id="upd"></div>
 </div>
 
+<!-- 상세 팝업 -->
 <div class="overlay" id="overlay" onclick="closeDetail()"></div>
 <div class="detail-panel" id="detail-panel">
   <button class="detail-close" onclick="closeDetail()">✕</button>
@@ -216,6 +244,7 @@ tr:hover td{background:#f8fafc}
   </div>
 </div>
 
+<!-- 포트폴리오 편집 팝업 -->
 <div class="overlay" id="pf-overlay" onclick="closePfEditor()"></div>
 <div class="pf-editor" id="pf-editor">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -241,7 +270,9 @@ tr:hover td{background:#f8fafc}
 const PROXY=[
   u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
   u=>'https://corsproxy.io/?'+encodeURIComponent(u),
+  u=>'https://thingproxy.freeboard.io/fetch/'+u,
 ];
+const CARD_PERIODS=[['실시간','5m','1d'],['5일','1h','5d'],['1달','1d','1mo'],['1년','1wk','1y']];
 const STOCK_KR=[
   {k:'samsung',l:'삼성전자'},{k:'hynix',l:'SK하이닉스'},{k:'hyundai',l:'현대차'},
   {k:'hanwha',l:'한화에어로'},{k:'naver',l:'NAVER'},
@@ -279,10 +310,10 @@ const THEMES_DEF={
   '건설':[{n:'현대건설',s:'000720.KS'},{n:'GS건설',s:'006360.KS'},{n:'대우건설',s:'047040.KS'}],
 };
 const ETF_LIST=[
-  {n:'SPDR S&P500',s:'SPY'},{n:'인베스코QQQ',s:'QQQ'},{n:'iShares EM',s:'EEM'},
-  {n:'iShares EAFE',s:'EFA'},{n:'VanEck Gold',s:'GDX'},{n:'US Oil',s:'USO'},
+  {n:'SPDR S&P500',s:'SPY'},{n:'인베스코 QQQ',s:'QQQ'},{n:'iShares EM',s:'EEM'},
+  {n:'iShares EAFE',s:'EFA'},{n:'VanEck Gold',s:'GDX'},{n:'US Oil Fund',s:'USO'},
 ];
-const NAVER={up:'#c84a31',down:'#1261c4',upBg:'rgba(200,74,49,0.10)',downBg:'rgba(18,97,196,0.10)',grid:'rgba(0,0,0,0.05)',text:'#999',border:'transparent'};
+const NAVER={up:'#c84a31',down:'#1261c4',upBg:'rgba(200,74,49,0.10)',downBg:'rgba(18,97,196,0.10)',grid:'rgba(0,0,0,0.05)',text:'#999'};
 const KEY_TO_YF={
   samsung:'005930.KS',hynix:'000660.KS',hyundai:'005380.KS',hanwha:'012450.KS',naver:'035420.KS',
   nvda:'NVDA',tsla:'TSLA',aapl:'AAPL',msft:'MSFT',googl:'GOOGL',
@@ -292,13 +323,15 @@ const KEY_TO_YF={
   spy:'SPY',qqq:'QQQ',eem:'EEM',efa:'EFA',gdx:'GDX',uso:'USO',
 };
 
+// card state: {cbId -> {symbol, isUp, currentVals}}
+const cardState={};
 let jsonData=null,allNews=[],kr50Cache=[],detailChartInst=null,currentDetailSymbol='';
-const miniCharts={};
+let currentStockList=STOCK_KR; // track for period switching
 
 function cls(v){return v>0?'up':v<0?'down':'flat';}
 function sign(v){return v>0?'+':'';}
 function fmt(v,d=2){if(v===null||v===undefined||isNaN(v))return'-';return Number(v).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});}
-function getEtfCols(){const w=window.innerWidth;if(w>=1024)return 6;if(w>=768)return 4;if(w>=480)return 3;return 2;}
+function getEtfCols(){const w=window.innerWidth;if(w>=1024)return 3;if(w>=600)return 2;return 1;}
 
 async function loadJSON(){
   try{const r=await fetch('./data.json?t='+Date.now());jsonData=await r.json();}
@@ -309,7 +342,7 @@ async function yfetch(symbol,interval,range){
   const base='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(symbol)+'?interval='+interval+'&range='+range;
   for(const pf of PROXY){
     try{
-      const r=await fetch(pf(base),{signal:AbortSignal.timeout(6000)});
+      const r=await fetch(pf(base),{signal:AbortSignal.timeout(10000)});
       if(!r.ok)continue;
       const j=await r.json();
       if(j?.chart?.result?.[0])return j;
@@ -319,16 +352,12 @@ async function yfetch(symbol,interval,range){
 }
 
 function drawSparkSVG(el,values,isUp,h){
-  const w=el.clientWidth||200;
-  h=h||80;
+  const w=el.clientWidth||200;h=h||80;
   const color=isUp?NAVER.up:NAVER.down;
   const mn=Math.min(...values),mx=Math.max(...values);
   const rng=mx-mn||mx*0.02||1;
   const px=2,py=4;
-  const pts=values.map((v,i)=>[
-    px+(i/(values.length-1))*(w-px*2),
-    py+(1-(v-mn)/rng)*(h-py*2)
-  ]);
+  const pts=values.map((v,i)=>[px+(i/(values.length-1))*(w-px*2),py+(1-(v-mn)/rng)*(h-py*2)]);
   let line=`M${pts[0][0]},${pts[0][1]}`;
   for(let i=1;i<pts.length;i++){
     const cx=(pts[i-1][0]+pts[i][0])/2;
@@ -338,7 +367,7 @@ function drawSparkSVG(el,values,isUp,h){
   const gid='sg'+Math.random().toString(36).slice(2);
   el.innerHTML=`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" style="display:block">
     <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="${color}" stop-opacity="0.12"/>
+      <stop offset="0%" stop-color="${color}" stop-opacity="0.13"/>
       <stop offset="100%" stop-color="${color}" stop-opacity="0"/>
     </linearGradient></defs>
     <path d="${fill}" fill="url(#${gid})"/>
@@ -346,11 +375,48 @@ function drawSparkSVG(el,values,isUp,h){
   </svg>`;
 }
 
-async function makeMiniChart(containerId,candles,isUp,symbol){
-  const el=document.getElementById(containerId);
+function buildCardPeriodTabs(cbId){
+  const el=document.getElementById('cp-'+cbId);
   if(!el)return;
-  const prev=miniCharts[containerId];
-  if(prev?.remove){try{prev.remove();}catch(e){}}
+  el.innerHTML=CARD_PERIODS.map((p,i)=>
+    `<button class="cptab${i===0?' on':''}" onclick="switchCardPeriod('${cbId}',${i},this)">${p[0]}</button>`
+  ).join('');
+}
+
+async function switchCardPeriod(cbId,idx,btn){
+  const wrap=document.getElementById('cp-'+cbId);
+  if(wrap)wrap.querySelectorAll('.cptab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const st=cardState[cbId];if(!st?.symbol)return;
+  const [,interval,range]=CARD_PERIODS[idx];
+  const el=document.getElementById(cbId);
+  if(!el)return;
+  el.innerHTML='<div style="text-align:center;color:#ddd;font-size:9px;line-height:76px">···</div>';
+  const data=await yfetch(st.symbol,interval,range);
+  if(data?.chart?.result?.[0]){
+    const q=data.chart.result[0].indicators.quote[0];
+    const vals=(q.close||[]).filter(v=>v!=null);
+    if(vals.length>=2){
+      st.currentVals=vals;
+      el.innerHTML='';drawSparkSVG(el,vals,st.isUp,80);
+      new ResizeObserver(()=>{if(el.clientWidth>0){el.innerHTML='';drawSparkSVG(el,vals,st.isUp,80);}}).observe(el);
+    }
+  }
+}
+
+// For ETF period switching (stores spark data per ETF card)
+const etfData=[]; // {n, s, price, chg, isUp, spark}
+async function switchEtfPeriod(idx,btn){
+  const wrap=document.getElementById('cp-etf');
+  if(wrap)wrap.querySelectorAll('.cptab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const [,interval,range]=CARD_PERIODS[idx];
+  await loadETF(interval,range);
+}
+
+async function makeMiniChart(cbId,candles,isUp,symbol){
+  const el=document.getElementById(cbId);
+  if(!el)return;
   el.innerHTML='';
   let vals=[];
   if(symbol){
@@ -364,54 +430,68 @@ async function makeMiniChart(containerId,candles,isUp,symbol){
     vals=[...candles].sort((a,b)=>a.time-b.time).map(c=>c.close).filter(v=>v!=null);
   }
   if(vals.length<2)return;
+  cardState[cbId]={...(cardState[cbId]||{}),currentVals:vals};
   drawSparkSVG(el,vals,isUp,80);
-  miniCharts[containerId]={};
   new ResizeObserver(()=>{if(el.clientWidth>0){el.innerHTML='';drawSparkSVG(el,vals,isUp,80);}}).observe(el);
 }
 
 function switchStockTab(tab,btn){
   document.querySelectorAll('.card-tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
-  renderStockCard(tab==='kr'?STOCK_KR:STOCK_US);
+  currentStockList=tab==='kr'?STOCK_KR:STOCK_US;
+  renderStockCard(currentStockList);
 }
 
 function renderStockCard(list){
   const el=document.getElementById('m1');
   el.innerHTML='';
   if(!jsonData?.market){el.innerHTML='<div class="no-data">데이터 없음</div>';return;}
-  let firstKey=null;
+  let firstKey=null,firstSymbol='';
   list.forEach(item=>{
     const m=jsonData.market[item.k];
     if(!m)return;
-    if(!firstKey&&m.candles?.length>1)firstKey=item.k;
+    const sym=KEY_TO_YF[item.k]||'';
+    if(!firstKey){firstKey=item.k;firstSymbol=sym;}
     const row=document.createElement('div');
     row.className='row';
     const c=cls(m.change);
     row.innerHTML='<span class="rn">'+item.l+'</span><span class="'+c+'">'+fmt(m.price)+' <small>'+sign(m.change)+fmt(m.pct)+'%</small></span>';
+    row.onclick=()=>openDetail(item.l,sym);
     el.appendChild(row);
   });
   if(firstKey){
-    setTimeout(()=>makeMiniChart('cb1',jsonData.market[firstKey].candles,jsonData.market[firstKey].change>=0,KEY_TO_YF[firstKey]||''),50);
+    const m=jsonData.market[firstKey];
+    const isUp=m?.change>=0;
+    cardState['cb1']={symbol:firstSymbol,isUp,currentVals:[]};
+    setTimeout(()=>makeMiniChart('cb1',m?.candles||[],isUp,firstSymbol),50);
   }
 }
 
-function renderSection(mid,cbId,keys,labels){
+function renderSection(mid,cbId,keys,labels,names){
   const el=document.getElementById(mid);
   el.innerHTML='';
   if(!jsonData?.market){el.innerHTML='<div class="no-data">데이터 없음</div>';return;}
+  let firstKey=null;
   keys.forEach((k,i)=>{
     const m=jsonData.market[k];
     if(!m)return;
+    if(!firstKey)firstKey=k;
+    const sym=KEY_TO_YF[k]||'';
     const row=document.createElement('div');
     row.className='row';
     const c=cls(m.change);
     row.innerHTML='<span class="rn">'+labels[i]+'</span><span class="'+c+'">'+fmt(m.price)+' <small>'+sign(m.change)+fmt(m.pct)+'%</small></span>';
+    row.onclick=()=>openDetail(labels[i],sym);
     el.appendChild(row);
   });
-  const firstKey=keys.find(k=>jsonData.market[k]?.candles?.length>1)||keys.find(k=>KEY_TO_YF[k]&&jsonData.market[k]);
-  if(firstKey){
-    const m=jsonData.market[firstKey];
-    setTimeout(()=>makeMiniChart(cbId,m?.candles||[],m?.change>=0,KEY_TO_YF[firstKey]||''),50);
+  // pick first key that has candles OR has a YF symbol
+  const fk=keys.find(k=>jsonData.market[k]?.candles?.length>1)||keys.find(k=>KEY_TO_YF[k]&&jsonData.market[k]);
+  if(fk){
+    const m=jsonData.market[fk];
+    const sym=KEY_TO_YF[fk]||'';
+    const isUp=m?.change>=0;
+    cardState[cbId]={symbol:sym,isUp,currentVals:[]};
+    setTimeout(()=>makeMiniChart(cbId,m?.candles||[],isUp,sym),50);
   }
 }
 
@@ -432,13 +512,11 @@ function renderNews(tab){
 
 function filterNews(tab,btn){
   document.querySelectorAll('.ntab').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderNews(tab);
+  btn.classList.add('on');renderNews(tab);
 }
 
 function buildThemes(){
-  const el=document.getElementById('themes');
-  el.innerHTML='';
+  const el=document.getElementById('themes');el.innerHTML='';
   Object.keys(THEMES_DEF).forEach((t,i)=>{
     const btn=document.createElement('button');
     btn.className='chip'+(i===0?' on':'');
@@ -470,86 +548,116 @@ async function loadStockTable(theme){
     renderTableRows(sorted.slice(0,20));return;
   }
   if(theme==='한국주요50'){
-    if(kr50Cache.length){renderTableRows(kr50Cache);return;}
-    const fromJson=['samsung','hynix','hanwha','hyundai'].map(k=>{
+    // Show cached data.json data immediately
+    const fromJson=['samsung','hynix','hanwha','hyundai','naver'].map(k=>{
       const m=jsonData?.market?.[k];if(!m)return null;
-      const names={samsung:'삼성전자',hynix:'SK하이닉스',hanwha:'한화에어로',hyundai:'현대차'};
-      const syms={samsung:'005930.KS',hynix:'000660.KS',hanwha:'012450.KS',hyundai:'005380.KS'};
+      const names={samsung:'삼성전자',hynix:'SK하이닉스',hanwha:'한화에어로',hyundai:'현대차',naver:'NAVER'};
+      const syms={samsung:'005930.KS',hynix:'000660.KS',hanwha:'012450.KS',hyundai:'005380.KS',naver:'035420.KS'};
       return{n:names[k],s:syms[k],p:m.price,c:m.change,pct:m.pct,vol:m.vol,h:m.high,l:m.low};
     }).filter(Boolean);
     if(fromJson.length)renderTableRows(fromJson);
+    if(kr50Cache.length){renderTableRows(kr50Cache);return;}
+    // Fetch remaining in background
     const results=await Promise.all(KR50.map(s=>yfetch(s.s,'1d','5d')));
     kr50Cache=[];
     KR50.forEach((s,i)=>{
       try{
         const meta=results[i].chart.result[0].meta;
-        const p=meta.regularMarketPrice,prev=meta.chartPreviousClose,c=p-prev;
-        kr50Cache.push({n:s.n,s:s.s,p,c,pct:c/prev*100,vol:meta.regularMarketVolume||0,h:meta.regularMarketDayHigh||0,l:meta.regularMarketDayLow||0});
+        const p=meta.regularMarketPrice,prev=meta.chartPreviousClose||p,c=p-prev;
+        kr50Cache.push({n:s.n,s:s.s,p,c,pct:prev?c/prev*100:0,vol:meta.regularMarketVolume||0,h:meta.regularMarketDayHigh||0,l:meta.regularMarketDayLow||0});
       }catch(e){kr50Cache.push({n:s.n,s:s.s,p:0,c:0,pct:0,vol:0,h:0,l:0});}
     });
-    renderTableRows(kr50Cache);return;
+    renderTableRows(kr50Cache.filter(d=>d.p>0));return;
   }
   const list=THEMES_DEF[theme]||[];
+  if(!list.length){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#bbb;padding:10px">데이터 없음</td></tr>';return;}
   const results=await Promise.all(list.map(s=>yfetch(s.s,'1d','5d')));
   renderTableRows(list.map((s,i)=>{
     try{
       const meta=results[i].chart.result[0].meta;
-      const p=meta.regularMarketPrice,prev=meta.chartPreviousClose,c=p-prev;
-      return{n:s.n,s:s.s,p,c,pct:c/prev*100,vol:meta.regularMarketVolume||0,h:meta.regularMarketDayHigh||0,l:meta.regularMarketDayLow||0};
+      const p=meta.regularMarketPrice,prev=meta.chartPreviousClose||p,c=p-prev;
+      return{n:s.n,s:s.s,p,c,pct:prev?c/prev*100:0,vol:meta.regularMarketVolume||0,h:meta.regularMarketDayHigh||0,l:meta.regularMarketDayLow||0};
     }catch(e){return{n:s.n,s:s.s,p:0,c:0,pct:0,vol:0,h:0,l:0};}
-  }));
+  }).filter(d=>d.p>0));
 }
 
 function renderTableRows(rows){
+  if(!rows.length){
+    document.getElementById('stb').innerHTML='<tr><td colspan="7" style="text-align:center;color:#bbb;padding:10px">데이터를 불러오지 못했습니다</td></tr>';return;
+  }
   document.getElementById('stb').innerHTML=rows.map(d=>{
     const c=cls(d.pct);
-    return '<tr><td onclick="openDetail(\''+d.n+'\',\''+d.s+'\')">'+d.n+'</td><td>'+(d.p?d.p.toLocaleString(undefined,{maximumFractionDigits:0}):'-')+'</td><td class="'+c+'">'+sign(d.c)+(d.c?d.c.toFixed(0):'-')+'</td><td class="'+c+'">'+sign(d.pct)+(d.pct?d.pct.toFixed(2):'-')+'%</td><td>'+(d.vol?(d.vol/1000).toFixed(0)+'K':'-')+'</td><td>'+(d.h?d.h.toLocaleString(undefined,{maximumFractionDigits:0}):'-')+'</td><td>'+(d.l?d.l.toLocaleString(undefined,{maximumFractionDigits:0}):'-')+'</td></tr>';
+    const pStr=d.p?d.p.toLocaleString(undefined,{maximumFractionDigits:2}):'-';
+    const cStr=d.c?sign(d.c)+(Math.abs(d.c)<1?d.c.toFixed(2):d.c.toFixed(0)):'-';
+    return '<tr><td onclick="openDetail(\''+d.n+'\',\''+d.s+'\')">'+d.n+'</td><td>'+pStr+'</td><td class="'+c+'">'+cStr+'</td><td class="'+c+'">'+(d.pct?sign(d.pct)+d.pct.toFixed(2)+'%':'-')+'</td><td>'+(d.vol?(d.vol/1000).toFixed(0)+'K':'-')+'</td><td>'+(d.h?d.h.toLocaleString(undefined,{maximumFractionDigits:0}):'-')+'</td><td>'+(d.l?d.l.toLocaleString(undefined,{maximumFractionDigits:0}):'-')+'</td></tr>';
   }).join('');
 }
 
-async function loadETF(){
+async function loadETF(interval='5m',range='1d'){
   const grid=document.getElementById('etf-grid');
-  const tbody=document.getElementById('etftb');
   grid.style.gridTemplateColumns='repeat('+getEtfCols()+',1fr)';
-  grid.innerHTML='';tbody.innerHTML='';
-  const results=await Promise.all(ETF_LIST.map(s=>yfetch(s.s,'1d','5d')));
+  grid.innerHTML='';
+  // First: show data.json values instantly
+  const jsonKeys={SPY:'spy',QQQ:'qqq',EEM:'eem',EFA:'efa',GDX:'gdx',USO:'uso'};
   ETF_LIST.forEach((d,i)=>{
-    let price=0,chg=0,spark=[],vol='-';
-    const jsonKey={SPY:'spy',QQQ:'qqq',EEM:'eem',EFA:'efa',GDX:'gdx',USO:'uso'}[d.s];
-    if(jsonKey&&jsonData?.market?.[jsonKey]){const m=jsonData.market[jsonKey];price=m.price;chg=m.change;if(m.candles)spark=m.candles;}
-    if(results[i]){
-      try{
-        const meta=results[i].chart.result[0].meta;
-        price=meta.regularMarketPrice;chg=price-meta.chartPreviousClose;
-        vol=((meta.regularMarketVolume||0)/1000).toFixed(0)+'K';
-        const q=results[i].chart.result[0].indicators.quote[0];
-        const ts=results[i].chart.result[0].timestamp||[];
-        spark=ts.map((t,j)=>({time:t,close:q.close[j]||price})).filter(c=>c.close);
-      }catch(e){}
-    }
-    if(!price)price=0;
-    const pct=price?(chg/price*100).toFixed(2):'0.00';
+    const jk=jsonKeys[d.s];
+    const m=jk&&jsonData?.market?.[jk];
+    const price=m?.price||0,chg=m?.change||0;
+    const pct=price?(chg/(price-chg)*100):0;
     const c=cls(chg);const isUp=chg>=0;
     const card=document.createElement('div');
-    card.className='etfc';
-    card.innerHTML='<div class="etfn">'+d.n+'</div><div class="etfp">'+fmt(price,2)+'</div><div class="etfch '+c+'">'+sign(chg)+fmt(chg,2)+' '+sign(+pct)+pct+'%</div><div class="etf-spark" id="etfs'+i+'"></div>';
+    card.className='etfc';card.id='etfc'+i;
+    card.onclick=()=>openDetail(d.n,d.s);
+    card.innerHTML=`<div class="etfc-info">
+      <div class="etfn">${d.n} <span style="color:#999;font-weight:400">${d.s}</span></div>
+      <div class="etfp" id="etfp${i}">${price?fmt(price,2):'--'}</div>
+      <div class="etfch ${c}" id="etfch${i}">${price?sign(chg)+fmt(chg,2)+' ('+sign(pct)+pct.toFixed(2)+'%)':'--'}</div>
+    </div>
+    <div class="etf-spark" id="etfs${i}"></div>`;
     grid.appendChild(card);
-    const tr=document.createElement('tr');
-    tr.innerHTML='<td>'+d.n+'</td><td>'+fmt(price,2)+'</td><td class="'+c+'">'+sign(chg)+fmt(chg,2)+'</td><td class="'+c+'">'+sign(+pct)+pct+'%</td><td>'+vol+'</td>';
-    tbody.appendChild(tr);
-    setTimeout(()=>{
-      const el=document.getElementById('etfs'+i);
-      if(!el||spark.length<2)return;
-      const vals=spark.sort((a,b)=>a.time-b.time).map(c=>c.close).filter(v=>v!=null);
-      if(vals.length<2)return;
-      drawSparkSVG(el,vals,isUp,40);
-      new ResizeObserver(()=>{if(el.clientWidth>0){el.innerHTML='';drawSparkSVG(el,vals,isUp,40);}}).observe(el);
-    },150);
+    // draw sparkline from data.json candles immediately
+    if(m?.candles?.length>=2){
+      setTimeout(()=>{
+        const el=document.getElementById('etfs'+i);if(!el)return;
+        const vals=[...m.candles].sort((a,b)=>a.time-b.time).map(c=>c.close).filter(v=>v!=null);
+        if(vals.length>=2)drawSparkSVG(el,vals,isUp,44);
+      },80);
+    }
   });
-  window.addEventListener('resize',()=>{grid.style.gridTemplateColumns='repeat('+getEtfCols()+',1fr)';});
+  window.addEventListener('resize',()=>{grid.style.gridTemplateColumns='repeat('+getEtfCols()+',1fr)';},{once:false});
+  // Live fetch to update prices and sparklines
+  const results=await Promise.all(ETF_LIST.map(d=>yfetch(d.s,interval,range)));
+  ETF_LIST.forEach((d,i)=>{
+    if(!results[i])return;
+    try{
+      const meta=results[i].chart.result[0].meta;
+      const price=meta.regularMarketPrice,prev=meta.chartPreviousClose||price;
+      const chg=price-prev,pct=prev?chg/prev*100:0;
+      const c=cls(chg);const isUp=chg>=0;
+      const ep=document.getElementById('etfp'+i);
+      const ec=document.getElementById('etfch'+i);
+      const es=document.getElementById('etfs'+i);
+      if(ep)ep.textContent=fmt(price,2);
+      if(ec){ec.className='etfch '+c;ec.textContent=sign(chg)+fmt(chg,2)+' ('+sign(pct)+pct.toFixed(2)+'%)';}
+      if(es){
+        const q=results[i].chart.result[0].indicators.quote[0];
+        const ts=results[i].chart.result[0].timestamp||[];
+        const vals=ts.map((_,j)=>q.close[j]).filter(v=>v!=null);
+        if(vals.length>=2){drawSparkSVG(es,vals,isUp,44);new ResizeObserver(()=>{if(es.clientWidth>0){es.innerHTML='';drawSparkSVG(es,vals,isUp,44);}}).observe(es);}
+      }
+    }catch(e){}
+  });
+}
+
+function buildEtfPeriodTabs(){
+  const el=document.getElementById('cp-etf');if(!el)return;
+  el.innerHTML=CARD_PERIODS.map((p,i)=>
+    `<button class="cptab${i===0?' on':''}" onclick="switchEtfPeriod(${i},this)">${p[0]}</button>`
+  ).join('');
 }
 
 async function openDetail(name,symbol){
+  if(!symbol)return;
   currentDetailSymbol=symbol;
   document.getElementById('d-name').textContent=name;
   document.getElementById('d-price').textContent='로딩 중...';
@@ -560,7 +668,7 @@ async function openDetail(name,symbol){
   const code=symbol.replace('.KS','').replace('.KQ','');
   const isKR=symbol.includes('.KS')||symbol.includes('.KQ');
   document.getElementById('naver-link').href=isKR?'https://finance.naver.com/item/main.naver?code='+code:'https://finance.naver.com/world/sise.naver?symbol='+symbol;
-  document.querySelectorAll('.detail-tab').forEach((b,i)=>{b.classList.toggle('on',i===0);});
+  document.querySelectorAll('.detail-tab').forEach((b,i)=>b.classList.toggle('on',i===0));
   await loadDetailChart(symbol,'1d','5m');
 }
 
@@ -570,7 +678,7 @@ async function loadDetailChart(symbol,range,interval){
   wrap.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:12px">로딩 중...</div>';
   document.getElementById('period-summary').innerHTML='';
   const data=await yfetch(symbol,interval,range);
-  if(!data){wrap.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:12px">데이터 없음</div>';return;}
+  if(!data){wrap.innerHTML='<div style="text-align:center;color:#bbb;padding:40px 0;font-size:12px">데이터를 불러올 수 없습니다</div>';return;}
   try{
     const meta=data.chart.result[0].meta;
     const q=data.chart.result[0].indicators.quote[0];
@@ -585,8 +693,7 @@ async function loadDetailChart(symbol,range,interval){
     const periodHigh=validIdx.length?Math.max(...validIdx.map(i=>highs[i]||closes[i])):0;
     const periodLow=validIdx.length?Math.min(...validIdx.map(i=>lows[i]||closes[i])):0;
     const periodVol=validIdx.reduce((s,i)=>s+(vols[i]||0),0);
-    const periodChg=lastClose-firstClose;
-    const periodPct=firstClose?periodChg/firstClose*100:0;
+    const periodChg=lastClose-firstClose,periodPct=firstClose?periodChg/firstClose*100:0;
 
     document.getElementById('d-price').innerHTML=
       '<span>'+price.toLocaleString(undefined,{maximumFractionDigits:2})+'</span>'+
@@ -616,17 +723,15 @@ async function loadDetailChart(symbol,range,interval){
       grid:{vertLines:{color:NAVER.grid},horzLines:{color:NAVER.grid}},
       rightPriceScale:{borderVisible:false,scaleMargins:{top:0.1,bottom:0.2}},
       timeScale:{borderVisible:false,timeVisible:true,secondsVisible:false},
-      crosshair:{
-        mode:LightweightCharts.CrosshairMode.Normal,
-        vertLine:{color:'rgba(0,0,0,0.15)',width:1,style:1,labelBackgroundColor:isUp?NAVER.up:NAVER.down},
-        horzLine:{color:'rgba(0,0,0,0.15)',width:1,style:1,labelBackgroundColor:isUp?NAVER.up:NAVER.down},
-      },
+      crosshair:{mode:LightweightCharts.CrosshairMode.Normal,
+        vertLine:{color:'rgba(0,0,0,0.15)',width:1,style:1,labelBackgroundColor:color},
+        horzLine:{color:'rgba(0,0,0,0.15)',width:1,style:1,labelBackgroundColor:color}},
     });
     if(interval==='5m'||interval==='1h'){
       const s=chart.addAreaSeries({lineColor:color,topColor:isUp?NAVER.upBg:NAVER.downBg,bottomColor:'transparent',lineWidth:1.5,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:true,crosshairMarkerRadius:3,crosshairMarkerBorderColor:color,crosshairMarkerBackgroundColor:'#fff'});
       s.setData(ts.map((t,i)=>({time:t,value:closes[i]??null})).filter(d=>d.value!==null).sort((a,b)=>a.time-b.time));
     }else{
-      const cs=chart.addCandlestickSeries({upColor:NAVER.up,downColor:NAVER.down,borderUpColor:NAVER.up,borderDownColor:NAVER.down,wickUpColor:NAVER.up,wickDownColor:NAVER.down,borderVisible:true,wickVisible:true});
+      const cs=chart.addCandlestickSeries({upColor:NAVER.up,downColor:NAVER.down,borderUpColor:NAVER.up,borderDownColor:NAVER.down,wickUpColor:NAVER.up,wickDownColor:NAVER.down});
       cs.setData(ts.map((t,i)=>({time:t,open:opens[i]??closes[i],high:highs[i]??closes[i],low:lows[i]??closes[i],close:closes[i]??0})).filter(d=>d.close).sort((a,b)=>a.time-b.time));
       const vs=chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol'});
       chart.priceScale('vol').applyOptions({scaleMargins:{top:0.85,bottom:0}});
@@ -660,13 +765,13 @@ function closeDetail(){
   if(detailChartInst){try{detailChartInst.remove();}catch(e){}detailChartInst=null;}
 }
 
-function fmtPfPrice(price, currency){
-  if(currency==='USD') return '$'+price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+function fmtPfPrice(price,currency){
+  if(currency==='USD')return '$'+price.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   return '₩'+Math.round(price).toLocaleString();
 }
 function fmtMan(krw){
   const abs=Math.abs(krw);
-  if(abs>=100000000) return (krw/100000000).toFixed(1)+'억';
+  if(abs>=100000000)return (krw/100000000).toFixed(1)+'억';
   return (krw/10000).toFixed(0)+'만';
 }
 
@@ -681,7 +786,7 @@ function renderPortfolioUI(pf){
   document.getElementById('pftb').innerHTML=pf.holdings.map(h=>{
     const c=cls(h.pnl_pct);const s=h.pnl_pct>=0?'+':'';
     return `<tr>
-      <td><span style="font-weight:700">${h.name}</span><br><small style="color:#aaa;font-size:10px">${h.symbol}</small></td>
+      <td style="color:#222;cursor:default"><span style="font-weight:700">${h.name}</span><br><small style="color:#aaa;font-size:10px">${h.symbol}</small></td>
       <td>${h.qty.toLocaleString()}</td>
       <td>${fmtPfPrice(h.avg_price,h.currency)}</td>
       <td>${fmtPfPrice(h.current_price,h.currency)}</td>
@@ -777,10 +882,21 @@ async function init(){
   document.getElementById('ai-comment').textContent=jsonData?.ai_comment||'시황 데이터를 불러오지 못했어요.';
   allNews=jsonData?.news||[];
   renderNews('all');
+
+  // Build period tabs for all cards
+  ['cb1','cb2','cb3','cb4'].forEach(buildCardPeriodTabs);
+  buildEtfPeriodTabs();
+
   renderStockCard(STOCK_KR);
-  renderSection('m2','cb2',['kospi','kosdaq','dow','sp500','nasdaq','vix','dxy'],['코스피','코스닥','다우','S&P500','나스닥','VIX','달러지수']);
-  renderSection('m3','cb3',['usdkrw','jpykrw','eurkrw','gbpkrw','cnykrw'],['달러/원','엔/원','유로/원','파운드/원','위안/원']);
-  renderSection('m4','cb4',['gold','silver','brent','oil','natgas','copper'],['금','은','브렌트유','WTI','천연가스','구리']);
+  renderSection('m2','cb2',
+    ['kospi','kosdaq','dow','sp500','nasdaq','vix','dxy'],
+    ['코스피','코스닥','다우','S&P500','나스닥','VIX','달러지수']);
+  renderSection('m3','cb3',
+    ['usdkrw','jpykrw','eurkrw','gbpkrw','cnykrw'],
+    ['달러/원','엔/원','유로/원','파운드/원','위안/원']);
+  renderSection('m4','cb4',
+    ['gold','silver','brent','oil','natgas','copper'],
+    ['금','은','브렌트유','WTI','천연가스','구리']);
   buildThemes();
   await Promise.all([renderPortfolio(),loadStockTable('한국주요50'),loadETF()]);
   const upd=jsonData?.updated?new Date(new Date(jsonData.updated).getTime()+9*3600000).toLocaleString('ko-KR'):new Date().toLocaleString('ko-KR');
