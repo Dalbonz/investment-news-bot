@@ -1,7 +1,38 @@
 {
-  "holdings": [
-    {"name": "삼성전자", "symbol": "005930.KS", "qty": 10, "avg_price": 70000, "currency": "KRW"},
-    {"name": "엔비디아",  "symbol": "NVDA",       "qty": 5,  "avg_price": 130.0, "currency": "USD"}
+  "updated": "2025-05-07",
+  "realized_pnl_2025_krw": 405240,
+  "cash": [
+    { "bank": "신한은행",   "currency": "KRW", "amount": 5521230 },
+    { "bank": "토스뱅크",   "currency": "KRW", "amount": 2906103 },
+    { "bank": "우리은행",   "currency": "KRW", "amount": 2370010 },
+    { "bank": "카카오뱅크", "currency": "KRW", "amount": 2059130 },
+    { "bank": "국민은행",   "currency": "KRW", "amount": 270000  }
   ],
-  "base_currency": "KRW"
+  "savings": [
+    {
+      "type": "적금",
+      "bank": "신한",
+      "maturity": "2030-01-01",
+      "rate_pct": 4.80,
+      "maturity_amount": 43024800,
+      "currency": "KRW"
+    }
+  ],
+  "stocks": [
+    { "name": "브로드컴",      "symbol": "AVGO",      "market": "US", "qty": 18,  "avg_price": 195.34, "currency": "USD" },
+    { "name": "엔비디아",      "symbol": "NVDA",      "market": "US", "qty": 23,  "avg_price": 132.10, "currency": "USD" },
+    { "name": "한국전력",      "symbol": "015760.KS", "market": "KR", "qty": 150, "avg_price": 19277,  "currency": "KRW" },
+    { "name": "마이크로소프트", "symbol": "MSFT",      "market": "US", "qty": 10,  "avg_price": 430.12, "currency": "USD" },
+    { "name": "애플",          "symbol": "AAPL",      "market": "US", "qty": 13,  "avg_price": 218.41, "currency": "USD" },
+    { "name": "테슬라",        "symbol": "TSLA",      "market": "US", "qty": 7,   "avg_price": 428.74, "currency": "USD" },
+    { "name": "SK하이닉스",    "symbol": "000660.KS", "market": "KR", "qty": 2,   "avg_price": 215000, "currency": "KRW" },
+    { "name": "TSMC",          "symbol": "TSM",       "market": "US", "qty": 4,   "avg_price": 185.03, "currency": "USD" },
+    { "name": "IVV S&P500",    "symbol": "IVV",       "market": "US", "qty": 2,   "avg_price": 599.00, "currency": "USD" },
+    { "name": "네이버",        "symbol": "035420.KS", "market": "KR", "qty": 7,   "avg_price": 189500, "currency": "KRW" },
+    { "name": "삼성전자",      "symbol": "005930.KS", "market": "KR", "qty": 5,   "avg_price": 58300,  "currency": "KRW" },
+    { "name": "코카콜라",      "symbol": "KO",        "market": "US", "qty": 10,  "avg_price": 65.36,  "currency": "USD" },
+    { "name": "현대차",        "symbol": "005380.KS", "market": "KR", "qty": 2,   "avg_price": 274500, "currency": "KRW" },
+    { "name": "NVDL 2X NVDA",  "symbol": "NVDL",      "market": "US", "qty": 6,   "avg_price": 66.16,  "currency": "USD" },
+    { "name": "월마트",        "symbol": "WMT",       "market": "US", "qty": 2,   "avg_price": 93.79,  "currency": "USD" }
+  ]
 }
