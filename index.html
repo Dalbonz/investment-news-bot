@@ -143,11 +143,6 @@ tr:hover td{background:#f8fafc}
 .sav-item .sv{font-size:13px;font-weight:700;color:#1d1d1f}
 .sav-rate{color:#059669}
 .pf-realized{display:flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:11px;color:#16a34a;font-weight:700}
-.pfe-tabs{display:flex;gap:4px;margin-bottom:12px}
-.pfe-tab{background:transparent;border:1px solid #e0e0e0;border-radius:8px;font-size:11px;font-weight:700;color:#888;padding:4px 12px;cursor:pointer;font-family:inherit;flex:1;text-align:center}
-.pfe-tab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8}
-.pfe-content{display:none}
-.pfe-content.on{display:block}
 </style>
 </head>
 <body>
@@ -245,7 +240,11 @@ tr:hover td{background:#f8fafc}
 <div class="sec" id="pf-sec">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
     <div style="font-weight:700;font-size:15px;color:#1d1d1f">💼 내 포트폴리오</div>
-    <button onclick="openPfEditor()" style="background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">주식 편집</button>
+    <div style="display:flex;gap:6px">
+      <button id="pf-edit-btn" onclick="togglePfEdit()" style="background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✏️ 편집</button>
+      <button id="pf-save-btn" onclick="savePfInline()" style="display:none;background:#1d4ed8;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ 저장</button>
+      <button id="pf-cancel-btn" onclick="cancelPfEdit()" style="display:none;background:#f4f6fa;color:#444;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✕ 취소</button>
+    </div>
   </div>
   <!-- KPI 요약 -->
   <div class="pf-summary" id="pf-summary"></div>
@@ -259,23 +258,53 @@ tr:hover td{background:#f8fafc}
   </div>
   <!-- 주식 탭 -->
   <div class="pf-content on" id="pf-stock-tab">
-    <div class="tw">
-      <table class="pftable">
-        <thead><tr>
-          <th>종목</th><th>수량</th><th>평단가</th><th>현재가</th><th>전일비</th><th>1달비</th><th>6달비</th><th>1년비</th><th>평가금액</th><th>수익률/손익</th>
-        </tr></thead>
-        <tbody id="pftb"></tbody>
-      </table>
+    <div id="pf-stock-view">
+      <div class="tw">
+        <table class="pftable">
+          <thead><tr>
+            <th>종목</th><th>수량</th><th>평단가</th><th>현재가</th><th>전일비</th><th>1달비</th><th>6달비</th><th>1년비</th><th>평가금액</th><th>수익률/손익</th>
+          </tr></thead>
+          <tbody id="pftb"></tbody>
+        </table>
+      </div>
+      <div id="pf-realized-wrap"></div>
     </div>
-    <div id="pf-realized-wrap"></div>
+    <div id="pf-stock-edit-wrap" style="display:none">
+      <div style="overflow-x:auto">
+        <table class="pf-edit-table">
+          <thead><tr><th>종목명</th><th>심볼</th><th>시장</th><th>수량</th><th>평단가</th><th>통화</th><th title="거래제한">🔒</th><th></th></tr></thead>
+          <tbody id="pf-edit-tbody"></tbody>
+        </table>
+      </div>
+      <div style="font-size:10px;color:#aaa;margin-top:6px">💡 종목명 입력 시 자동완성. 🔒 체크 = 거래제한</div>
+      <button onclick="addPfRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 종목 추가</button>
+    </div>
   </div>
   <!-- 현금 탭 -->
   <div class="pf-content" id="pf-cash-tab">
-    <div id="pf-cash-list"></div>
+    <div id="pf-cash-view"><div id="pf-cash-list"></div></div>
+    <div id="pf-cash-edit-wrap" style="display:none">
+      <div style="overflow-x:auto">
+        <table class="pf-edit-table">
+          <thead><tr><th>은행명</th><th>통화</th><th>잔액</th><th></th></tr></thead>
+          <tbody id="pf-cash-tbody"></tbody>
+        </table>
+      </div>
+      <button onclick="addCashRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 계좌 추가</button>
+    </div>
   </div>
   <!-- 예적금 탭 -->
   <div class="pf-content" id="pf-savings-tab">
-    <div id="pf-savings-list"></div>
+    <div id="pf-savings-view"><div id="pf-savings-list"></div></div>
+    <div id="pf-savings-edit-wrap" style="display:none">
+      <div style="overflow-x:auto">
+        <table class="pf-edit-table">
+          <thead><tr><th>구분</th><th>은행</th><th>만기일</th><th>이율(%)</th><th>만기금액</th><th>통화</th><th></th></tr></thead>
+          <tbody id="pf-savings-tbody"></tbody>
+        </table>
+      </div>
+      <button onclick="addSavingsRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 예적금 추가</button>
+    </div>
   </div>
 </div>
 <div class="updated" id="upd"></div>
@@ -305,61 +334,6 @@ tr:hover td{background:#f8fafc}
   </div>
 </div>
 
-<!-- 포트폴리오 편집 팝업 -->
-<div class="overlay" id="pf-overlay" onclick="closePfEditor()"></div>
-<div class="pf-editor" id="pf-editor">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-    <div style="font-size:16px;font-weight:800">💼 포트폴리오 편집</div>
-    <button onclick="closePfEditor()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#888;line-height:1">✕</button>
-  </div>
-  <!-- 편집 탭 -->
-  <div class="pfe-tabs">
-    <button class="pfe-tab on" onclick="switchEditorTab('stock',this)">📈 주식</button>
-    <button class="pfe-tab" onclick="switchEditorTab('cash',this)">🏦 현금</button>
-    <button class="pfe-tab" onclick="switchEditorTab('savings',this)">💰 예적금</button>
-  </div>
-
-  <!-- 주식 편집 -->
-  <div class="pfe-content on" id="pfe-stock">
-    <div style="overflow-x:auto">
-      <table class="pf-edit-table">
-        <thead><tr>
-          <th>종목명</th><th>심볼</th><th>시장</th><th>수량</th><th>평단가</th><th>통화</th><th title="거래제한">🔒</th><th></th>
-        </tr></thead>
-        <tbody id="pf-edit-tbody"></tbody>
-      </table>
-    </div>
-    <div style="font-size:10px;color:#aaa;margin-top:6px">💡 종목명 입력 시 자동완성 목록이 표시됩니다. 🔒 체크 = 거래제한 보유분</div>
-    <button onclick="addPfRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 종목 추가</button>
-  </div>
-
-  <!-- 현금 편집 -->
-  <div class="pfe-content" id="pfe-cash">
-    <div style="overflow-x:auto">
-      <table class="pf-edit-table">
-        <thead><tr><th>은행명</th><th>통화</th><th>잔액</th><th></th></tr></thead>
-        <tbody id="pf-cash-tbody"></tbody>
-      </table>
-    </div>
-    <button onclick="addCashRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 계좌 추가</button>
-  </div>
-
-  <!-- 예적금 편집 -->
-  <div class="pfe-content" id="pfe-savings">
-    <div style="overflow-x:auto">
-      <table class="pf-edit-table">
-        <thead><tr><th>구분</th><th>은행</th><th>만기일</th><th>이율(%)</th><th>만기금액</th><th>통화</th><th></th></tr></thead>
-        <tbody id="pf-savings-tbody"></tbody>
-      </table>
-    </div>
-    <button onclick="addSavingsRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 예적금 추가</button>
-  </div>
-
-  <div style="display:flex;gap:8px;margin-top:12px">
-    <button onclick="savePfEditor()" style="flex:1;background:#1d4ed8;color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">저장</button>
-    <button onclick="closePfEditor()" style="background:#f4f6fa;color:#444;border:none;border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">취소</button>
-  </div>
-</div>
 
 <script>
 const PROXY=[
@@ -1036,13 +1010,6 @@ let pfCashEditData=[];
 let pfSavingsEditData=[];
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-function switchEditorTab(tab,btn){
-  document.querySelectorAll('.pfe-tab').forEach(b=>b.classList.remove('on'));
-  document.querySelectorAll('.pfe-content').forEach(c=>c.classList.remove('on'));
-  btn.classList.add('on');
-  document.getElementById('pfe-'+tab)?.classList.add('on');
-}
-
 /* ── 현금 편집 ── */
 function renderCashEditRows(){
   document.getElementById('pf-cash-tbody').innerHTML=pfCashEditData.map((c,i)=>`
@@ -1220,52 +1187,57 @@ function renderPfEditRows(){
     </tr>`;
   }).join('');
 }
-function openPfEditor(){
-  // 주식
+function togglePfEdit(){
   let stored=null;
   try{const s=localStorage.getItem('pf_holdings');if(s)stored=JSON.parse(s);}catch(e){}
   if(stored){pfEditData=stored;}
   else if(pfJson?.stocks?.length){pfEditData=pfJson.stocks.map(h=>({name:h.name,symbol:h.symbol,market:h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US'),qty:h.qty,avg_price:h.avg_price,currency:h.currency||'KRW',locked:h.locked||false}));}
   else if(jsonData?.portfolio?.holdings){pfEditData=jsonData.portfolio.holdings.map(h=>({name:h.name,symbol:h.symbol,market:h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US'),qty:h.qty,avg_price:h.avg_price,currency:h.currency||'KRW',locked:h.locked||false}));}
   else{pfEditData=[];}
-  // 현금
   let storedCash=null;
   try{const s=localStorage.getItem('pf_cash');if(s)storedCash=JSON.parse(s);}catch(e){}
   pfCashEditData=storedCash||pfJson?.cash||[];
-  // 예적금
   let storedSavings=null;
   try{const s=localStorage.getItem('pf_savings');if(s)storedSavings=JSON.parse(s);}catch(e){}
   pfSavingsEditData=storedSavings||pfJson?.savings||[];
-
   renderPfEditRows();
   renderCashEditRows();
   renderSavingsEditRows();
-  // 항상 첫 탭(주식)으로 초기화
-  document.querySelectorAll('.pfe-tab').forEach((b,i)=>b.classList.toggle('on',i===0));
-  document.querySelectorAll('.pfe-content').forEach((c,i)=>c.classList.toggle('on',i===0));
-  document.getElementById('pf-editor').classList.add('show');
-  document.getElementById('pf-overlay').classList.add('show');
+  document.getElementById('pf-stock-view').style.display='none';
+  document.getElementById('pf-stock-edit-wrap').style.display='block';
+  document.getElementById('pf-cash-view').style.display='none';
+  document.getElementById('pf-cash-edit-wrap').style.display='block';
+  document.getElementById('pf-savings-view').style.display='none';
+  document.getElementById('pf-savings-edit-wrap').style.display='block';
+  document.getElementById('pf-edit-btn').style.display='none';
+  document.getElementById('pf-save-btn').style.display='';
+  document.getElementById('pf-cancel-btn').style.display='';
 }
-function closePfEditor(){
-  document.getElementById('pf-editor').classList.remove('show');
-  document.getElementById('pf-overlay').classList.remove('show');
+function exitPfEditMode(){
+  document.getElementById('pf-stock-view').style.display='';
+  document.getElementById('pf-stock-edit-wrap').style.display='none';
+  document.getElementById('pf-cash-view').style.display='';
+  document.getElementById('pf-cash-edit-wrap').style.display='none';
+  document.getElementById('pf-savings-view').style.display='';
+  document.getElementById('pf-savings-edit-wrap').style.display='none';
+  document.getElementById('pf-edit-btn').style.display='';
+  document.getElementById('pf-save-btn').style.display='none';
+  document.getElementById('pf-cancel-btn').style.display='none';
 }
+function cancelPfEdit(){exitPfEditMode();}
 function addPfRow(){collectPfEditData();pfEditData.push({name:'',symbol:'',market:'KR',qty:1,avg_price:0,currency:'KRW',locked:false});renderPfEditRows();}
 function deletePfRow(i){collectPfEditData();pfEditData.splice(i,1);renderPfEditRows();}
-async function savePfEditor(){
+async function savePfInline(){
   collectPfEditData();
   collectCashEditData();
   collectSavingsEditData();
-  // 주식
   const holdings=pfEditData.filter(h=>h.name&&h.symbol&&h.qty>0).map(h=>({...h,symbol:h.symbol.toUpperCase()}));
   localStorage.setItem('pf_holdings',JSON.stringify(holdings));
-  // 현금
   const cash=pfCashEditData.filter(c=>c.bank&&c.amount>=0);
   localStorage.setItem('pf_cash',JSON.stringify(cash));
-  // 예적금
   const savings=pfSavingsEditData.filter(s=>s.bank);
   localStorage.setItem('pf_savings',JSON.stringify(savings));
-  closePfEditor();
+  exitPfEditMode();
   await renderPortfolio();
 }
 
