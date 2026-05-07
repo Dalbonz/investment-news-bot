@@ -185,7 +185,7 @@ def get_ai_comment(market):
                 'content-type':        'application/json',
             },
             json={
-                'model':      'claude-3-5-haiku-20241022',
+                'model':      'claude-haiku-4-5',
                 'max_tokens': 800,
                 'messages':   [{'role': 'user', 'content': prompt}],
             },
