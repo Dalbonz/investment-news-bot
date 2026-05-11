@@ -1,5 +1,6 @@
 # CLAUDE.md
 
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Running the bot
@@ -16,7 +17,10 @@ python news_bot.py
 
 This is a two-part system connected by `data.json`:
 
-1. **`news_bot.py`** — Python script that runs via GitHub Actions on a daily cron (`30 23 * * *` UTC = 08:30 KST). It:
+1. **`news_bot.py`** — Python script that runs via GitHub Actions on two schedules:
+   - 평일(월~금) `30 23 * * 0,1,2,3,4` UTC = 08:30 KST
+   - 주말(토~일) `0 1 * * 0,6` UTC = 10:00 KST
+   It:
    - Fetches 5-day OHLCV candles for ~35 symbols from the Yahoo Finance v8 API
    - Scrapes up to 3 articles per source from 5 Korean financial RSS feeds, filtered by `INVEST_KW` / `EXCLUDE_KW` keyword lists
    - Optionally generates a 3–4 sentence Korean market commentary using OpenAI `gpt-4o-mini`
@@ -33,7 +37,7 @@ This is a two-part system connected by `data.json`:
 - `SYMBOLS` dict in `news_bot.py` maps short keys (e.g. `'kospi'`) to Yahoo Finance ticker symbols. The same keys are used in `data.json` and referenced directly in `index.html`.
 - News keyword filtering (`is_invest_news`) is purely title-based with no ML — add/remove strings from `INVEST_KW` / `EXCLUDE_KW` to tune.
 - The frontend (`index.html`) has no dependency on `new_index_gpt.html`; the latter is an alternate/experimental layout.
-npm install -g @anthropic-ai/claude-code
+
 
 ## 현재 심볼 현황
 - 코스피: ^KS11, 코스닥: ^KQ11
