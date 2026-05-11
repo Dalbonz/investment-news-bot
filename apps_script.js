@@ -18,7 +18,7 @@
 
 // ← 여기를 본인 Google 스프레드시트 ID로 교체하세요
 // URL의 /d/ 뒤 ~ /edit 사이의 긴 문자열입니다
-const SHEET_ID = 'YOUR_SPREADSHEET_ID_HERE';
+const SHEET_ID = '1jYVXz_rJ5CiVOWl3Rts5EPXBSgib3BCvf-TDXFegC6E';
 
 // ────────────────────────────────────────────────────────────
 // GET: 전체 포트폴리오 데이터 반환
