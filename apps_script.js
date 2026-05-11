@@ -1,59 +1,56 @@
 /**
- * Investment Dashboard — Google Apps Script Web App
+ * Investment Dashboard — Google Apps Script Web App (1인용)
  *
  * 배포 방법:
  *  1. Google Sheets 열기 → 확장 프로그램 → Apps Script
  *  2. 이 파일의 내용 전체를 붙여넣기
- *  3. SHEET_ID 를 본인 스프레드시트 ID로 교체
+ *  3. OWNER 와 SHEET_ID 를 수정
+ *     - Bong 시트: OWNER = 'bong', SHEET_ID = 'Bong 시트 ID'
+ *     - Kyoung 시트: OWNER = 'kyoung', SHEET_ID = 'Kyoung 시트 ID'
  *  4. 배포 → 새 배포 → 유형: 웹 앱
  *     - 다음 사용자로 실행: 나(Me)
  *     - 액세스 권한: 누구나(Anyone)
  *  5. 배포 후 URL을 대시보드 ⚙️ 설정에 붙여넣기
  *
- * 시트 구조 (자동 생성됨):
- *  Bong_Stocks   | Bong_Cash   | Bong_Savings
- *  Kyoung_Stocks | Kyoung_Cash | Kyoung_Savings
- *  Meta          (realized_pnl 등 메타 값)
+ * 시트 탭 구조 (자동 생성됨):
+ *  Stocks | Cash | Savings | Meta
  */
 
-// ← 여기를 본인 Google 스프레드시트 ID로 교체하세요
+// ← 'bong' 또는 'kyoung' 으로 변경하세요
+const OWNER = 'bong';
+
+// ← 본인 Google 스프레드시트 ID로 교체하세요
 // URL의 /d/ 뒤 ~ /edit 사이의 긴 문자열입니다
+//   Bong   시트: 1jYVXz_rJ5CiVOWl3Rts5EPXBSgib3BCvf-TDXFegC6E
+//   Kyoung 시트: 1656KHRiBCbdvvksAuuppmTy9IfyhOrblZAMMcsiVu1w
 const SHEET_ID = '1jYVXz_rJ5CiVOWl3Rts5EPXBSgib3BCvf-TDXFegC6E';
 
 // ────────────────────────────────────────────────────────────
-// GET: 전체 포트폴리오 데이터 반환
+// GET: 포트폴리오 데이터 반환
 // ────────────────────────────────────────────────────────────
-function doGet(e) {
+function doGet(_e) {
   try {
     const ss = SpreadsheetApp.openById(SHEET_ID);
-    const result = {
-      bong:   readOwner(ss, 'Bong'),
-      kyoung: readOwner(ss, 'Kyoung'),
-    };
-    return jsonResponse(result);
+    return jsonResponse(readOwner(ss));
   } catch (err) {
     return jsonResponse({ error: err.toString() });
   }
 }
 
 // ────────────────────────────────────────────────────────────
-// POST: 오너의 포트폴리오 저장 (owner, stocks, cash, savings)
+// POST: 포트폴리오 저장 (stocks, cash, savings)
 // ────────────────────────────────────────────────────────────
 function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
-    const owner = data.owner; // 'bong' | 'kyoung'
-    if (!owner || owner === 'total') throw new Error('Invalid owner');
-
-    const prefix = owner.charAt(0).toUpperCase() + owner.slice(1); // 'Bong' | 'Kyoung'
     const ss = SpreadsheetApp.openById(SHEET_ID);
 
     if (data.stocks !== undefined)
-      writeSheet(ss, prefix + '_Stocks', HEADERS.stocks, data.stocks);
+      writeSheet(ss, 'Stocks',  HEADERS.stocks,  data.stocks);
     if (data.cash !== undefined)
-      writeSheet(ss, prefix + '_Cash', HEADERS.cash, data.cash);
+      writeSheet(ss, 'Cash',    HEADERS.cash,    data.cash);
     if (data.savings !== undefined)
-      writeSheet(ss, prefix + '_Savings', HEADERS.savings, data.savings);
+      writeSheet(ss, 'Savings', HEADERS.savings, data.savings);
 
     return jsonResponse({ ok: true });
   } catch (err) {
@@ -71,15 +68,15 @@ const HEADERS = {
 };
 
 // ────────────────────────────────────────────────────────────
-// 헬퍼: 오너 데이터 읽기
+// 헬퍼: 데이터 읽기
 // ────────────────────────────────────────────────────────────
-function readOwner(ss, prefix) {
-  const stocks  = readSheet(ss, prefix + '_Stocks',  HEADERS.stocks);
-  const cash    = readSheet(ss, prefix + '_Cash',    HEADERS.cash);
-  const savings = readSheet(ss, prefix + '_Savings', HEADERS.savings);
+function readOwner(ss) {
+  const stocks  = readSheet(ss, 'Stocks',  HEADERS.stocks);
+  const cash    = readSheet(ss, 'Cash',    HEADERS.cash);
+  const savings = readSheet(ss, 'Savings', HEADERS.savings);
   const meta    = readSheet(ss, 'Meta', ['key', 'value']);
   const realized = Number(
-    (meta.find(r => r.key === prefix.toLowerCase() + '_realized_pnl_2025') || {}).value || 0
+    (meta.find(r => r.key === OWNER + '_realized_pnl_2025') || {}).value || 0
   );
   return { stocks, cash, savings, realized_pnl_2025_krw: realized };
 }
@@ -97,11 +94,9 @@ function readSheet(ss, sheetName, headers) {
     .map(row => {
       const obj = {};
       headers.forEach((h, i) => { obj[h] = row[i] !== undefined ? row[i] : ''; });
-      // 숫자 필드 변환
       ['qty', 'avg_price', 'amount', 'rate_pct', 'maturity_amount'].forEach(f => {
         if (obj[f] !== undefined && obj[f] !== '') obj[f] = Number(obj[f]);
       });
-      // boolean 변환
       if (obj.locked !== undefined)
         obj.locked = obj.locked === true || obj.locked === 'TRUE' || obj.locked === 1;
       return obj;

@@ -444,13 +444,18 @@ tr:hover td{background:#f8fafc}
 <div class="sync-settings-overlay" id="sync-settings-overlay">
   <div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:24px;width:440px;max-width:92vw">
     <div style="color:#e6edf3;font-weight:700;font-size:15px;margin-bottom:10px">⚙️ Google Sheets 연동 설정</div>
-    <div style="color:#8b949e;font-size:11px;margin-bottom:12px;line-height:1.6">Apps Script Web App URL을 입력하면 Google 시트와 양방향 동기화됩니다.<br>비워두면 로컬 저장소만 사용합니다.</div>
-    <input type="url" id="apps-script-url-input" placeholder="https://script.google.com/macros/s/..."
+    <div style="color:#8b949e;font-size:11px;margin-bottom:12px;line-height:1.6">각자의 Apps Script 배포 URL을 입력하세요. 5분마다 자동 동기화됩니다.<br>비워두면 해당 계정은 로컬 저장소를 사용합니다.</div>
+    <div style="color:#8b949e;font-size:11px;margin-bottom:4px">🧑 Bong URL</div>
+    <input type="url" id="bong-url-input" placeholder="https://script.google.com/macros/s/..."
+      style="width:100%;margin-bottom:10px;background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:9px 10px;color:#c9d1d9;font-size:12px;font-family:inherit;box-sizing:border-box">
+    <div style="color:#8b949e;font-size:11px;margin-bottom:4px">👩 Kyoung URL</div>
+    <input type="url" id="kyoung-url-input" placeholder="https://script.google.com/macros/s/..."
       style="width:100%;margin-bottom:10px;background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:9px 10px;color:#c9d1d9;font-size:12px;font-family:inherit;box-sizing:border-box">
     <div style="color:#8b949e;font-size:10px;margin-bottom:14px;line-height:1.8;background:#0d1117;border-radius:8px;padding:10px 12px">
       💡 <b style="color:#c9d1d9">설정 방법:</b><br>
       1. Google Sheets 열기 → 확장 프로그램 → Apps Script<br>
-      2. <code style="color:#c8fa00">apps_script.js</code> 코드 붙여넣기 (레포에 포함)<br>
+      2. <code style="color:#c8fa00">apps_script.js</code> 붙여넣기 후 OWNER 상단 값 변경<br>
+      &nbsp;&nbsp;&nbsp;(Bong 시트: <code style="color:#c8fa00">'bong'</code> / Kyoung 시트: <code style="color:#c8fa00">'kyoung'</code>)<br>
       3. 배포 → 새 배포 → 웹 앱 선택<br>
       4. "다음 사용자로 실행: 나" / "액세스 권한: 누구나" 설정<br>
       5. 배포 URL 복사 → 위에 붙여넣기
@@ -590,7 +595,7 @@ async function switchOwnerTab(owner,btn){
 }
 
 // ── Google Sheets / Apps Script 동기화 ───────────────────────
-function getAppsScriptUrl(){return localStorage.getItem('pf_apps_script_url')||'';}
+function getAppsScriptUrlFor(owner){return localStorage.getItem('pf_apps_script_url_'+owner)||'';}
 function setSyncStatus(status,msg){
   const dot=document.getElementById('sync-dot');
   const txt=document.getElementById('sync-status-text');
@@ -599,50 +604,75 @@ function setSyncStatus(status,msg){
   txt.textContent=msg;
 }
 function openSyncSettings(){
-  document.getElementById('apps-script-url-input').value=getAppsScriptUrl();
+  document.getElementById('bong-url-input').value=getAppsScriptUrlFor('bong');
+  document.getElementById('kyoung-url-input').value=getAppsScriptUrlFor('kyoung');
   document.getElementById('sync-settings-overlay').classList.add('show');
 }
 function closeSyncSettings(){document.getElementById('sync-settings-overlay').classList.remove('show');}
 function saveSyncSettings(){
-  const url=document.getElementById('apps-script-url-input').value.trim();
-  if(url)localStorage.setItem('pf_apps_script_url',url);
-  else localStorage.removeItem('pf_apps_script_url');
+  const bongUrl=document.getElementById('bong-url-input').value.trim();
+  const kyoungUrl=document.getElementById('kyoung-url-input').value.trim();
+  if(bongUrl)localStorage.setItem('pf_apps_script_url_bong',bongUrl);
+  else localStorage.removeItem('pf_apps_script_url_bong');
+  if(kyoungUrl)localStorage.setItem('pf_apps_script_url_kyoung',kyoungUrl);
+  else localStorage.removeItem('pf_apps_script_url_kyoung');
   closeSyncSettings();
   loadAndRenderPortfolio(currentOwner);
 }
 
 let gsDataCache=null;
-async function fetchGsData(){
-  const url=getAppsScriptUrl();
-  if(!url){setSyncStatus('','로컬 저장소 사용 중');return null;}
+async function fetchGsDataFor(owner){
+  const url=getAppsScriptUrlFor(owner);
+  if(!url)return null;
   try{
-    setSyncStatus('','Google Sheets 동기화 중...');
     const r=await fetch(url,{signal:AbortSignal.timeout(12000)});
     if(!r.ok)throw new Error('HTTP '+r.status);
     const data=await r.json();
     if(data.error)throw new Error(data.error);
-    gsDataCache=data;
-    setSyncStatus('ok','Google Sheets 동기화됨 ✓');
     return data;
   }catch(e){
+    console.warn('GS fetch ('+owner+'):',e);
+    return null;
+  }
+}
+async function fetchGsData(){
+  const hasBong=!!getAppsScriptUrlFor('bong');
+  const hasKyoung=!!getAppsScriptUrlFor('kyoung');
+  if(!hasBong&&!hasKyoung){setSyncStatus('','로컬 저장소 사용 중');return null;}
+  setSyncStatus('','Google Sheets 동기화 중...');
+  try{
+    const [bongData,kyoungData]=await Promise.all([
+      fetchGsDataFor('bong'),
+      fetchGsDataFor('kyoung'),
+    ]);
+    if(!bongData&&!kyoungData)throw new Error('all failed');
+    gsDataCache={bong:bongData,kyoung:kyoungData};
+    setSyncStatus('ok','Google Sheets 동기화됨 ✓');
+    return gsDataCache;
+  }catch(e){
     setSyncStatus('err','Google Sheets 연결 실패 — 로컬 사용');
-    console.warn('GS fetch:',e);
     return null;
   }
 }
 async function syncToGs(owner,stocks,cash,savings){
-  const url=getAppsScriptUrl();
+  const url=getAppsScriptUrlFor(owner);
   if(!url||owner==='total')return;
   try{
     await fetch(url,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({owner,stocks,cash,savings}),
+      body:JSON.stringify({stocks,cash,savings}),
       signal:AbortSignal.timeout(15000),
     });
     setSyncStatus('ok','Google Sheets 저장됨 ✓');
   }catch(e){setSyncStatus('err','Google Sheets 저장 실패');}
 }
+// 5분마다 GS 자동 새로고침 (포트폴리오 모달이 열려있을 때만)
+setInterval(()=>{
+  if(document.getElementById('pf-modal')?.classList.contains('show')){
+    loadAndRenderPortfolio(currentOwner);
+  }
+},5*60*1000);
 
 // ── 포트폴리오 데이터 로드 & 렌더 ──────────────────────────────
 function lsGet(key){try{const v=localStorage.getItem(key);return v?JSON.parse(v):null;}catch(e){return null;}}
