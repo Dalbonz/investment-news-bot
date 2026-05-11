@@ -136,9 +136,11 @@ def get_news():
     return all_news
 
 _FALLBACK_COMMENT = {
-    'kr':   '한국 시황 분석을 불러오지 못했어요.',
-    'us':   '미국 시황 분석을 불러오지 못했어요.',
-    'tips': '투자 포인트를 불러오지 못했어요.',
+    'summary': '',
+    'kr':      '한국 시황 분석을 불러오지 못했어요.',
+    'us':      '미국 시황 분석을 불러오지 못했어요.',
+    'pick':    '종목 추천을 불러오지 못했어요.',
+    'warn':    '',
 }
 
 def get_ai_comment(market):
@@ -146,29 +148,38 @@ def get_ai_comment(market):
         return dict(_FALLBACK_COMMENT)
 
     kr_rows, us_rows, other_rows = [], [], []
-    for k, label in [('kospi','코스피'),('kosdaq','코스닥'),('usdkrw','달러/원'),('jpykrw','엔/원'),('eurkrw','유로/원')]:
+    for k, label in [('kospi','코스피'),('kosdaq','코스닥'),('usdkrw','달러/원'),('jpykrw','엔/원'),('eurkrw','유로/원'),
+                     ('samsung','삼성전자'),('hynix','SK하이닉스'),('naver','NAVER'),('hanwha','한화에어로'),('hyundai','현대차')]:
         if k in market:
             m = market[k]
             kr_rows.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
-    for k, label in [('nasdaq','나스닥'),('sp500','S&P500'),('dow','다우'),('nvda','엔비디아'),('aapl','애플'),('msft','마이크로소프트'),('tsla','테슬라'),('googl','구글')]:
+    for k, label in [('nasdaq','나스닥'),('sp500','S&P500'),('dow','다우'),('nvda','엔비디아'),('aapl','애플'),
+                     ('msft','마이크로소프트'),('tsla','테슬라'),('googl','구글'),('ndx','NDX100')]:
         if k in market:
             m = market[k]
             us_rows.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
-    for k, label in [('oil','WTI유가'),('gold','금'),('vix','VIX'),('silver','은')]:
+    for k, label in [('oil','WTI유가'),('brent','브렌트유'),('gold','금'),('silver','은'),('vix','VIX'),('dxy','달러지수')]:
         if k in market:
             m = market[k]
             other_rows.append(label + ': ' + str(m['price']) + ' (' + ('+' if m['pct']>=0 else '') + str(m['pct']) + '%)')
 
     prompt = (
-        '당신은 전문 증권 애널리스트입니다. 아래 시장 데이터를 바탕으로 투자자를 위한 시황 분석을 한국어로 작성하세요.\n\n'
+        '당신은 주식 투자를 처음 시작하는 사람의 친절한 선생님입니다. 아래 실시간 시장 데이터를 보고 오늘 시장을 쉽게 설명하고 오늘 살 만한 종목을 추천해주세요.\n\n'
+        '규칙:\n'
+        '- 전문용어는 쓰지 말거나, 쓴다면 바로 쉬운 말로 풀어주세요\n'
+        '- "코스피 하락" 대신 "우리나라 주식 전체가 조금 떨어졌어요" 같이 친근하게\n'
+        '- 추천 종목은 반드시 실제 종목명(삼성전자, 엔비디아, 애플 등)을 쓰고 왜 지금 사면 좋은지 누구나 이해할 수 있는 이유 1문장으로\n'
+        '- 모든 설명은 짧고 명확하게\n\n'
         '한국 시장:\n' + '\n'.join(kr_rows) + '\n\n'
         '미국 시장:\n' + '\n'.join(us_rows) + '\n\n'
-        '기타(원자재/변동성):\n' + '\n'.join(other_rows) + '\n\n'
+        '원자재/지표:\n' + '\n'.join(other_rows) + '\n\n'
         '아래 JSON 형식으로만 응답하세요 (다른 텍스트 없이):\n'
         '{\n'
-        '  "kr": "🇰🇷 한국 시황: [코스피/코스닥/환율 중심 2~3문장]",\n'
-        '  "us": "🇺🇸 미국 시황: [나스닥/S&P500/빅테크 중심 2~3문장]",\n'
-        '  "tips": "💡 오늘의 투자 포인트: [주목 섹터/종목 2~3문장]"\n'
+        '  "summary": "📌 오늘 한 줄 요약: [오늘 시장 분위기를 친구에게 말하듯 한 문장]",\n'
+        '  "kr": "🇰🇷 한국 시장: [코스피/코스닥/주요 종목 상황을 초보자도 알 수 있게 2문장, 전문용어 금지]",\n'
+        '  "us": "🇺🇸 미국 시장: [나스닥/S&P500/빅테크 상황을 쉽게 2문장]",\n'
+        '  "pick": "🛒 오늘의 추천 종목:\\n• [종목명] — [지금 사면 좋은 이유 1문장, 쉽게]\\n• [종목명] — [이유]\\n• [종목명] — [이유]",\n'
+        '  "warn": "⚠️ 오늘 조심할 것: [지금 사면 안 되는 상황이나 주의사항 1~2문장, 쉽게]"\n'
         '}'
     )
 
@@ -186,7 +197,7 @@ def get_ai_comment(market):
             },
             json={
                 'model':      'claude-haiku-4-5',
-                'max_tokens': 800,
+                'max_tokens': 1800,
                 'messages':   [{'role': 'user', 'content': prompt}],
             },
             timeout=30,
@@ -216,9 +227,11 @@ def get_ai_comment(market):
                 raw = raw[4:]
         parsed = json.loads(raw)
         return {
-            'kr':   parsed.get('kr',   ''),
-            'us':   parsed.get('us',   ''),
-            'tips': parsed.get('tips', ''),
+            'summary': parsed.get('summary', ''),
+            'kr':      parsed.get('kr',      ''),
+            'us':      parsed.get('us',      ''),
+            'pick':    parsed.get('pick',    ''),
+            'warn':    parsed.get('warn',    ''),
         }
 
     except json.JSONDecodeError as e:
@@ -324,11 +337,16 @@ def save_data_json(market, news, ai_comment, portfolio=None):
 def build_telegram_msg(market, news, ai_comment):
     today = datetime.now().strftime('%Y년 %m월 %d일')
     msg = '📈 <b>' + today + ' 투자 브리핑</b>\n\n'
-    msg += '🤖 <b>AI 시황 분석</b>\n'
+    msg += '🤖 <b>AI 오늘의 시황</b>\n'
     if isinstance(ai_comment, dict):
+        if ai_comment.get('summary'):
+            msg += ai_comment['summary'] + '\n\n'
         msg += ai_comment.get('kr',   '') + '\n\n'
         msg += ai_comment.get('us',   '') + '\n\n'
-        msg += ai_comment.get('tips', '') + '\n\n'
+        if ai_comment.get('pick'):
+            msg += ai_comment['pick'] + '\n\n'
+        if ai_comment.get('warn'):
+            msg += ai_comment['warn'] + '\n\n'
     else:
         msg += str(ai_comment) + '\n\n'
     msg += '📊 <b>주요 증시</b>\n'
@@ -400,11 +418,15 @@ def send_email(market, news, ai_comment):
         news_html += '<a href="' + item['link'] + '" style="color:#1a73e8;font-size:0.9em">🔗 자세히 보기</a>'
         news_html += '</div>'
     if isinstance(ai_comment, dict):
-        ai_html = (
-            '<div style="margin-bottom:10px">' + ai_comment.get('kr',   '') + '</div>'
-            '<div style="margin-bottom:10px">' + ai_comment.get('us',   '') + '</div>'
-            '<div>'                             + ai_comment.get('tips', '') + '</div>'
-        )
+        ai_html = ''
+        if ai_comment.get('summary'):
+            ai_html += '<div style="margin-bottom:12px;font-size:15px;font-weight:bold">' + ai_comment['summary'] + '</div>'
+        ai_html += '<div style="margin-bottom:10px">' + ai_comment.get('kr', '') + '</div>'
+        ai_html += '<div style="margin-bottom:10px">' + ai_comment.get('us', '') + '</div>'
+        if ai_comment.get('pick'):
+            ai_html += '<div style="margin-bottom:10px;white-space:pre-line">' + ai_comment['pick'] + '</div>'
+        if ai_comment.get('warn'):
+            ai_html += '<div>' + ai_comment['warn'] + '</div>'
     else:
         ai_html = str(ai_comment)
     html = (
