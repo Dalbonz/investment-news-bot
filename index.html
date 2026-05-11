@@ -184,13 +184,35 @@ tr:hover td{background:#f8fafc}
 .pf-dark .ac-item:hover{background:#21262d}
 .pf-dark .pf-legend-item{color:#c9d1d9}
 .pf-spark-td{width:72px;padding:2px 4px!important;vertical-align:middle}
+/* ── Portfolio button & modal ── */
+.pf-header-btn{position:absolute;right:0;top:50%;transform:translateY(-50%);background:#1d4ed8;color:#fff;border:none;border-radius:10px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;z-index:2}
+@media(max-width:480px){.pf-header-btn{position:static;display:block;margin:8px auto 0;transform:none}}
+.pf-modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#0d1117;z-index:200;overflow-y:auto}
+.pf-modal.show{display:block}
+.pf-modal-hd{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid #21262d;position:sticky;top:0;background:#0d1117;z-index:10}
+.pf-modal-close{background:none;border:none;color:#8b949e;font-size:24px;cursor:pointer;padding:0 6px;line-height:1}
+.pf-modal-close:hover{color:#e6edf3}
+.owner-tabs{display:flex;gap:6px;padding:10px 16px 0}
+.owner-tab{background:#161b22;border:1px solid #30363d;border-radius:10px;font-size:12px;font-weight:700;color:#8b949e;padding:5px 16px;cursor:pointer;font-family:inherit;transition:all .1s}
+.owner-tab.on{background:#c8fa00;color:#0d1117;border-color:#c8fa00}
+.pf-pw-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:220;align-items:center;justify-content:center}
+.pf-pw-overlay.show{display:flex}
+.pf-pw-box{background:#161b22;border:1px solid #30363d;border-radius:16px;padding:28px 24px;width:320px;max-width:90vw}
+.pf-sync-row{display:flex;align-items:center;gap:8px;padding:7px 16px;font-size:11px;color:#8b949e;border-bottom:1px solid #161b22}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#8b949e;flex-shrink:0;transition:background .3s}
+.sync-dot.ok{background:#3fb950}.sync-dot.err{background:#f85149}
+.sync-settings-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);z-index:230;align-items:center;justify-content:center}
+.sync-settings-overlay.show{display:flex}
+.ai-section-pre{white-space:pre-line;padding:6px 0;border-bottom:1px solid rgba(29,78,216,0.12)}
+.ai-section-pre:last-child{border-bottom:none;padding-bottom:0}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div class="header">
+<div class="header" style="position:relative">
   <h2>Investment Daily Dashboard</h2>
   <div class="date" id="header-date"></div>
+  <button class="pf-header-btn" onclick="openPfModal()">💼 포트폴리오</button>
 </div>
 <div class="ai-box">
   <div class="ai-label">🤖 AI 시황 코멘트</div>
@@ -277,77 +299,7 @@ tr:hover td{background:#f8fafc}
   <div class="etf-grid" id="etf-grid"></div>
 </div>
 
-<!-- 포트폴리오 -->
-<div class="sec pf-dark" id="pf-sec">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-    <div style="font-weight:700;font-size:15px;color:#e6edf3">💼 내 포트폴리오</div>
-    <div style="display:flex;gap:6px">
-      <button id="pf-edit-btn" onclick="togglePfEdit()" style="background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✏️ 편집</button>
-      <button id="pf-save-btn" onclick="savePfInline()" style="display:none;background:#1d4ed8;color:#fff;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ 저장</button>
-      <button id="pf-cancel-btn" onclick="cancelPfEdit()" style="display:none;background:#f4f6fa;color:#444;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✕ 취소</button>
-    </div>
-  </div>
-  <!-- KPI 요약 -->
-  <div class="pf-summary" id="pf-summary"></div>
-  <!-- 자산배분 도넛 -->
-  <div id="pf-chart-wrap" style="margin-bottom:10px"></div>
-  <!-- 탭 -->
-  <div class="pf-tabs">
-    <button class="pf-tab on" onclick="switchPfTab('stock',this)">📈 주식</button>
-    <button class="pf-tab" onclick="switchPfTab('cash',this)">🏦 현금</button>
-    <button class="pf-tab" onclick="switchPfTab('savings',this)">💰 예적금</button>
-  </div>
-  <!-- 주식 탭 -->
-  <div class="pf-content on" id="pf-stock-tab">
-    <div id="pf-stock-view">
-      <div class="tw">
-        <table class="pftable">
-          <thead><tr>
-            <th>종목</th><th>수량</th><th>평단가</th><th>현재가</th><th>전일비</th><th>1달비</th><th>6달비</th><th>1년비</th><th>평가금액</th><th>수익률/손익</th><th>차트</th>
-          </tr></thead>
-          <tbody id="pftb"></tbody>
-        </table>
-      </div>
-      <div id="pf-realized-wrap"></div>
-    </div>
-    <div id="pf-stock-edit-wrap" style="display:none">
-      <div style="overflow-x:auto">
-        <table class="pf-edit-table">
-          <thead><tr><th>종목명</th><th>심볼</th><th>시장</th><th>수량</th><th>평단가</th><th>통화</th><th title="거래제한">🔒</th><th></th></tr></thead>
-          <tbody id="pf-edit-tbody"></tbody>
-        </table>
-      </div>
-      <div style="font-size:10px;color:#aaa;margin-top:6px">💡 종목명 입력 시 자동완성. 🔒 체크 = 거래제한</div>
-      <button onclick="addPfRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 종목 추가</button>
-    </div>
-  </div>
-  <!-- 현금 탭 -->
-  <div class="pf-content" id="pf-cash-tab">
-    <div id="pf-cash-view"><div id="pf-cash-list"></div></div>
-    <div id="pf-cash-edit-wrap" style="display:none">
-      <div style="overflow-x:auto">
-        <table class="pf-edit-table">
-          <thead><tr><th>은행명</th><th>통화</th><th>잔액</th><th></th></tr></thead>
-          <tbody id="pf-cash-tbody"></tbody>
-        </table>
-      </div>
-      <button onclick="addCashRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 계좌 추가</button>
-    </div>
-  </div>
-  <!-- 예적금 탭 -->
-  <div class="pf-content" id="pf-savings-tab">
-    <div id="pf-savings-view"><div id="pf-savings-list"></div></div>
-    <div id="pf-savings-edit-wrap" style="display:none">
-      <div style="overflow-x:auto">
-        <table class="pf-edit-table">
-          <thead><tr><th>구분</th><th>은행</th><th>만기일</th><th>이율(%)</th><th>만기금액</th><th>통화</th><th></th></tr></thead>
-          <tbody id="pf-savings-tbody"></tbody>
-        </table>
-      </div>
-      <button onclick="addSavingsRow()" style="margin-top:8px;background:#f0f4ff;color:#1d4ed8;border:1px solid #c7d7fb;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 예적금 추가</button>
-    </div>
-  </div>
-</div>
+<!-- 포트폴리오는 우측 상단 버튼으로 접근 -->
 <div class="updated" id="upd"></div>
 </div>
 
@@ -376,6 +328,140 @@ tr:hover td{background:#f8fafc}
 </div>
 
 
+<!-- ── 비밀번호 모달 ── -->
+<div class="pf-pw-overlay" id="pf-pw-overlay">
+  <div class="pf-pw-box">
+    <div style="color:#e6edf3;font-weight:800;font-size:18px;margin-bottom:4px">🔐 포트폴리오</div>
+    <div style="color:#8b949e;font-size:12px;margin-bottom:16px">비밀번호를 입력하세요</div>
+    <input type="password" id="pf-pw-input" class="pf-edit-input" placeholder="비밀번호"
+      style="width:100%;margin-bottom:8px;background:#1c2128;border-color:#30363d;color:#e6edf3;font-size:14px;padding:10px 12px"
+      onkeydown="if(event.key==='Enter')submitPfPassword()">
+    <div id="pf-pw-err" style="color:#f85149;font-size:11px;margin-bottom:8px;display:none">비밀번호가 올바르지 않습니다</div>
+    <div style="display:flex;gap:8px">
+      <button onclick="submitPfPassword()" style="flex:1;background:#c8fa00;color:#0d1117;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">확인</button>
+      <button onclick="closePwModal()" style="background:#21262d;color:#8b949e;border:none;border-radius:8px;padding:10px 16px;font-size:13px;cursor:pointer;font-family:inherit">취소</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 포트폴리오 전체화면 모달 ── -->
+<div class="pf-modal" id="pf-modal">
+  <!-- 헤더 -->
+  <div class="pf-modal-hd">
+    <div style="color:#e6edf3;font-weight:800;font-size:18px">💼 포트폴리오</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button onclick="openSyncSettings()" title="Google Sheets 설정" style="background:none;border:none;color:#8b949e;font-size:16px;cursor:pointer;padding:2px 6px;line-height:1">⚙️</button>
+      <button class="pf-modal-close" onclick="closePfModal()">✕</button>
+    </div>
+  </div>
+  <!-- 오너 탭 -->
+  <div class="owner-tabs">
+    <button class="owner-tab on" onclick="switchOwnerTab('total',this)">📊 Total</button>
+    <button class="owner-tab" onclick="switchOwnerTab('bong',this)">🧑 Bong</button>
+    <button class="owner-tab" onclick="switchOwnerTab('kyoung',this)">👩 Kyoung</button>
+  </div>
+  <!-- 동기화 상태 -->
+  <div class="pf-sync-row">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-status-text">로컬 데이터 사용 중</span>
+  </div>
+  <!-- 포트폴리오 컨텐츠 -->
+  <div style="padding:8px 8px 32px;max-width:1400px;margin:0 auto">
+    <div class="pf-dark" id="pf-sec" style="border-radius:10px;padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-weight:700;font-size:15px;color:#e6edf3" id="pf-owner-label">💼 포트폴리오</div>
+        <div style="display:flex;gap:6px" id="pf-edit-controls">
+          <button id="pf-edit-btn" onclick="togglePfEdit()" style="background:#1c2128;color:#8b949e;border:1px solid #30363d;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✏️ 편집</button>
+          <button id="pf-save-btn" onclick="savePfInline()" style="display:none;background:#c8fa00;color:#0d1117;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✓ 저장</button>
+          <button id="pf-cancel-btn" onclick="cancelPfEdit()" style="display:none;background:#1c2128;color:#8b949e;border:none;border-radius:8px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit">✕ 취소</button>
+        </div>
+      </div>
+      <!-- KPI 요약 -->
+      <div class="pf-summary" id="pf-summary"></div>
+      <!-- 자산배분 도넛 -->
+      <div id="pf-chart-wrap" style="margin-bottom:10px"></div>
+      <!-- 탭 -->
+      <div class="pf-tabs">
+        <button class="pf-tab on" onclick="switchPfTab('stock',this)">📈 주식</button>
+        <button class="pf-tab" onclick="switchPfTab('cash',this)">🏦 현금</button>
+        <button class="pf-tab" onclick="switchPfTab('savings',this)">💰 예적금</button>
+      </div>
+      <!-- 주식 탭 -->
+      <div class="pf-content on" id="pf-stock-tab">
+        <div id="pf-stock-view">
+          <div class="tw">
+            <table class="pftable">
+              <thead><tr>
+                <th>종목</th><th>수량</th><th>평단가</th><th>현재가</th><th>전일비</th><th>1달비</th><th>6달비</th><th>1년비</th><th>평가금액</th><th>수익률/손익</th><th>차트</th>
+              </tr></thead>
+              <tbody id="pftb"></tbody>
+            </table>
+          </div>
+          <div id="pf-realized-wrap"></div>
+        </div>
+        <div id="pf-stock-edit-wrap" style="display:none">
+          <div style="overflow-x:auto">
+            <table class="pf-edit-table">
+              <thead><tr><th>종목명</th><th>심볼</th><th>시장</th><th>수량</th><th>평단가</th><th>통화</th><th title="거래제한">🔒</th><th></th></tr></thead>
+              <tbody id="pf-edit-tbody"></tbody>
+            </table>
+          </div>
+          <div style="font-size:10px;color:#aaa;margin-top:6px">💡 종목명 입력 시 자동완성. 🔒 체크 = 거래제한</div>
+          <button onclick="addPfRow()" style="margin-top:8px;background:#1c2128;color:#c8fa00;border:1px solid #30363d;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 종목 추가</button>
+        </div>
+      </div>
+      <!-- 현금 탭 -->
+      <div class="pf-content" id="pf-cash-tab">
+        <div id="pf-cash-view"><div id="pf-cash-list"></div></div>
+        <div id="pf-cash-edit-wrap" style="display:none">
+          <div style="overflow-x:auto">
+            <table class="pf-edit-table">
+              <thead><tr><th>은행명</th><th>통화</th><th>잔액</th><th></th></tr></thead>
+              <tbody id="pf-cash-tbody"></tbody>
+            </table>
+          </div>
+          <button onclick="addCashRow()" style="margin-top:8px;background:#1c2128;color:#c8fa00;border:1px solid #30363d;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 계좌 추가</button>
+        </div>
+      </div>
+      <!-- 예적금 탭 -->
+      <div class="pf-content" id="pf-savings-tab">
+        <div id="pf-savings-view"><div id="pf-savings-list"></div></div>
+        <div id="pf-savings-edit-wrap" style="display:none">
+          <div style="overflow-x:auto">
+            <table class="pf-edit-table">
+              <thead><tr><th>구분</th><th>은행</th><th>만기일</th><th>이율(%)</th><th>만기금액</th><th>통화</th><th></th></tr></thead>
+              <tbody id="pf-savings-tbody"></tbody>
+            </table>
+          </div>
+          <button onclick="addSavingsRow()" style="margin-top:8px;background:#1c2128;color:#c8fa00;border:1px solid #30363d;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;width:100%">+ 예적금 추가</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Google Sheets 설정 오버레이 ── -->
+<div class="sync-settings-overlay" id="sync-settings-overlay">
+  <div style="background:#161b22;border:1px solid #30363d;border-radius:16px;padding:24px;width:440px;max-width:92vw">
+    <div style="color:#e6edf3;font-weight:700;font-size:15px;margin-bottom:10px">⚙️ Google Sheets 연동 설정</div>
+    <div style="color:#8b949e;font-size:11px;margin-bottom:12px;line-height:1.6">Apps Script Web App URL을 입력하면 Google 시트와 양방향 동기화됩니다.<br>비워두면 로컬 저장소만 사용합니다.</div>
+    <input type="url" id="apps-script-url-input" placeholder="https://script.google.com/macros/s/..."
+      style="width:100%;margin-bottom:10px;background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:9px 10px;color:#c9d1d9;font-size:12px;font-family:inherit;box-sizing:border-box">
+    <div style="color:#8b949e;font-size:10px;margin-bottom:14px;line-height:1.8;background:#0d1117;border-radius:8px;padding:10px 12px">
+      💡 <b style="color:#c9d1d9">설정 방법:</b><br>
+      1. Google Sheets 열기 → 확장 프로그램 → Apps Script<br>
+      2. <code style="color:#c8fa00">apps_script.js</code> 코드 붙여넣기 (레포에 포함)<br>
+      3. 배포 → 새 배포 → 웹 앱 선택<br>
+      4. "다음 사용자로 실행: 나" / "액세스 권한: 누구나" 설정<br>
+      5. 배포 URL 복사 → 위에 붙여넣기
+    </div>
+    <div style="display:flex;gap:8px">
+      <button onclick="saveSyncSettings()" style="flex:1;background:#c8fa00;color:#0d1117;border:none;border-radius:8px;padding:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">저장</button>
+      <button onclick="closeSyncSettings()" style="background:#21262d;color:#8b949e;border:none;border-radius:8px;padding:10px 16px;font-size:12px;cursor:pointer;font-family:inherit">취소</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const PROXY=[
   u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),
@@ -384,10 +470,12 @@ const PROXY=[
 ];
 const CARD_PERIODS=[['실시간','5m','1d'],['5일','1h','5d'],['1달','1d','1mo'],['1년','1wk','1y']];
 const STOCK_KR=[
+  {k:'kospi',l:'코스피'},{k:'kosdaq',l:'코스닥'},
   {k:'samsung',l:'삼성전자'},{k:'hynix',l:'SK하이닉스'},{k:'hyundai',l:'현대차'},
   {k:'hanwha',l:'한화에어로'},{k:'naver',l:'NAVER'},
 ];
 const STOCK_US=[
+  {k:'nasdaq',l:'나스닥'},{k:'sp500',l:'S&P500'},
   {k:'nvda',l:'NVDA'},{k:'tsla',l:'TSLA'},{k:'aapl',l:'AAPL'},
   {k:'msft',l:'MSFT'},{k:'googl',l:'GOOGL'},
 ];
@@ -436,6 +524,12 @@ const KEY_TO_YF={
 const PF_COLORS=['#1d4ed8','#0891b2','#059669','#d97706','#dc2626','#7c3aed','#be185d','#0d9488','#65a30d','#ea580c','#0284c7','#16a34a','#b45309','#9333ea','#e11d48'];
 
 const SYMBOL_DB=[
+  {n:'코스피지수',s:'^KS11',m:'KR'},{n:'코스닥지수',s:'^KQ11',m:'KR'},
+  {n:'나스닥',s:'^IXIC',m:'US'},{n:'S&P500',s:'^GSPC',m:'US'},{n:'다우존스',s:'^DJI',m:'US'},
+  {n:'KODEX200',s:'069500.KS',m:'KR'},{n:'KODEX코스닥150',s:'229200.KQ',m:'KR'},
+  {n:'TIGER미국S&P500',s:'360750.KS',m:'KR'},{n:'TIGER나스닥100',s:'133690.KS',m:'KR'},
+  {n:'기아',s:'000270.KS',m:'KR'},{n:'LG에너지솔루션',s:'373220.KS',m:'KR'},
+  {n:'삼성바이오로직스',s:'207940.KS',m:'KR'},{n:'셀트리온',s:'068270.KS',m:'KR'},
   ...KR50.map(s=>({n:s.n,s:s.s,m:'KR'})),
   {n:'NVIDIA',s:'NVDA',m:'US'},{n:'Tesla',s:'TSLA',m:'US'},{n:'Apple',s:'AAPL',m:'US'},
   {n:'Microsoft',s:'MSFT',m:'US'},{n:'Alphabet',s:'GOOGL',m:'US'},{n:'Amazon',s:'AMZN',m:'US'},
@@ -448,6 +542,181 @@ const SYMBOL_DB=[
   {n:'NVDL 2X NVDA',s:'NVDL',m:'US'},{n:'TSMC',s:'TSM',m:'US'},
   ...ETF_LIST.map(s=>({n:s.n,s:s.s,m:'US'})),
 ];
+
+// ── 포트폴리오 인증 & 모달 ─────────────────────────────────────
+// SHA-256('Bong1204') — 비밀번호 변경하려면 아래 값을 교체하세요
+const PF_PASSWORD_HASH='e0ac95d6cc6abf8573f94de76682add9c24a745fad5d65c4900b4eeefb5c39a9';
+async function hashPw(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+
+function openPfModal(){
+  if(sessionStorage.getItem('pf_auth')==='1'){showPfPanel();return;}
+  const o=document.getElementById('pf-pw-overlay');o.classList.add('show');
+  document.getElementById('pf-pw-input').value='';
+  document.getElementById('pf-pw-err').style.display='none';
+  setTimeout(()=>document.getElementById('pf-pw-input').focus(),120);
+}
+function closePwModal(){document.getElementById('pf-pw-overlay').classList.remove('show');}
+async function submitPfPassword(){
+  const pw=document.getElementById('pf-pw-input').value;
+  if(await hashPw(pw)===PF_PASSWORD_HASH){
+    sessionStorage.setItem('pf_auth','1');
+    closePwModal();showPfPanel();
+  }else{
+    document.getElementById('pf-pw-err').style.display='block';
+    document.getElementById('pf-pw-input').select();
+  }
+}
+async function showPfPanel(){
+  document.getElementById('pf-modal').classList.add('show');
+  document.body.style.overflow='hidden';
+  currentOwner='total';
+  document.querySelectorAll('.owner-tab').forEach((b,i)=>b.classList.toggle('on',i===0));
+  await loadAndRenderPortfolio('total');
+}
+function closePfModal(){
+  document.getElementById('pf-modal').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+// ── 오너 탭 ───────────────────────────────────────────────────
+let currentOwner='total';
+async function switchOwnerTab(owner,btn){
+  document.querySelectorAll('.owner-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  currentOwner=owner;
+  const ec=document.getElementById('pf-edit-controls');
+  if(ec)ec.style.display=owner==='total'?'none':'flex';
+  await loadAndRenderPortfolio(owner);
+}
+
+// ── Google Sheets / Apps Script 동기화 ───────────────────────
+function getAppsScriptUrl(){return localStorage.getItem('pf_apps_script_url')||'';}
+function setSyncStatus(status,msg){
+  const dot=document.getElementById('sync-dot');
+  const txt=document.getElementById('sync-status-text');
+  if(!dot||!txt)return;
+  dot.className='sync-dot'+(status==='ok'?' ok':status==='err'?' err':'');
+  txt.textContent=msg;
+}
+function openSyncSettings(){
+  document.getElementById('apps-script-url-input').value=getAppsScriptUrl();
+  document.getElementById('sync-settings-overlay').classList.add('show');
+}
+function closeSyncSettings(){document.getElementById('sync-settings-overlay').classList.remove('show');}
+function saveSyncSettings(){
+  const url=document.getElementById('apps-script-url-input').value.trim();
+  if(url)localStorage.setItem('pf_apps_script_url',url);
+  else localStorage.removeItem('pf_apps_script_url');
+  closeSyncSettings();
+  loadAndRenderPortfolio(currentOwner);
+}
+
+let gsDataCache=null;
+async function fetchGsData(){
+  const url=getAppsScriptUrl();
+  if(!url){setSyncStatus('','로컬 저장소 사용 중');return null;}
+  try{
+    setSyncStatus('','Google Sheets 동기화 중...');
+    const r=await fetch(url,{signal:AbortSignal.timeout(12000)});
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    if(data.error)throw new Error(data.error);
+    gsDataCache=data;
+    setSyncStatus('ok','Google Sheets 동기화됨 ✓');
+    return data;
+  }catch(e){
+    setSyncStatus('err','Google Sheets 연결 실패 — 로컬 사용');
+    console.warn('GS fetch:',e);
+    return null;
+  }
+}
+async function syncToGs(owner,stocks,cash,savings){
+  const url=getAppsScriptUrl();
+  if(!url||owner==='total')return;
+  try{
+    await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({owner,stocks,cash,savings}),
+      signal:AbortSignal.timeout(15000),
+    });
+    setSyncStatus('ok','Google Sheets 저장됨 ✓');
+  }catch(e){setSyncStatus('err','Google Sheets 저장 실패');}
+}
+
+// ── 포트폴리오 데이터 로드 & 렌더 ──────────────────────────────
+function lsGet(key){try{const v=localStorage.getItem(key);return v?JSON.parse(v):null;}catch(e){return null;}}
+
+function buildOwnerData(gsData,owner){
+  const pfOwner=pfJson?.[owner]||(owner==='bong'?pfJson:null);
+  const src=gsData?.[owner];
+  return{
+    stocks:  lsGet('pf_'+owner+'_holdings')||src?.stocks ||pfOwner?.stocks ||[],
+    cash:    lsGet('pf_'+owner+'_cash')    ||src?.cash   ||pfOwner?.cash   ||[],
+    savings: lsGet('pf_'+owner+'_savings') ||src?.savings||pfOwner?.savings||[],
+    realized_pnl_2025_krw:src?.realized_pnl_2025_krw||pfOwner?.realized_pnl_2025_krw||0,
+  };
+}
+
+async function loadAndRenderPortfolio(owner){
+  currentOwner=owner;
+  const gsData=await fetchGsData();
+  const usdkrw=jsonData?.market?.usdkrw?.price||1380;
+
+  let stocks,cash,savings,realized;
+  if(owner==='total'){
+    const b=buildOwnerData(gsData,'bong');
+    const k=buildOwnerData(gsData,'kyoung');
+    stocks=[...(b.stocks||[]),...(k.stocks||[])];
+    cash=[...(b.cash||[]),...(k.cash||[])];
+    savings=[...(b.savings||[]),...(k.savings||[])];
+    realized=(b.realized_pnl_2025_krw||0)+(k.realized_pnl_2025_krw||0);
+  }else{
+    const d=buildOwnerData(gsData,owner);
+    stocks=d.stocks;cash=d.cash;savings=d.savings;realized=d.realized_pnl_2025_krw;
+  }
+
+  const ec=document.getElementById('pf-edit-controls');
+  if(ec)ec.style.display=owner==='total'?'none':'flex';
+  const lbl=document.getElementById('pf-owner-label');
+  if(lbl){const icons={total:'📊 Total 전체 자산',bong:'🧑 Bong 포트폴리오',kyoung:'👩 Kyoung 포트폴리오'};lbl.textContent=icons[owner]||'💼 포트폴리오';}
+
+  renderCash(cash);renderSavings(savings);
+  const totalCashKrw=cash.reduce((s,c)=>s+(c.currency==='USD'?c.amount*usdkrw:c.amount||0),0);
+  const totalSavingsKrw=savings.reduce((s,sv)=>s+(sv.currency==='USD'?sv.maturity_amount*usdkrw:sv.maturity_amount||0),0);
+
+  if(!stocks?.length){
+    document.getElementById('pftb').innerHTML='<tr><td colspan="11" style="text-align:center;color:#8b949e;padding:20px;font-size:12px">'+(owner==='total'?'보유 주식이 없습니다. Bong 또는 Kyoung 탭에서 편집하세요':'편집 버튼으로 보유 주식을 입력해주세요')+'</td></tr>';
+    renderSummaryAndChart(0,0,0,totalCashKrw,totalSavingsKrw);
+    const rpw=document.getElementById('pf-realized-wrap');if(rpw)rpw.innerHTML='';
+    return;
+  }
+
+  document.getElementById('pftb').innerHTML='<tr><td colspan="11" style="text-align:center;color:#8b949e;padding:20px;font-size:12px">실시간 가격 조회 중…</td></tr>';
+  const resolved=await Promise.all(stocks.map(async h=>{
+    let cur=null,closes=[],timestamps=[];
+    const d=await yfetch(h.symbol,'1d','1y');
+    if(d?.chart?.result?.[0]){const res=d.chart.result[0];cur=res.meta.regularMarketPrice;closes=res.indicators.quote[0].close||[];timestamps=res.timestamp||[];}
+    if(!cur){const k=Object.keys(KEY_TO_YF).find(k=>KEY_TO_YF[k]===h.symbol);if(k&&jsonData?.market?.[k])cur=jsonData.market[k].price;}
+    if(!cur)cur=h.avg_price;
+    const periods=calcPeriodChg(cur,closes,timestamps);
+    const mkt=h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US');
+    const rate=h.currency==='USD'?usdkrw:1;
+    const cost_krw=h.avg_price*rate*h.qty,value_krw=cur*rate*h.qty;
+    const pnl_krw=value_krw-cost_krw,pnl_pct=cost_krw?pnl_krw/cost_krw*100:0;
+    const spark=closes.filter(v=>v!=null).slice(-60);
+    return{name:h.name,symbol:h.symbol,qty:h.qty,avg_price:h.avg_price,currency:h.currency,market:mkt,locked:h.locked||false,current_price:cur,value_krw,cost_krw,pnl_krw,pnl_pct,periods,spark};
+  }));
+  const totalStockCost=resolved.reduce((s,h)=>s+h.cost_krw,0);
+  const totalStockVal=resolved.reduce((s,h)=>s+h.value_krw,0);
+  const totalPnl=totalStockVal-totalStockCost;
+  const totalPnlPct=totalStockCost?totalPnl/totalStockCost*100:0;
+  renderSummaryAndChart(totalStockVal,totalPnl,totalPnlPct,totalCashKrw,totalSavingsKrw);
+  renderPortfolioUI(resolved);
+  const rpw=document.getElementById('pf-realized-wrap');
+  if(rpw&&realized){const rv=realized,rc=cls(rv);rpw.innerHTML=`<div class="pf-realized">💹 2025년 실현손익: <span class="${rc}" style="font-size:13px">${rv>=0?'+':''}₩${Math.abs(rv).toLocaleString()}</span></div>`;}
+  else if(rpw)rpw.innerHTML='';
+}
 
 // card state: {cbId -> {symbol, isUp, currentVals}}
 const cardState={};
@@ -975,69 +1244,7 @@ function renderPortfolioUI(holdings){
   }).join('');
 }
 
-async function renderPortfolio(){
-  document.getElementById('pf-sec').style.display='block';
-  const usdkrw=jsonData?.market?.usdkrw?.price||1380;
-
-  // 현금: localStorage 우선, 없으면 portfolio.json
-  let cashItems;
-  try{const s=localStorage.getItem('pf_cash');cashItems=s?JSON.parse(s):null;}catch(e){}
-  cashItems=cashItems||pfJson?.cash||[];
-  // 예적금: localStorage 우선, 없으면 portfolio.json
-  let savingsItems;
-  try{const s=localStorage.getItem('pf_savings');savingsItems=s?JSON.parse(s):null;}catch(e){}
-  savingsItems=savingsItems||pfJson?.savings||[];
-  renderCash(cashItems);
-  renderSavings(savingsItems);
-  const totalCashKrw=cashItems.reduce((s,c)=>s+(c.currency==='USD'?c.amount*usdkrw:c.amount||0),0);
-  const totalSavingsKrw=savingsItems.reduce((s,sv)=>s+(sv.currency==='USD'?sv.maturity_amount*usdkrw:sv.maturity_amount||0),0);
-
-  // Stocks: localStorage first, then portfolio.json, then data.json
-  let stocks=null;
-  try{const s=localStorage.getItem('pf_holdings');if(s)stocks=JSON.parse(s);}catch(e){}
-  if(!stocks?.length&&pfJson?.stocks?.length) stocks=pfJson.stocks;
-  if(!stocks?.length&&jsonData?.portfolio?.holdings?.length) stocks=jsonData.portfolio.holdings;
-
-  if(!stocks?.length){
-    document.getElementById('pftb').innerHTML='<tr><td colspan="10" style="text-align:center;color:#bbb;padding:16px;font-size:12px">주식 편집 버튼으로 보유 주식을 입력해주세요</td></tr>';
-    renderSummaryAndChart(0,0,0,totalCashKrw,totalSavingsKrw);
-    return;
-  }
-
-  document.getElementById('pftb').innerHTML='<tr><td colspan="10" style="text-align:center;color:#bbb;padding:16px;font-size:12px">실시간 가격 및 기간 수익률 조회 중…</td></tr>';
-  const resolved=await Promise.all(stocks.map(async h=>{
-    let cur=null,closes=[],timestamps=[];
-    const d=await yfetch(h.symbol,'1d','1y');
-    if(d?.chart?.result?.[0]){
-      const res=d.chart.result[0];
-      cur=res.meta.regularMarketPrice;
-      closes=res.indicators.quote[0].close||[];
-      timestamps=res.timestamp||[];
-    }
-    if(!cur){const k=Object.keys(KEY_TO_YF).find(k=>KEY_TO_YF[k]===h.symbol);if(k&&jsonData?.market?.[k])cur=jsonData.market[k].price;}
-    if(!cur)cur=h.avg_price;
-    const periods=calcPeriodChg(cur,closes,timestamps);
-    const mkt=h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US');
-    const rate=h.currency==='USD'?usdkrw:1;
-    const cost_krw=h.avg_price*rate*h.qty,value_krw=cur*rate*h.qty;
-    const pnl_krw=value_krw-cost_krw,pnl_pct=cost_krw?pnl_krw/cost_krw*100:0;
-    const spark=closes.filter(v=>v!=null).slice(-60);
-    return{name:h.name,symbol:h.symbol,qty:h.qty,avg_price:h.avg_price,currency:h.currency,market:mkt,locked:h.locked||false,current_price:cur,value_krw,cost_krw,pnl_krw,pnl_pct,periods,spark};
-  }));
-  const totalStockCost=resolved.reduce((s,h)=>s+h.cost_krw,0);
-  const totalStockVal=resolved.reduce((s,h)=>s+h.value_krw,0);
-  const totalPnl=totalStockVal-totalStockCost;
-  const totalPnlPct=totalStockCost?totalPnl/totalStockCost*100:0;
-
-  renderSummaryAndChart(totalStockVal,totalPnl,totalPnlPct,totalCashKrw,totalSavingsKrw);
-  renderPortfolioUI(resolved);
-
-  const rpw=document.getElementById('pf-realized-wrap');
-  if(rpw&&pfJson?.realized_pnl_2025_krw){
-    const rv=pfJson.realized_pnl_2025_krw,rc=cls(rv);
-    rpw.innerHTML=`<div class="pf-realized">💹 2025년 실현손익: <span class="${rc}" style="font-size:13px">${rv>=0?'+':''}₩${Math.abs(rv).toLocaleString()}</span></div>`;
-  }
-}
+// renderPortfolio()는 loadAndRenderPortfolio()로 대체됨
 
 function renderSummaryAndChart(stockKrw,pnlKrw,pnlPct,cashKrw,savingsKrw){
   const totalKrw=stockKrw+cashKrw+savingsKrw;
@@ -1247,21 +1454,17 @@ function renderPfEditRows(){
   }).join('');
 }
 function togglePfEdit(){
-  let stored=null;
-  try{const s=localStorage.getItem('pf_holdings');if(s)stored=JSON.parse(s);}catch(e){}
+  const owner=currentOwner==='total'?'bong':currentOwner;
+  const pfOwner=pfJson?.[owner]||(owner==='bong'?pfJson:null);
+  const src=gsDataCache?.[owner];
+  const stored=lsGet('pf_'+owner+'_holdings');
   if(stored){pfEditData=stored;}
-  else if(pfJson?.stocks?.length){pfEditData=pfJson.stocks.map(h=>({name:h.name,symbol:h.symbol,market:h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US'),qty:h.qty,avg_price:h.avg_price,currency:h.currency||'KRW',locked:h.locked||false}));}
-  else if(jsonData?.portfolio?.holdings){pfEditData=jsonData.portfolio.holdings.map(h=>({name:h.name,symbol:h.symbol,market:h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US'),qty:h.qty,avg_price:h.avg_price,currency:h.currency||'KRW',locked:h.locked||false}));}
+  else if(src?.stocks?.length){pfEditData=src.stocks.map(h=>({name:h.name,symbol:h.symbol,market:h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US'),qty:h.qty,avg_price:h.avg_price,currency:h.currency||'KRW',locked:h.locked||false}));}
+  else if(pfOwner?.stocks?.length){pfEditData=pfOwner.stocks.map(h=>({name:h.name,symbol:h.symbol,market:h.market||(h.symbol?.includes('.KS')||h.symbol?.includes('.KQ')?'KR':'US'),qty:h.qty,avg_price:h.avg_price,currency:h.currency||'KRW',locked:h.locked||false}));}
   else{pfEditData=[];}
-  let storedCash=null;
-  try{const s=localStorage.getItem('pf_cash');if(s)storedCash=JSON.parse(s);}catch(e){}
-  pfCashEditData=storedCash||pfJson?.cash||[];
-  let storedSavings=null;
-  try{const s=localStorage.getItem('pf_savings');if(s)storedSavings=JSON.parse(s);}catch(e){}
-  pfSavingsEditData=storedSavings||pfJson?.savings||[];
-  renderPfEditRows();
-  renderCashEditRows();
-  renderSavingsEditRows();
+  pfCashEditData=lsGet('pf_'+owner+'_cash')||src?.cash||pfOwner?.cash||[];
+  pfSavingsEditData=lsGet('pf_'+owner+'_savings')||src?.savings||pfOwner?.savings||[];
+  renderPfEditRows();renderCashEditRows();renderSavingsEditRows();
   document.getElementById('pf-stock-view').style.display='none';
   document.getElementById('pf-stock-edit-wrap').style.display='block';
   document.getElementById('pf-cash-view').style.display='none';
@@ -1287,17 +1490,17 @@ function cancelPfEdit(){exitPfEditMode();}
 function addPfRow(){collectPfEditData();pfEditData.push({name:'',symbol:'',market:'KR',qty:1,avg_price:0,currency:'KRW',locked:false});renderPfEditRows();}
 function deletePfRow(i){collectPfEditData();pfEditData.splice(i,1);renderPfEditRows();}
 async function savePfInline(){
-  collectPfEditData();
-  collectCashEditData();
-  collectSavingsEditData();
+  const owner=currentOwner==='total'?'bong':currentOwner;
+  collectPfEditData();collectCashEditData();collectSavingsEditData();
   const holdings=pfEditData.filter(h=>h.name&&h.symbol&&h.qty>0).map(h=>({...h,symbol:h.symbol.toUpperCase()}));
-  localStorage.setItem('pf_holdings',JSON.stringify(holdings));
+  localStorage.setItem('pf_'+owner+'_holdings',JSON.stringify(holdings));
   const cash=pfCashEditData.filter(c=>c.bank&&c.amount>=0);
-  localStorage.setItem('pf_cash',JSON.stringify(cash));
+  localStorage.setItem('pf_'+owner+'_cash',JSON.stringify(cash));
   const savings=pfSavingsEditData.filter(s=>s.bank);
-  localStorage.setItem('pf_savings',JSON.stringify(savings));
+  localStorage.setItem('pf_'+owner+'_savings',JSON.stringify(savings));
+  syncToGs(owner,holdings,cash,savings);
   exitPfEditMode();
-  await renderPortfolio();
+  await loadAndRenderPortfolio(currentOwner);
 }
 
 async function init(){
@@ -1307,17 +1510,19 @@ async function init(){
   const ac=jsonData?.ai_comment;
   const aiEl=document.getElementById('ai-comment');
   if(ac&&typeof ac==='object'){
-    aiEl.innerHTML=
-      '<div class="ai-section">'+( ac.kr  ||'')+'</div>'+
-      '<div class="ai-section">'+( ac.us  ||'')+'</div>'+
-      '<div class="ai-section">'+( ac.tips||'')+'</div>';
+    let html=
+      '<div class="ai-section">'+(ac.kr  ||'')+'</div>'+
+      '<div class="ai-section">'+(ac.us  ||'')+'</div>'+
+      '<div class="ai-section">'+(ac.tips||'')+'</div>';
+    if(ac.outlook)html+='<div class="ai-section ai-section-pre">'+(ac.outlook||'')+'</div>';
+    if(ac.reco)   html+='<div class="ai-section ai-section-pre">'+(ac.reco   ||'')+'</div>';
+    aiEl.innerHTML=html;
   }else{
     aiEl.textContent=ac||'시황 데이터를 불러오지 못했어요.';
   }
   allNews=jsonData?.news||[];
   renderNews('all');
 
-  // Build period tabs for all cards
   ['cb1','cb2','cb3','cb4'].forEach(buildCardPeriodTabs);
   buildEtfPeriodTabs();
 
@@ -1332,7 +1537,7 @@ async function init(){
     ['gold','silver','brent','oil','natgas','copper'],
     ['금','은','브렌트유','WTI','천연가스','구리']);
   buildThemes();
-  await Promise.all([renderPortfolio(),loadStockTable('한국주요50'),loadETF()]);
+  await Promise.all([loadStockTable('한국주요50'),loadETF()]);
   const upd=jsonData?.updated?new Date(new Date(jsonData.updated).getTime()+9*3600000).toLocaleString('ko-KR'):new Date().toLocaleString('ko-KR');
   document.getElementById('upd').textContent='마지막 업데이트: '+upd+' (KST)';
 }
