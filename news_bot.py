@@ -1,4 +1,4 @@
-import os, json, smtplib, requests, xml.etree.ElementTree as ET
+import os, json, smtplib, requests, xml.etree.ElementTree as ET, base64
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
@@ -9,6 +9,7 @@ TELEGRAM_CHAT_ID_WIFE = os.environ.get('TELEGRAM_CHAT_ID_WIFE', '')
 GMAIL_USER          = os.environ['GMAIL_USER']
 GMAIL_PASSWORD      = os.environ['GMAIL_PASSWORD']
 ANTHROPIC_API_KEY   = os.environ.get('ANTHROPIC_API_KEY', '')
+DATA_REPO_TOKEN     = os.environ.get('DATA_REPO_TOKEN', '')
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
 
@@ -203,7 +204,6 @@ def get_ai_comment(market):
             timeout=30,
         )
         print('Claude 응답 status: ' + str(res.status_code))
-        print('Claude 응답 헤더: ' + str(dict(res.headers)))
         result = res.json()
         print('Claude 응답 body: ' + str(result)[:500])
 
@@ -215,12 +215,11 @@ def get_ai_comment(market):
                 return {
                     'kr':   '⚠️ API 크레딧 부족으로 한국 시황 분석을 생성하지 못했습니다.',
                     'us':   '⚠️ API 크레딧 부족으로 미국 시황 분석을 생성하지 못했습니다.',
-                    'tips': '💳 Anthropic Console(console.anthropic.com)에서 크레딧을 충전하면 AI 시황 분석이 재개됩니다.',
+                    'tips': '💳 Anthropic Console에서 크레딧을 충전하면 AI 시황 분석이 재개됩니다.',
                 }
             return dict(_FALLBACK_COMMENT)
 
         raw = result['content'][0]['text'].strip()
-        # strip markdown code fence if present
         if raw.startswith('```'):
             raw = raw.split('```')[1]
             if raw.startswith('json'):
@@ -265,13 +264,11 @@ def get_portfolio_data(market):
         currency   = h.get('currency', 'KRW')
         name       = h['name']
 
-        # 이미 fetch된 시장 데이터에서 현재가 조회
         current_price = None
         mkey = sym_to_key.get(symbol)
         if mkey and mkey in market:
             current_price = market[mkey]['price']
 
-        # 없으면 직접 fetch
         if current_price is None:
             try:
                 url = 'https://query1.finance.yahoo.com/v8/finance/chart/' + symbol + '?interval=1d&range=1d'
@@ -333,6 +330,32 @@ def save_data_json(market, news, ai_comment, portfolio=None):
     with open('data.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
     print('data.json 저장 완료!')
+    return data
+
+def push_to_data_repo(data):
+    if not DATA_REPO_TOKEN:
+        print('DATA_REPO_TOKEN 없음, 스킵')
+        return
+    repo = 'Dalbonz/4-my-money'
+    path = 'data.json'
+    url  = f'https://api.github.com/repos/{repo}/contents/{path}'
+    headers = {
+        'Authorization': f'token {DATA_REPO_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json',
+    }
+    r = requests.get(url, headers=headers, timeout=10)
+    sha = r.json().get('sha', '') if r.status_code == 200 else ''
+
+    content = base64.b64encode(
+        json.dumps(data, ensure_ascii=False, indent=2).encode()
+    ).decode()
+
+    body = {'message': 'update data.json', 'content': content}
+    if sha:
+        body['sha'] = sha
+
+    r2 = requests.put(url, headers=headers, json=body, timeout=15)
+    print('4-my-money push: ' + str(r2.status_code))
 
 def build_telegram_msg(market, news, ai_comment):
     today = datetime.now().strftime('%Y년 %m월 %d일')
@@ -379,14 +402,12 @@ def build_telegram_msg(market, news, ai_comment):
 
 def send_telegram(market, news, ai_comment):
     msg = build_telegram_msg(market, news, ai_comment)
-    # 본인 발송
     res = requests.post(
         'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage',
         data={'chat_id': TELEGRAM_CHAT_ID, 'text': msg, 'parse_mode': 'HTML'},
         timeout=15
     )
     print('텔레그램(본인) 응답: ' + str(res.status_code))
-    # 와이프 발송
     if TELEGRAM_CHAT_ID_WIFE:
         res2 = requests.post(
             'https://api.telegram.org/bot' + TELEGRAM_TOKEN + '/sendMessage',
@@ -463,7 +484,8 @@ def main():
     news       = get_news()
     ai_comment = get_ai_comment(market)
     portfolio  = get_portfolio_data(market)
-    save_data_json(market, news, ai_comment, portfolio)
+    data       = save_data_json(market, news, ai_comment, portfolio)
+    push_to_data_repo(data)
     send_telegram(market, news, ai_comment)
     send_email(market, news, ai_comment)
     print('완료!')
