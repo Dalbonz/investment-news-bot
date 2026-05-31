@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-30T04:44:15Z",
+  "updated": "2026-05-31T05:13:05Z",
   "market": {
     "kospi": {
       "price": 8476.15,
@@ -700,7 +700,7 @@
           "vol": 0
         },
         {
-          "time": 1780114871,
+          "time": 1780201270,
           "open": 159.255,
           "high": 159.255,
           "low": 159.255,
@@ -847,7 +847,7 @@
           "high": 89.02,
           "low": 86.35,
           "close": 87.36,
-          "vol": 235145
+          "vol": 242918
         }
       ]
     },
@@ -885,11 +885,11 @@
         },
         {
           "time": 1780027200,
-          "open": 93.37,
-          "high": 94.01,
-          "low": 91.46,
-          "close": 92.05,
-          "vol": 9881
+          "open": 92.67,
+          "high": 92.89,
+          "low": 89.94,
+          "close": 91.12,
+          "vol": 38381
         }
       ]
     },
@@ -931,7 +931,7 @@
           "high": 3.388,
           "low": 3.272,
           "close": 3.29,
-          "vol": 200655
+          "vol": 151828
         }
       ]
     },
@@ -969,11 +969,11 @@
         },
         {
           "time": 1780027200,
-          "open": 4494.0,
-          "high": 4591.7998,
-          "low": 4487.8999,
-          "close": 4560.5,
-          "vol": 16427
+          "open": 4527.6001,
+          "high": 4627.1001,
+          "low": 4519.5,
+          "close": 4593.0,
+          "vol": 124293
         }
       ]
     },
@@ -1011,11 +1011,11 @@
         },
         {
           "time": 1780027200,
-          "open": 75.52,
-          "high": 75.616,
-          "low": 75.115,
-          "close": 75.616,
-          "vol": 280
+          "open": 76.025,
+          "high": 76.96,
+          "low": 74.815,
+          "close": 75.875,
+          "vol": 34115
         }
       ]
     },
@@ -1053,11 +1053,11 @@
         },
         {
           "time": 1780027200,
-          "open": 6.392,
-          "high": 6.392,
-          "low": 6.345,
-          "close": 6.3595,
-          "vol": 2596
+          "open": 6.425,
+          "high": 6.44,
+          "low": 6.371,
+          "close": 6.389,
+          "vol": 30760
         }
       ]
     },
@@ -1866,82 +1866,82 @@
     {
       "source": "매일경제",
       "category": "분석",
-      "title": "“안 그래도 없는 돈, 지키면서 불리자”…청년 위한 ‘잃지 않는 투자’ 방법은? [캥거루족 탈출기⑳]",
-      "link": "https://www.mk.co.kr/news/economy/12061840"
+      "title": "이억원 “국민참여성장펀드 2차분 추가 출시”",
+      "link": "https://www.mk.co.kr/news/economy/12062049"
     },
     {
       "source": "매일경제",
       "category": "분석",
-      "title": "“한국 공적연금 지출액, 2085년 GDP 15% 초과할 것...구조개혁 시급”",
-      "link": "https://www.mk.co.kr/news/economy/12061528"
+      "title": "“일본 추월은 시간문제”…K반도체 업고 수출 ‘1조달러’ 달성 눈앞",
+      "link": "https://www.mk.co.kr/news/economy/12062023"
     },
     {
       "source": "매일경제",
       "category": "분석",
-      "title": "[표] 외국환율고시표",
-      "link": "https://www.mk.co.kr/news/economy/12061488"
+      "title": "“120조 더 써도 빚 안는다”…‘세수 대박’에 정부 AI 인프라 투자론 부상",
+      "link": "https://www.mk.co.kr/news/economy/12061934"
     },
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "포 코너스 프로퍼티 트러스트, 동물병원 부동산 102개 2.68억 달러에 인수",
-      "link": "https://kr.investing.com/news/company-news/article-93CH-1965939"
+      "title": "현대硏 \"고유가 장기화…사업계획 재수립·공급망 다변화 필요\"",
+      "link": "https://kr.investing.com/news/stock-market-news/article-1966057"
     },
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "메타, 틱톡, 스냅, 유튜브 학교 소송 2,700만 달러에 합의",
-      "link": "https://kr.investing.com/news/stock-market-news/article-1965937"
+      "title": "중국 제조업 활동, 5월 둔화…경제 모멘텀 약화",
+      "link": "https://kr.investing.com/news/economy-news/article-1966052"
     },
     {
       "source": "Investing.com",
       "category": "속보",
-      "title": "프리모리스 서비스: 법무총책임자 페리시치, 380만 달러 상당 주식 매각",
-      "link": "https://kr.investing.com/news/insider-trading-news/article-93CH-1965935"
+      "title": "삼성전자, 마이크론 꺾고 첫 정상…車 반도체 시장 판도 바꿨다",
+      "link": "https://kr.investing.com/news/stock-market-news/article-1966051"
     },
     {
       "source": "한국경제",
       "category": "국내",
-      "title": "부자들의 돈은 어디로 향하나…AI 장세가 바꾼 투자 지도",
-      "link": "https://www.hankyung.com/article/202605269465i"
+      "title": "美 금리 인상설에…FOMC 투표권자 카시카리가 꺼낸 한 마디 [심성미의 중앙은행 워치]",
+      "link": "https://www.hankyung.com/article/202605318730i"
     },
     {
       "source": "한국경제",
       "category": "국내",
-      "title": "\"랠리 불안하지만 지속\"…전쟁 끝→반도체 위험? [김현석의 월스트리트나우]",
-      "link": "https://www.hankyung.com/article/202605307799i"
+      "title": "[KIW2026 다시보기 영상]  제인 자오 \"국부펀드는 어떻게 추가 수익을 창출할 것인가\"",
+      "link": "https://www.hankyung.com/article/202605297361i"
     },
     {
       "source": "한국경제",
       "category": "국내",
-      "title": "AI 랠리·종전협상 기대감에 '쑥'…美 3대지수 또 최고치 [뉴욕증시 브리핑]",
-      "link": "https://www.hankyung.com/article/2026053078347"
+      "title": "美 비트코인 ETF 3주 연속 순유출…'극단적 공포' 재진입",
+      "link": "https://www.hankyung.com/article/202605297079i"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "김영록 전남지사, 일본서 농수산식품 수출 확대 협약",
-      "link": "https://www.yna.co.kr/view/AKR20260529139800054"
+      "title": "7월 6일부터 원/달러 24시간 거래된다…공휴일 포함",
+      "link": "https://www.yna.co.kr/view/AKR20260530042800002"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "[다음주 경제] 5월 소비자물가 중동영향 커졌나…OECD 韓성장률도 관심",
-      "link": "https://www.yna.co.kr/view/AKR20260530017700002"
+      "title": "국가데이터처, 내달 1일부터 경제총조사…AI·로봇 활용도 파악",
+      "link": "https://www.yna.co.kr/view/AKR20260530051800002"
     },
     {
       "source": "연합뉴스",
       "category": "국내",
-      "title": "국제유가, 트럼프 종전협상 최종결정 앞두고 하락…브렌트 2%↓",
-      "link": "https://www.yna.co.kr/view/AKR20260530005400072"
+      "title": "디지털 경제 속 중앙은행 역할은?…한은 국제 콘퍼런스",
+      "link": "https://www.yna.co.kr/view/AKR20260530051700002"
     }
   ],
   "ai_comment": {
-    "summary": "📌 오늘 한 줄 요약: 우리나라 주식은 잘 나가는데 미국도 함께 오르면서 전반적으로 좋은 날씨네요!",
-    "kr": "🇰🇷 한국 시장: 우리나라 주식 전체(코스피)가 8% 이상 올라서 매우 좋은 흐름이고, 특히 반도체 회사들(SK하이닉스, 삼성전자)이 크게 올랐어요. 다만 기술 관련 작은 회사들(코스닥)은 조금 내려갔어요.",
-    "us": "🇺🇸 미국 시장: 미국 주식도 전반적으로 올라가고 있는데, 마이크로소프트처럼 인공지능 관련 회사들이 특히 잘 나가고 있어요. 다만 엔비디아 같은 칩 회사는 조금 내려가서 투자자들이 정리하는 중이에요.",
-    "pick": "🛒 오늘의 추천 종목:\n• SK하이닉스 — 반도체 수요가 늘어나면서 20% 이상 오른 만큼 추세가 좋아 보여요.\n• 마이크로소프트 — 인공지능 투자가 가장 활발한 회사라 앞으로도 기대가 크네요.\n• 현대차 — 국내 자동차 회사 중 가장 안정적으로 오르고 있으니 장기 보유하기 좋아요.",
-    "warn": "⚠️ 오늘 조심할 것: 유가(석유 가격)가 많이 내려갔으니 에너지 관련 회사는 피하는 게 좋고, 엔비디아처럼 이미 많이 오른 회사들은 떨어질 수 있으니 성급히 따라가지 마세요."
+    "summary": "📌 오늘 한 줄 요약: 우리나라 주식은 잘 나가고 있는데, 미국 기술주들은 좀 흔들리는 상황이에요.",
+    "kr": "🇰🇷 한국 시장: 우리나라 주식 전체(코스피)가 8% 이상 올라서 좋은 하루를 보냈어요. 특히 반도체 회사들(SK하이닉스, 삼성전자)과 인터넷 회사(네이버)가 크게 올랐어요.",
+    "us": "🇺🇸 미국 시장: 미국 주식도 전반적으로 올라가는 분위기인데, 인공지능 관련주인 엔비디아는 오늘따라 떨어졌어요. 마이크로소프트와 테슬라는 잘 나가고 있어요.",
+    "pick": "🛒 오늘의 추천 종목:\n• SK하이닉스 — 반도체 수요가 좋아지면서 오늘 20% 올랐으니 앞으로의 상승 기대감이 충분해요.\n• 현대차 — 우리나라 자동차 산업이 살아나면서 8% 올랐고 더 오를 가능성이 있어요.\n• 마이크로소프트 — 미국 기술주 중에서도 가장 잘 나가고 있어서 안정적이에요.",
+    "warn": "⚠️ 오늘 조심할 것: 엔비디아처럼 인기 많던 주식들이 갑자기 떨어지는 날이니 너무 높은 값에 사지 않도록 주의하세요. 유가가 크게 떨어져서 에너지 관련 주식도 조심하세요."
   },
   "portfolio": {
     "holdings": [],
